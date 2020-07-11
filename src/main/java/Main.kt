@@ -8,6 +8,6 @@ fun main(args: Array<String>) {
     bot.onCommand("/start") { msg, _ ->
         bot.sendMessage(msg.chat.id, "Hello World!")
     }
-    
+
     bot.start()
 }
