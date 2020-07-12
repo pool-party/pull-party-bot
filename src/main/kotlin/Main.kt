@@ -1,7 +1,7 @@
 import com.elbekD.bot.Bot
 
 fun main(args: Array<String>) {
-    val token = "<TOKEN>"
+    val token = System.getenv("token") ?: "undefined"
     val userName = "<USER_NAME>"
     val bot = Bot.createPolling(token, userName)
 

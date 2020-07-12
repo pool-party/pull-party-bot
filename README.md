@@ -6,6 +6,6 @@
 
 To setup required version of gradle and dependencies run `gradlew` script, according to your system.
 
-Make sure you filled in bot's token and username in [Main](src/main/kotlin/Main.kt).
+Make sure you set the `token` environment variable (e.g. in build options).
 
 The only things you can be happy about at the moment are green letters after successful build)
