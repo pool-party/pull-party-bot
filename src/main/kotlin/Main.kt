@@ -1,4 +1,6 @@
 import com.elbekD.bot.Bot
+import com.elbekD.bot.types.KeyboardButton
+import com.elbekD.bot.types.ReplyKeyboardMarkup
 
 fun main(args: Array<String>) {
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
