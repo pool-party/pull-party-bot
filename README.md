@@ -6,4 +6,4 @@
 
 To setup required version of gradle and dependencies run `gradlew` script, according to your system.
 
-Make sure you set the `token` environment variable (e.g. in build options).
+Make sure you set the `TELEGRAM_TOKEN` environment variable (e.g. in build options).
