@@ -5,7 +5,10 @@ plugins {
 }
 
 jar {
-    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
     manifest {
         attributes(
             'Main-Class': 'MainKt'
