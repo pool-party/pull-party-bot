@@ -1,5 +1,4 @@
 import com.elbekD.bot.Bot
-
 fun main(args: Array<String>) {
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
     val userName = "PullPartyBot"
