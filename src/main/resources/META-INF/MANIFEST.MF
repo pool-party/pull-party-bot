@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: MainKt
+Main-Class: com.github.pool_party.pull_party_bot.MainKt
