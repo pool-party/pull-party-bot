@@ -68,6 +68,6 @@ fun initializePingCommands(bot: Bot) {
 
         // TODO DataBase work.
 
-        bot.sendMessage(msg.chat.id, "The parties I know: ");
+        bot.sendMessage(msg.chat.id, "The parties I know: ")
     }
 }
