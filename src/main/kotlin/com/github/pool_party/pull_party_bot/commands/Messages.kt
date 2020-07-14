@@ -4,18 +4,21 @@ val HELP_MSG =
     """
     Available commands:
 
-        /start    - awake the bot
-        /help     - show this usage guide
-        /create <name @user1 @user2 ...>    - create new party with given name and users
-        /delete <name>    - delete party, if exists
-        /party  <name>    - tag the members of existing party
+        /start - awake the bot
+        /help  - show this usage guide
+        /list  - show the parties of the chat
+
+        /party  <party-name> - tag the members of existing party
+        /delete <party-name> - forget the party like it had never happened
+
+        /create <party-name users-list> - create new party
     """.trimIndent()
 
 val ON_CREATE_FAIL =
     """
-    No people - no party 😔
+    No people - no party. 😔
 
-    At least name and the single user should be provided
+    At least name and a single user should be provided
     Follow the /create command with the party name and members of a new group
 
     Type /help for more information
@@ -37,6 +40,16 @@ val ON_PARTY_REQUEST_FAIL =
 
     Perhaps you wanted to create the party or misspelled its name
     Follow the /party command with the name of existing party
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_DELETE_EMPTY =
+    """
+    I'm not the police, but can stop the party. Which one though? 🚨
+
+    Perhaps you forgot to enter the name of party to remove
+    Follow the /delete command with the name of redundant party
 
     Type /help for more information
     """.trimIndent()
