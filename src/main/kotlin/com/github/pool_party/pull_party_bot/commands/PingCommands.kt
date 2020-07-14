@@ -43,7 +43,7 @@ fun initializePingCommands(bot: Bot) {
 
         bot.sendMessage(
             msg.chat.id,
-            if (true) { // success condition of DataBase.
+            if (false) { // success condition of DataBase.
                 "SUCCESS_RESPONSE" // response on success.
             } else {
                 ON_PARTY_REQUEST_FAIL
@@ -51,11 +51,23 @@ fun initializePingCommands(bot: Bot) {
         )
     }
 
-    // Delete existing party.
+    // Delete existing party, return if absent.
     bot.onCommand("/delete") { msg, name ->
+        if (name.isNullOrBlank()) {
+            bot.sendMessage(msg.chat.id, ON_DELETE_EMPTY)
+            return@onCommand
+        }
 
         // DataBase work.
 
         bot.sendMessage(msg.chat.id, "Party $name is just a history now \uD83D\uDC4D")
+    }
+
+    // Show all existing teams.
+    bot.onCommand("/list") { msg, _ ->
+
+        // DataBase work.
+
+        bot.sendMessage(msg.chat.id, "The parties I know: ");
     }
 }
