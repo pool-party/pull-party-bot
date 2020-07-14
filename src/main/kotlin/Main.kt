@@ -41,14 +41,15 @@ fun main() {
 
         if (parsedList.isNullOrEmpty() || parsedList.size == 1) {
             bot.sendMessage(chatId, ON_CREATE_FAIL)
-        } else {
-            val partyName = parsedList[0]
-            val users = parsedList.drop(1)
-
-            // DataBase work.
-
-            bot.sendMessage(chatId, "Party $partyName successfully created!")
+            return@onCommand
         }
+
+        val partyName = parsedList[0]
+        val users = parsedList.drop(1)
+
+        // DataBase work.
+
+        bot.sendMessage(chatId, "Party $partyName successfully created!")
     }
 
     /**
@@ -57,18 +58,19 @@ fun main() {
     bot.onCommand("/party") { msg, name ->
         if (name.isNullOrBlank()) {
             bot.sendMessage(msg.chat.id, ON_PARTY_FAIL)
-        } else {
-            // DataBase work.
-
-            bot.sendMessage(
-                msg.chat.id,
-                if (true) { // success condition of DataBase.
-                    "SUCCESS_RESPONSE" // response on success.
-                } else {
-                    ON_PARTY_REQUEST_FAIL
-                }
-            )
+            return@onCommand
         }
+
+        // DataBase work.
+
+        bot.sendMessage(
+            msg.chat.id,
+            if (true) { // success condition of DataBase.
+                "SUCCESS_RESPONSE" // response on success.
+            } else {
+                ON_PARTY_REQUEST_FAIL
+            }
+        )
     }
 
     /**
@@ -91,14 +93,16 @@ Available commands:
     /start    - awake the bot
     /help     - show this usage guide
     /create <name @user1 @user2 ...>    - create new party with given name and users
+    /delete <name>    - delete party, if exists
+    /party  <name>    - tag the members of existing party
     """.trimIndent()
 
 val ON_CREATE_FAIL =
     """
 No people - no party 😔
 
-At least name and single user should be provided
-Follow the /create command with the party name and members of new group
+At least name and the single user should be provided
+Follow the /create command with the party name and members of a new group
 
 Type /help for more information
     """.trimIndent()
@@ -107,7 +111,7 @@ val ON_PARTY_FAIL =
     """
 I could call up all parties, but it doesn't sound like a good idea. 🤪
 
-Perhaps you forgot to enter the party name.
+Perhaps you forgot to enter the party name
 Follow the /party command with the name of existing party
 
 Type /help for more information
@@ -117,7 +121,7 @@ val ON_PARTY_REQUEST_FAIL =
     """
 I am not aware of this party. You didn't invite me? 🤔
 
-Perhaps you wanted to create the party or misspelled it's name?
+Perhaps you wanted to create the party or misspelled its name
 Follow the /party command with the name of existing party
 
 Type /help for more information
