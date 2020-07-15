@@ -1,6 +1,8 @@
 package com.github.pool_party.pull_party_bot
 
 import com.elbekD.bot.Bot
+import com.elbekD.bot.server
+import com.elbekD.bot.util.AllowedUpdate
 import com.github.pool_party.pull_party_bot.commands.initializePingCommands
 
 const val APP_URL = "https://pullpartybot.herokuapp.com"
