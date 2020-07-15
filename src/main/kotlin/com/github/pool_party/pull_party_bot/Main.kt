@@ -17,7 +17,7 @@ fun main() {
         Bot.createPolling(USER_NAME, token)
     } else {
         Bot.createWebhook(USER_NAME, token) {
-            url = "${APP_URL}/${token}"
+            url = "$APP_URL/$token"
             allowedUpdates = listOf(AllowedUpdate.Message)
 
             server {
