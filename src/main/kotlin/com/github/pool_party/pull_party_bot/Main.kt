@@ -21,9 +21,6 @@ fun main() {
         }
     }
 
-    bot.onCommand("/start") { msg, _ ->
-        bot.sendMessage(msg.chat.id, "Hello World!")
-    }
-
+    initializePingCommands(bot)
     bot.start()
 }
