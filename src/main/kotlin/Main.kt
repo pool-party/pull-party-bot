@@ -30,7 +30,7 @@ fun main() {
             port = 8443
         }
     }
-
+    print(bot.getWebhookInfo().get())
     bot.onCommand("/start") { msg, _ ->
         bot.sendMessage(msg.chat.id, "Hello World!")
     }
