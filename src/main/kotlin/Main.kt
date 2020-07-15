@@ -30,7 +30,7 @@ fun main() {
             port = System.getenv("PORT").toInt()
         }
     }
-    print(System.getenv("PORT").toInt())
+    print(System.getenv("PORT"))
     print(bot.getWebhookInfo().get())
     bot.onCommand("/start") { msg, _ ->
         bot.sendMessage(msg.chat.id, "Hello World!")
