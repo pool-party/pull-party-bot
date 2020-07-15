@@ -23,7 +23,7 @@ fun main() {
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
     val userName = "PullPartyBot"
     val bot = Bot.createWebhook(userName,token) {
-        url = ngrok
+        url = "${ngrok}/${token}"
         allowedUpdates = listOf(AllowedUpdate.Message)
         server {
             host = "0.0.0.0"
