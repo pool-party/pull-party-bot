@@ -22,13 +22,14 @@ fun main() {
     val ngrok = "https://gankedbymomtestdeploy.herokuapp.com"
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
     val userName = "PullPartyBot"
+
     val bot = Bot.createWebhook(userName,token) {
         url = "${ngrok}/${token}"
 //        allowedUpdates = listOf(AllowedUpdate.Message)
-        server {
-            host = "0.0.0.0"
-            port = 8443
-        }
+//        server {
+//            host = "0.0.0.0"
+//            port = 8443
+//        }
     }
     print(bot.getWebhookInfo().get())
     bot.onCommand("/start") { msg, _ ->
@@ -36,17 +37,17 @@ fun main() {
     }
 
 
-//    embeddedServer(Netty,80) {
-//        routing {
-//            get("/"){
-//                call.respondText("Hi Mark", ContentType.Text.Html)
-//            }
-//            post("/${token}") {
-//                val response = call.receiveText()
-//                print(response)
-//                call.respond(HttpStatusCode.OK)
-//            }
-//        }
-//    }.start()
+    embeddedServer(Netty,8443) {
+        routing {
+            get("/"){
+                call.respondText("Hi Mark", ContentType.Text.Html)
+            }
+            post("/${token}") {
+                val response = call.receiveText()
+                print(response)
+                call.respond(HttpStatusCode.OK)
+            }
+        }
+    }.start()
     bot.start()
 }
