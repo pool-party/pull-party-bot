@@ -25,10 +25,10 @@ fun main() {
     val bot = Bot.createWebhook(userName,token) {
         url = "${ngrok}/${token}"
         allowedUpdates = listOf(AllowedUpdate.Message)
-        server {
-            host = "localhost"
-            port = 80
-        }
+//        server {
+//            host = "localhost"
+//            port = 80
+//        }
     }
 
     bot.onCommand("/start") { msg, _ ->
