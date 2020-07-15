@@ -25,10 +25,10 @@ fun main() {
     val bot = Bot.createWebhook(userName,token) {
         url = "${ngrok}/${token}"
         allowedUpdates = listOf(AllowedUpdate.Message)
-//        server {
-//            host = "localhost"
-//            port = 80
-//        }
+        server {
+            host = "localhost"
+            port = 80
+        }
     }
 
     bot.onCommand("/start") { msg, _ ->
@@ -36,17 +36,17 @@ fun main() {
     }
 
 
-    embeddedServer(Netty,80) {
-        routing {
-            get("/"){
-                call.respondText("Hi Mark", ContentType.Text.Html)
-            }
-            post("/${token}") {
-                val response = call.receiveText()
-                print(response)
-                call.respond(HttpStatusCode.OK)
-            }
-        }
-    }.start()
+//    embeddedServer(Netty,80) {
+//        routing {
+//            get("/"){
+//                call.respondText("Hi Mark", ContentType.Text.Html)
+//            }
+//            post("/${token}") {
+//                val response = call.receiveText()
+//                print(response)
+//                call.respond(HttpStatusCode.OK)
+//            }
+//        }
+//    }.start()
     bot.start()
 }
