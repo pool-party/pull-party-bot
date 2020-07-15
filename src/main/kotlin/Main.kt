@@ -4,7 +4,7 @@ import com.elbekD.bot.util.AllowedUpdate
 
 const val APP_URL = "https://pullpartybot.herokuapp.com"
 const val USER_NAME = "PullPartyBot"
-const val DEFAULT_PORT = "80"
+const val DEFAULT_PORT = 80
 
 fun main() {
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
@@ -14,7 +14,7 @@ fun main() {
 
         server {
             host = "0.0.0.0"
-            port = (System.getenv("PORT") ?: DEFAULT_PORT).toInt()
+            port = System.getenv("PORT")?.toInt() ?: DEFAULT_PORT
         }
     }
 
