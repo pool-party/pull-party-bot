@@ -24,7 +24,7 @@ fun main() {
     val userName = "PullPartyBot"
     val bot = Bot.createWebhook(userName,token) {
         url = "${ngrok}/${token}"
-        allowedUpdates = listOf(AllowedUpdate.Message)
+//        allowedUpdates = listOf(AllowedUpdate.Message)
         server {
             host = "0.0.0.0"
             port = 8443
