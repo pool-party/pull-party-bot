@@ -1,14 +1,7 @@
 language: java
-sudo: false
-before_script:
-  - if [ -e $HOME/build ]; then cp -r $HOME/build build; fi
-  - if [ -e $HOME/.gradle ]; then cp -r $HOME/.gradle .gradle; fi
 script:
   - ./gradlew check
-after_script:
-  - cp -r build $HOME/build
-  - cp -r .gradle $HOME/.gradle
 cache:
   directories:
-    - $HOME/.gradle
-    - $HOME/build
+    - .gradle
+    - build
