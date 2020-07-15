@@ -19,11 +19,11 @@ import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.sslConnector
 
 fun main() {
-    val ngrok = "https://gankedbymomtestdeploy.herokuapp.com"
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
+    val ngrok = "https://api.telegram.org/bot${token}/setWebhook?url=https://gankedbymomtestdeploy.herokuapp.com"
     val userName = "PullPartyBot"
     val bot = Bot.createWebhook(userName,token) {
-        url = "${ngrok}/${token}"
+        url = "${ngrok}/secret"
         allowedUpdates = listOf(AllowedUpdate.Message)
 //        server {
 //            host = "localhost"
@@ -41,7 +41,7 @@ fun main() {
             get("/"){
                 call.respondText("Hi Mark", ContentType.Text.Html)
             }
-            post("/${token}") {
+            post("/secret") {
                 val response = call.receiveText()
                 print(response)
                 call.respond(HttpStatusCode.OK)
