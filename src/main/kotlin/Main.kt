@@ -27,7 +27,7 @@ fun main() {
         allowedUpdates = listOf(AllowedUpdate.Message)
         server {
             host = "0.0.0.0"
-            port = 80
+            port = 8443
         }
     }
 
