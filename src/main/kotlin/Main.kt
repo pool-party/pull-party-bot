@@ -24,12 +24,13 @@ fun main() {
     val userName = "PullPartyBot"
     val bot = Bot.createWebhook(userName,token) {
         url = "${ngrok}/${token}"
-//        allowedUpdates = listOf(AllowedUpdate.Message)
+        allowedUpdates = listOf(AllowedUpdate.Message)
         server {
             host = "0.0.0.0"
             port = System.getenv("PORT").toInt()
         }
     }
+    print(System.getenv("PORT").toInt())
     print(bot.getWebhookInfo().get())
     bot.onCommand("/start") { msg, _ ->
         bot.sendMessage(msg.chat.id, "Hello World!")
