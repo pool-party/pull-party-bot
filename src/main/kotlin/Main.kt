@@ -26,7 +26,7 @@ fun main() {
         url = "${ngrok}/${token}"
         allowedUpdates = listOf(AllowedUpdate.Message)
         server {
-            host = "localhost"
+            host = "0.0.0.0"
             port = 80
         }
     }
