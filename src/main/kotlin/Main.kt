@@ -14,7 +14,7 @@ fun main() {
             port = System.getenv("PORT").toInt()
         }
     }
-    
+
     bot.onCommand("/start") { msg, _ ->
         bot.sendMessage(msg.chat.id, "Hello World!")
     }
