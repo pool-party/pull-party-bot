@@ -3,7 +3,7 @@ package com.github.pool_party.pull_party_bot.data_base
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun initDB() {
+fun initDB() { // change token for another app 
     Database.connect(
         System.getenv("HEROKU_POSTGRESQL_RED_JDBC_URL"),
         user = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_USERNAME"),
@@ -17,7 +17,7 @@ fun initDB() {
     }
 }
 
-fun createCommandTransaction(id: Long, partyName: String, userList: List<String>) {
+fun createCommandTransaction(id: Long, partyName: String, userList: List<String>) =
     transaction {
         Parties.insert {
             it[name] = partyName
@@ -25,9 +25,32 @@ fun createCommandTransaction(id: Long, partyName: String, userList: List<String>
             it[users] = userList.joinToString(" ")
         }
     }
-}
 
 fun partyCommandTransaction(id: Long, partyName: String): String? =
     transaction {
-        Parties.select { Parties.name.eq(partyName) and Parties.chatId.eq(id) }.firstOrNull()?.get(Parties.users)
+        Parties.select { Parties.chatId.eq(id) and Parties.name.eq(partyName) }.firstOrNull()?.get(Parties.users)
+    }
+
+fun deleteCommandTransaction(id: Long, partyName: String) = 
+    transaction {
+        Parties.deleteWhere { Parties.chatId.eq(id) and Parties.name.eq(partyName) }
+    }
+
+fun listCommandTransaction(id: Long): String? {
+    var ans : String? = null 
+    transaction {
+        Parties.select { Parties.chatId.eq(id) }.forEach{ 
+            ans += "\n" + it[Parties.name]
+        }
+    }
+    return ans
+}
+
+fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean = 
+    transaction {
+        Parties.update ({ Parties.chatId.eq(id) and Parties.name.eq(partyName) }) {
+            it[Parties.users] = userList.joinToString(" ")
+          }
+
+        return@transaction Parties.select {Parties.chatId.eq(id) and Parties.name.eq(partyName)}.empty()
     }
