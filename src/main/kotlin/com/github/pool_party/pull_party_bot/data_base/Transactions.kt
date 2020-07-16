@@ -5,9 +5,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun initDB() { // change token for another app 
     Database.connect(
-        System.getenv("HEROKU_POSTGRESQL_RED_JDBC_URL"),
-        user = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_USERNAME"),
-        password = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_PASSWORD")
+        System.getenv("JDBC_DATABASE_URL"),
+        user = System.getenv("JDBC_DATABASE_USERNAME"),
+        password = System.getenv("JDBC_DATABASE_PASSWORD")
     )
 
     transaction {
