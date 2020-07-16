@@ -33,27 +33,35 @@ object Cities : Table() {
 
 fun main() {
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
-    val bot = Bot.createWebhook(USER_NAME,token) {
-        url = "${APP_URL}/${token}"
-        allowedUpdates = listOf(AllowedUpdate.Message)
+    val isLongpoll = System.getenv("IS_LONGPOLL")?.toBoolean() ?: false
 
-        server {
-            host = "0.0.0.0"
-            port = System.getenv("PORT")?.toInt() ?: DEFAULT_PORT
+    val bot = if (isLongpoll) {
+        Bot.createPolling(USER_NAME, token)
+    } else {
+        Bot.createWebhook(USER_NAME, token) {
+            url = "${APP_URL}/${token}"
+            allowedUpdates = listOf(AllowedUpdate.Message)
+
+            server {
+                host = "0.0.0.0"
+                port = System.getenv("PORT")?.toInt() ?: DEFAULT_PORT
+            }
         }
     }
 
     initializePingCommands(bot)
 
 
-    Database.connect(System.getenv("HEROKU_POSTGRESQL_RED_JDBC_URL"), 
-            user = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_USERNAME"), 
-            password = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_PASSWORD"))
+    Database.connect(
+        System.getenv("HEROKU_POSTGRESQL_RED_JDBC_URL"),
+        user = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_USERNAME"),
+        password = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_PASSWORD")
+    )
 
     transaction {
         addLogger(StdOutSqlLogger)
 
-        SchemaUtils.create (Cities, Users)
+        SchemaUtils.create(Cities, Users)
 
         val saintPetersburgId = Cities.insert {
             it[name] = "St. Petersburg"
@@ -100,11 +108,11 @@ fun main() {
             it[Users.cityId] = null
         }
 
-        Users.update({ Users.id eq "alex"}) {
+        Users.update({ Users.id eq "alex" }) {
             it[name] = "Alexey"
         }
 
-        Users.deleteWhere{ Users.name like "%thing"}
+        Users.deleteWhere { Users.name like "%thing" }
 
         println("All cities:")
 
@@ -113,21 +121,21 @@ fun main() {
         }
 
         println("Manual join:")
-        (Users innerJoin Cities).slice(Users.name, Cities.name).
-            select {(Users.id.eq("andrey") or Users.name.eq("Sergey")) and
-                    Users.id.eq("sergey") and Users.cityId.eq(Cities.id)}.forEach {
+        (Users innerJoin Cities).slice(Users.name, Cities.name).select {
+            (Users.id.eq("andrey") or Users.name.eq("Sergey")) and
+                Users.id.eq("sergey") and Users.cityId.eq(Cities.id)
+        }.forEach {
             println("${it[Users.name]} lives in ${it[Cities.name]}")
         }
 
         println("Join with foreign key:")
 
 
-        (Users innerJoin Cities).slice(Users.name, Users.cityId, Cities.name).
-                select { Cities.name.eq("St. Petersburg") or Users.cityId.isNull()}.forEach {
+        (Users innerJoin Cities).slice(Users.name, Users.cityId, Cities.name)
+            .select { Cities.name.eq("St. Petersburg") or Users.cityId.isNull() }.forEach {
             if (it[Users.cityId] != null) {
                 println("${it[Users.name]} lives in ${it[Cities.name]}")
-            }
-            else {
+            } else {
                 println("${it[Users.name]} lives nowhere")
             }
         }
@@ -145,9 +153,9 @@ fun main() {
             }
         }
 
-        SchemaUtils.drop (Users, Cities)
+        SchemaUtils.drop(Users, Cities)
     }
-    
+
 
     bot.start()
 }
