@@ -4,6 +4,7 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.server
 import com.elbekD.bot.util.AllowedUpdate
 import com.github.pool_party.pull_party_bot.commands.initializePingCommands
+import org.jetbrains.exposed.sql.Database
 
 const val APP_URL = "https://somebodyoncetoldmepool.herokuapp.com"
 const val USER_NAME = "PullPartyBot"
@@ -26,6 +27,8 @@ fun main() {
             }
         }
     }
+
+    Database.connect(/*db info here*/)
 
     initializePingCommands(bot)
     bot.start()
