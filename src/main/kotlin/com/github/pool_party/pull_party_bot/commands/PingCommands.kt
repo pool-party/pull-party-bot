@@ -27,7 +27,7 @@ fun initializePingCommands(bot: Bot) {
         val partyName = parsedList[0]
         val users = parsedList.drop(1)
 
-        // DataBase work.
+        // TODO DataBase work.
 
         bot.sendMessage(chatId, "Party $partyName successfully created!")
     }
@@ -39,7 +39,7 @@ fun initializePingCommands(bot: Bot) {
             return@onCommand
         }
 
-        // DataBase work.
+        // TODO DataBase work.
 
         bot.sendMessage(
             msg.chat.id,
@@ -58,7 +58,7 @@ fun initializePingCommands(bot: Bot) {
             return@onCommand
         }
 
-        // DataBase work.
+        // TODO DataBase work.
 
         bot.sendMessage(msg.chat.id, "Party $name is just a history now \uD83D\uDC4D")
     }
@@ -66,7 +66,7 @@ fun initializePingCommands(bot: Bot) {
     // Show all existing teams.
     bot.onCommand("/list") { msg, _ ->
 
-        // DataBase work.
+        // TODO DataBase work.
 
         bot.sendMessage(msg.chat.id, "The parties I know: ");
     }
