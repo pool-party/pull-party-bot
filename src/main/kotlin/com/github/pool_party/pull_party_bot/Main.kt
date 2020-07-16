@@ -3,9 +3,8 @@ package com.github.pool_party.pull_party_bot
 import com.elbekD.bot.Bot
 import com.elbekD.bot.server
 import com.elbekD.bot.util.AllowedUpdate
-import com.github.pool_party.pull_party_bot.commands.initializePingCommands
-
-import org.jetbrains.exposed.sql.Database
+import com.github.pool_party.pull_party_bot.commands.initPingCommands
+import com.github.pool_party.pull_party_bot.data_base.initDB
 
 
 const val APP_URL = "https://somebodyoncetoldmepool.herokuapp.com"
@@ -31,12 +30,8 @@ fun main() {
         }
     }
 
-    Database.connect(System.getenv("HEROKU_POSTGRESQL_RED_JDBC_URL"), 
-            user = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_USERNAME"), 
-            password = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_PASSWORD"))
+    initDB()
+    initPingCommands(bot)
 
-
-    initializePingCommands(bot)
-    
     bot.start()
 }

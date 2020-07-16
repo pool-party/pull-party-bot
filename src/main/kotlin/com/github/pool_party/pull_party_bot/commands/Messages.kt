@@ -24,6 +24,11 @@ val ON_CREATE_FAIL =
     Type /help for more information
     """.trimIndent()
 
+val ON_CREATE_REQUEST_FAIL =
+    """
+    This team is already exists
+    """.trimIndent()//TODO better message
+
 val ON_PARTY_FAIL =
     """
     I could call up all parties, but it doesn't sound like a good idea. 🤪

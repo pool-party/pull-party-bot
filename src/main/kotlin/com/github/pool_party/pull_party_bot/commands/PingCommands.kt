@@ -2,8 +2,9 @@ package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
 import com.github.pool_party.pull_party_bot.data_base.*
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 
-fun initializePingCommands(bot: Bot) {
+fun initPingCommands(bot: Bot) {
 
     // Initiate the dialog with bot (might ask to set chat members in the future).
     bot.onCommand("/start") { msg, _ ->
@@ -42,14 +43,7 @@ fun initializePingCommands(bot: Bot) {
 
         // TODO DataBase work.
 
-        bot.sendMessage(
-            msg.chat.id,
-            if (false) { // success condition of DataBase.
-                "SUCCESS_RESPONSE" // response on success.
-            } else {
-                ON_PARTY_REQUEST_FAIL
-            }
-        )
+        bot.sendMessage(msg.chat.id, if (res.isNullOrBlank()) ON_PARTY_REQUEST_FAIL else res)
     }
 
     // Delete existing party, return if absent.
