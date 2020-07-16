@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.data_base
+package com.github.pool_party.pull_party_bot.database
 
 import org.jetbrains.exposed.sql.*
 

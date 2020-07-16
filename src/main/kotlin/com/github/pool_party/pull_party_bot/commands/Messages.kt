@@ -1,14 +1,27 @@
 package com.github.pool_party.pull_party_bot.commands
 
-//TODO keep all messages here to a single template:
-//"""
-//Interaction message
-//*Blank line*
-//Try to predict possible action led to this mistake and make a suggestion
-//Small command usage guide
-//*Blank line*
-///help command suggestion
-//"""
+// Comment template:
+// """
+// Interaction message
+// *Blank line*
+// Try to predict possible action led to this mistake and make a suggestion
+// Small command usage guide
+// *Blank line*
+// /help command suggestion
+// """
+
+val INIT_MSG =
+    """
+    Hey! I'm a PullPartyBot!
+
+    I can manage different parties inside your chat and tag their members whenever you need!
+
+    It would be very kind of you to start with creating the group of all members
+    Type in `/create all` and follow it with tags of all users
+    You can skip this step and simply create parties on your own if you want
+
+    Type /help for more information
+    """.trimIndent()
 
 val HELP_MSG =
     """
@@ -30,15 +43,20 @@ val ON_CREATE_FAIL =
     No people - no party. 😔
 
     At least name and a single user should be provided
-    Follow the /create command with the party name and members of a new group
+    Follow the /create command with the new party name and members of a new group
 
     Type /help for more information
     """.trimIndent()
 
 val ON_CREATE_REQUEST_FAIL =
     """
-    This team is already exists
-    """.trimIndent()//TODO better message
+    Someone is already rocking this party. 🥳
+
+    Perhaps you wanted to update existing group with /update
+    Follow the /create command with the new party name and members of a new group
+
+    Type /help for more information
+    """.trimIndent()
 
 val ON_PARTY_FAIL =
     """
@@ -70,17 +88,22 @@ val ON_DELETE_EMPTY =
     Type /help for more information
     """.trimIndent()
 
-val ON_PARTY_REQUEST_LIST_FAIL =
-    """
-    I don't know any parties in this chat yet 😢
-    """.trimIndent() //TODO Follow the template above
-
 val ON_UPDATE_FAIL =
     """
-    Incorrect update command
-    """.trimIndent() //TODO extend message
+    The wind of change is blowing. But where? 🤨
+
+    At least name and a single user should be provided
+    Follow the /update command with the existing party name and its new members
+
+    Type /help for more information
+    """.trimIndent()
 
 val ON_UPDATE_REQUEST_FAIL =
     """
-    No such team with this name:
-    """.trimIndent() //TODO suggest to create a team, bc it doesn't exist
+    Party didn't started yet, but you already changing the plans. 😥
+
+    Perhaps you wanted to create a new party with /create
+    Follow the /update command with the existing party name and its new members
+
+    Type /help for more information
+    """.trimIndent()
