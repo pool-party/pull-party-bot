@@ -60,12 +60,12 @@ val ON_DELETE_EMPTY =
     Type /help for more information
     """.trimIndent()
 
-val ON_PARTY_REQUEST_LIST_FAIL = 
+val ON_PARTY_REQUEST_LIST_FAIL =
     """
     I don't know any teams in this chat 😢
     """.trimIndent()
 
-val ON_UPDATE_REQUEST_FAIL = 
+val ON_UPDATE_REQUEST_FAIL =
     """
-    No such team with this name: 
+    No such team with this name:
     """.trimIndent()

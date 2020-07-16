@@ -55,7 +55,7 @@ fun initPingCommands(bot: Bot) {
 
         // TODO DataBase work.
 
-        bot.sendMessage(msg.chat.id, "Party $name is just a history now \uD83D\uDC4D")
+        bot.sendMessage(msg.chat.id, "Party `$name` is just a history now \uD83D\uDC4D")
     }
 
     // Show all existing teams.
@@ -65,4 +65,25 @@ fun initPingCommands(bot: Bot) {
 
         bot.sendMessage(msg.chat.id, "The parties I know: ")
     }
+
+    // Update existing party
+    bot.onCommand("/update") { msg, list ->
+        val parsedList = list?.split(' ')?.map { it.trim() }
+        val chatId = msg.chat.id
+
+        if (parsedList.isNullOrEmpty() || parsedList.size == 1) {
+            bot.sendMessage(chatId, ON_CREATE_FAIL)
+            return@onCommand
+        }
+
+        val partyName = parsedList[0]
+        val users = parsedList.drop(1)
+
+        bot.sendMessage(chatId, if (updateCommandTransaction(chatId, partyName, users)) ON_UPDATE_REQUEST_FAIL + "`$partyName`" else "Party `$partyName` successfully updated!")
+    }
+
+    // bot.onCommand("/stickerAlias") { msg, _ ->   // handle next message from this user ???
+
+    // }
+
 }
