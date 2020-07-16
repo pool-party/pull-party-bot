@@ -36,21 +36,16 @@ fun deleteCommandTransaction(id: Long, partyName: String) =
         Parties.deleteWhere { Parties.chatId.eq(id) and Parties.name.eq(partyName) }
     }
 
-fun listCommandTransaction(id: Long): String? {
-    var ans : String? = null
+fun listCommandTransaction(id: Long): String =
     transaction {
-        Parties.select { Parties.chatId.eq(id) }.forEach{
-            ans += "\n" + it[Parties.name]
-        }
+        Parties.select { Parties.chatId.eq(id) }.map { it[Parties.name] }.joinToString("\n")
     }
-    return ans
-}
 
 fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
-        Parties.update ({ Parties.chatId.eq(id) and Parties.name.eq(partyName) }) {
+        Parties.update({ Parties.chatId.eq(id) and Parties.name.eq(partyName) }) {
             it[Parties.users] = userList.joinToString(" ")
-          }
+        }
 
-        return@transaction Parties.select {Parties.chatId.eq(id) and Parties.name.eq(partyName)}.empty()
+        return@transaction !Parties.select { Parties.chatId.eq(id) and Parties.name.eq(partyName) }.empty()
     }

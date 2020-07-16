@@ -3,7 +3,7 @@ package com.github.pool_party.pull_party_bot
 import com.elbekD.bot.Bot
 import com.elbekD.bot.server
 import com.elbekD.bot.util.AllowedUpdate
-import com.github.pool_party.pull_party_bot.commands.initPingCommands
+import com.github.pool_party.pull_party_bot.commands.initCommandHandlers
 import com.github.pool_party.pull_party_bot.data_base.initDB
 
 
@@ -31,7 +31,7 @@ fun main() {
     }
 
     initDB()
-    initPingCommands(bot)
+    initCommandHandlers(bot)
 
     bot.start()
 }

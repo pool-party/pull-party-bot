@@ -1,5 +1,15 @@
 package com.github.pool_party.pull_party_bot.commands
 
+//TODO keep all messages here to a single template:
+//"""
+//Interaction message
+//*Blank line*
+//Try to predict possible action led to this mistake and make a suggestion
+//Small command usage guide
+//*Blank line*
+///help command suggestion
+//"""
+
 val HELP_MSG =
     """
     Available commands:
@@ -62,10 +72,15 @@ val ON_DELETE_EMPTY =
 
 val ON_PARTY_REQUEST_LIST_FAIL =
     """
-    I don't know any teams in this chat 😢
-    """.trimIndent()
+    I don't know any parties in this chat yet 😢
+    """.trimIndent() //TODO Follow the template above
+
+val ON_UPDATE_FAIL =
+    """
+    Incorrect update command
+    """.trimIndent() //TODO extend message
 
 val ON_UPDATE_REQUEST_FAIL =
     """
     No such team with this name:
-    """.trimIndent()
+    """.trimIndent() //TODO suggest to create a team, bc it doesn't exist

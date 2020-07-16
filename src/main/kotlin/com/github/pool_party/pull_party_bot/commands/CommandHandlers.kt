@@ -4,7 +4,7 @@ import com.elbekD.bot.Bot
 import com.github.pool_party.pull_party_bot.data_base.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 
-fun initPingCommands(bot: Bot) {
+fun initCommandHandlers(bot: Bot) {
 
     // Initiate the dialog with bot (might ask to set chat members in the future).
     bot.onCommand("/start") { msg, _ ->
@@ -61,9 +61,9 @@ fun initPingCommands(bot: Bot) {
     // Show all existing teams.
     bot.onCommand("/list") { msg, _ ->
 
-        // TODO DataBase work.
+        val res = "\n" + listCommandTransaction(msg.chat.id)
 
-        bot.sendMessage(msg.chat.id, "The parties I know: ")
+        bot.sendMessage(msg.chat.id, if (res == "\n") ON_PARTY_REQUEST_LIST_FAIL else "The parties I know: $res")
     }
 
     // Update existing party
@@ -72,14 +72,22 @@ fun initPingCommands(bot: Bot) {
         val chatId = msg.chat.id
 
         if (parsedList.isNullOrEmpty() || parsedList.size == 1) {
-            bot.sendMessage(chatId, ON_CREATE_FAIL)
+            bot.sendMessage(chatId, ON_UPDATE_FAIL)
             return@onCommand
         }
 
         val partyName = parsedList[0]
         val users = parsedList.drop(1)
 
-        bot.sendMessage(chatId, if (updateCommandTransaction(chatId, partyName, users)) ON_UPDATE_REQUEST_FAIL + "`$partyName`" else "Party `$partyName` successfully updated!")
+        bot.sendMessage(
+            chatId,
+            if (updateCommandTransaction(
+                    chatId,
+                    partyName,
+                    users
+                )
+            ) "Party `$partyName` successfully updated!" else "$ON_UPDATE_REQUEST_FAIL`$partyName`"
+        )
     }
 
     // bot.onCommand("/stickerAlias") { msg, _ ->   // handle next message from this user ???
