@@ -31,13 +31,12 @@ fun main() {
         }
     }
 
-    initializePingCommands(bot)
-
-
     Database.connect(System.getenv("HEROKU_POSTGRESQL_RED_JDBC_URL"), 
             user = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_USERNAME"), 
             password = System.getenv("HEROKU_POSTGRESQL_RED_JDBC_PASSWORD"))
-    
 
+
+    initializePingCommands(bot)
+    
     bot.start()
 }

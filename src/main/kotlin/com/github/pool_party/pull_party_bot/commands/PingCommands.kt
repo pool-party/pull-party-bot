@@ -1,6 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
+import com.github.pool_party.pull_party_bot.data_base.*
 
 fun initializePingCommands(bot: Bot) {
 
