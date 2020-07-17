@@ -3,21 +3,21 @@ package com.github.pool_party.pull_party_bot
 import com.elbekD.bot.Bot
 import com.elbekD.bot.server
 import com.elbekD.bot.util.AllowedUpdate
-import com.github.pool_party.pull_party_bot.commands.initializePingCommands
+import com.github.pool_party.pull_party_bot.commands.initPingCommandHandlers
+import com.github.pool_party.pull_party_bot.database.initDB
 
-const val APP_URL = "https://somebodyoncetoldmepool.herokuapp.com"
+const val APP_URL = "https://pullpartydb.herokuapp.com"
 const val USER_NAME = "PullPartyBot"
 const val DEFAULT_PORT = 80
 
 fun main() {
     val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
-    val isLongpoll = System.getenv("IS_LONGPOLL")?.toBoolean() ?: false
 
-    val bot = if (isLongpoll) {
+    val bot = if (System.getenv("IS_LONGPOLL") == "true") {
         Bot.createPolling(USER_NAME, token)
     } else {
         Bot.createWebhook(USER_NAME, token) {
-            url = "${APP_URL}/${token}"
+            url = "$APP_URL/$token"
             allowedUpdates = listOf(AllowedUpdate.Message)
 
             server {
@@ -27,6 +27,8 @@ fun main() {
         }
     }
 
-    initializePingCommands(bot)
+    initDB()
+    bot.initPingCommandHandlers()
+
     bot.start()
 }

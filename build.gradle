@@ -11,11 +11,19 @@ repositories {
     maven { url "https://jitpack.io" }
 
     mavenCentral()
+
+    jcenter()
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "com.github.elbekD:kt-telegram-bot:1.3.4"
+
+    implementation "org.jetbrains.exposed:exposed-core:0.24.1"
+    implementation "org.jetbrains.exposed:exposed-dao:0.24.1"
+    implementation "org.jetbrains.exposed:exposed-jdbc:0.24.1"
+
+    implementation "org.postgresql:postgresql:42.2.2"
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
