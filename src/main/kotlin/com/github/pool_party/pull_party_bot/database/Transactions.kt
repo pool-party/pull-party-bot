@@ -12,53 +12,39 @@ fun initDB() { // change token for another app
 
     transaction {
         addLogger(StdOutSqlLogger)
-
         SchemaUtils.create(Parties)
     }
 }
 
-fun selectParty(id: Long, partyName: String) =
-    Parties.select { Parties.chatId.eq(id) and Parties.name.eq(partyName) }
-
 fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
-        selectParty(id, partyName).empty().also {
-            if (it) {
-                Parties.insert {
-                    it[name] = partyName
-                    it[chatId] = id
-                    it[users] = userList.joinToString(" ")
-                }
-            }
-        }
-    }
-
-fun partyCommandTransaction(id: Long, partyName: String): String? =
-    transaction {
-        selectParty(id, partyName).firstOrNull()?.get(Parties.users)
-    }
-
-fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
-    transaction {
-        selectParty(id, partyName).empty().not().also {
-            if (it) {
-                Parties.deleteWhere { Parties.chatId.eq(id) and Parties.name.eq(partyName) }
-            }
-        }
-    }
-
-fun listCommandTransaction(id: Long): String =
-    transaction {
-        Parties.select { Parties.chatId.eq(id) }.map { it[Parties.name] }.joinToString("\n")
-    }
-
-fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
-    transaction {
-        if (selectParty(id, partyName).empty()) {
+        if (Party.find(id, partyName) != null) {
             return@transaction false
         }
 
-        Parties.update({ Parties.chatId.eq(id) and Parties.name.eq(partyName) }) {
-            it[Parties.users] = userList.joinToString(" ")
-        } > 0
+        Party.new {
+            name = partyName
+            chatId = id
+            users = userList.joinToString(" ")
+        }
+        true
+    }
+
+fun partyCommandTransaction(id: Long, partyName: String): String? = transaction { Party.find(id, partyName)?.users }
+
+fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
+    transaction {
+        val party = Party.find(id, partyName)
+        party?.delete()
+        party != null
+    }
+
+fun listCommandTransaction(id: Long): String =
+    transaction { Party.find { Parties.chatId.eq(id) }.map { it.name }.joinToString("\n") }
+
+fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
+    transaction {
+        val party = Party.find(id, partyName) ?: return@transaction false
+        party.users = userList.joinToString(" ")
+        true
     }
