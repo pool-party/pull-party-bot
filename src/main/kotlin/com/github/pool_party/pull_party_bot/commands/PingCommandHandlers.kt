@@ -52,7 +52,8 @@ suspend fun Bot.suspendList(msg: Message) {
 
 
 suspend fun Bot.suspendParty(msg: Message, args: String?) {
-    val parsedArgs = args?.split(' ')?.map { it.trim().toLowerCase() }
+    val parsedArgs = args?.split(' ')
+        ?.map { it.trim().toLowerCase() }?.distinct()
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
@@ -74,13 +75,15 @@ suspend fun Bot.suspendParty(msg: Message, args: String?) {
     if (hasInvalidRes) {
         sendMessage(
             chatId,
-            if (parsedArgs.size == 1) ON_PARTY_REQUEST_FAIL else ON_PARTY_REQUEST_FAILS
+            if (parsedArgs.size == 1) ON_PARTY_REQUEST_FAIL
+            else ON_PARTY_REQUEST_FAILS
         )
     }
 }
 
 suspend fun Bot.suspendDelete(msg: Message, args: String?) {
-    val parsedArgs = args?.split(' ')?.map { it.trim().toLowerCase() }
+    val parsedArgs = args?.split(' ')
+        ?.map { it.trim().toLowerCase() }?.distinct()
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
@@ -109,7 +112,8 @@ suspend fun Bot.suspendCreate(msg: Message, args: String?) {
     }
 
     val partyName = parsedList[0].removePrefix("@")
-    val users = parsedList.drop(1).map { if (!it.startsWith("@")) "@$it" else it }
+    val users = parsedList.drop(1)
+        .map { if (!it.startsWith("@")) "@$it" else it }.distinct()
 
     sendMessage(
         chatId,
@@ -129,7 +133,8 @@ suspend fun Bot.suspendUpdate(msg: Message, args: String?) {
     }
 
     val partyName = parsedList[0].removePrefix("@")
-    val users = parsedList.drop(1).map { if (!it.startsWith("@")) "@$it" else it }
+    val users = parsedList.drop(1)
+        .map { if (!it.startsWith("@")) "@$it" else it }.distinct()
 
     sendMessage(
         chatId,
