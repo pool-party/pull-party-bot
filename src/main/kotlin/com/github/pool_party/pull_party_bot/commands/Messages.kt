@@ -31,14 +31,72 @@ val HELP_MSG =
         /help  - show this usage guide
         /list  - show the parties of the chat
 
-        /party  <party-name> - tag the members of existing party
-        /delete <party-name> - forget the party like it had never happened
+        /party  <party-names> - tag the members of existing parties
+        /delete <party-names> - forget the parties as they had never happened
 
         /create <party-name users-list> - create new party
         /update <party-name users-list> - update an existing party
     """.trimIndent()
 
-val ON_CREATE_FAIL =
+val ON_LIST_SUCCESS =
+    """
+    The parties I know:
+
+    """.trimIndent()
+
+val ON_LIST_EMPTY =
+    """
+    I don't know any parties in this chat yet 😢
+    """.trimIndent()
+
+
+val ON_PARTY_SUCCESS =
+    """
+    😱 Release the
+    """.trimIndent()
+
+val ON_PARTY_EMPTY =
+    """
+    I could call up all parties, but it doesn't sound like a good idea. 🤪
+
+    Perhaps you forgot to enter the party names
+    Follow the /party command with the names of existing parties
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_PARTY_REQUEST_FAIL =
+    """
+    I am not aware of this party. You didn't invite me? 🤔
+
+    Perhaps you wanted to /create the party or misspelled its name
+    Follow the /party command with the names of existing parties
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_PARTY_REQUEST_FAILS =
+    """
+    I'm not that impudent to call up the parties I don't know. 😅
+
+    Perhaps you misspelled some names
+    Follow the /party command with the names of existing parties
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_DELETE_EMPTY =
+    """
+    I'm not the police, but can stop the party. Which one though? 🚨
+
+    Perhaps you forgot to enter the name of party to remove
+    Follow the /delete command with the name of redundant party
+
+    Type /help for more information
+    """.trimIndent()
+
+
+val ON_CREATE_EMPTY =
     """
     No people - no party. 😔
 
@@ -58,37 +116,7 @@ val ON_CREATE_REQUEST_FAIL =
     Type /help for more information
     """.trimIndent()
 
-val ON_PARTY_FAIL =
-    """
-    I could call up all parties, but it doesn't sound like a good idea. 🤪
-
-    Perhaps you forgot to enter the party name
-    Follow the /party command with the name of existing party
-
-    Type /help for more information
-    """.trimIndent()
-
-val ON_PARTY_REQUEST_FAIL =
-    """
-    I am not aware of this party. You didn't invite me? 🤔
-
-    Perhaps you wanted to create the party or misspelled its name
-    Follow the /party command with the name of existing party
-
-    Type /help for more information
-    """.trimIndent()
-
-val ON_DELETE_EMPTY =
-    """
-    I'm not the police, but can stop the party. Which one though? 🚨
-
-    Perhaps you forgot to enter the name of party to remove
-    Follow the /delete command with the name of redundant party
-
-    Type /help for more information
-    """.trimIndent()
-
-val ON_UPDATE_FAIL =
+val ON_UPDATE_EMPTY =
     """
     The wind of change is blowing. But where? 🤨
 

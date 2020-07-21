@@ -16,6 +16,24 @@ fun initDB() { // change token for another app
     }
 }
 
+fun listCommandTransaction(id: Long): String =
+    transaction {
+        Party.find { Parties.chatId.eq(id) }
+            .map { it.name }
+            .joinToString("\n")
+    }
+
+fun partyCommandTransaction(id: Long, partyName: String): String? =
+    transaction { Party.find(id, partyName)?.users }
+
+fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
+    transaction {
+        val party = Party.find(id, partyName)
+        party?.delete()
+
+        party != null
+    }
+
 fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
         if (Party.find(id, partyName) != null) {
@@ -27,24 +45,14 @@ fun createCommandTransaction(id: Long, partyName: String, userList: List<String>
             chatId = id
             users = userList.joinToString(" ")
         }
+
         true
     }
-
-fun partyCommandTransaction(id: Long, partyName: String): String? = transaction { Party.find(id, partyName)?.users }
-
-fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
-    transaction {
-        val party = Party.find(id, partyName)
-        party?.delete()
-        party != null
-    }
-
-fun listCommandTransaction(id: Long): String =
-    transaction { Party.find { Parties.chatId.eq(id) }.map { it.name }.joinToString("\n") }
 
 fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
         val party = Party.find(id, partyName) ?: return@transaction false
         party.users = userList.joinToString(" ")
+
         true
     }
