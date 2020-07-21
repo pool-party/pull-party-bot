@@ -40,8 +40,12 @@ fun createCommandTransaction(id: Long, partyName: String, userList: List<String>
             return@transaction false
         }
 
+        val rudeMode = Parties.select { Parties.chatId.eq(id) }
+            .firstOrNull()?.get(Parties.isRude) ?: false //Will be better after DataBase update
+
         Party.new {
             name = partyName
+            isRude = rudeMode
             chatId = id
             users = userList.joinToString(" ")
         }
@@ -55,4 +59,13 @@ fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>
         party.users = userList.joinToString(" ")
 
         true
+    }
+
+fun rudeCommandTransaction(id: Long, newMode: Boolean): Boolean =
+    transaction {
+        val oldMode = Parties.select { Parties.chatId.eq(id) }.first()[Parties.isRude]
+
+        Parties.update({ Parties.chatId.eq(id) }) { it[Parties.isRude] = newMode }
+
+        oldMode != newMode
     }

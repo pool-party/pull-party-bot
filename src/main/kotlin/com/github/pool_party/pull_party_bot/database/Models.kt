@@ -4,6 +4,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 object Parties : IntIdTable() {
     val name = varchar("name", 50)
+    val isRude = bool("is_rude")
     val chatId = long("chat_id")
     val users = text("users")
 }

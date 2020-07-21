@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.*
 class Party(id: EntityID<Int>) : IntEntity(id) {
 
     var name by Parties.name
+    var isRude by Parties.isRude
     var chatId by Parties.chatId
     var users by Parties.users
 

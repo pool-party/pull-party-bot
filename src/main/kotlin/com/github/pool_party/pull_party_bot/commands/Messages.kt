@@ -36,6 +36,8 @@ val HELP_MSG =
 
         /create <party-name users-list> - create new party
         /update <party-name users-list> - update an existing party
+
+        /rude <on/off> - switch RUDE(CAPS LOCK) mode
     """.trimIndent()
 
 val ON_LIST_SUCCESS =
@@ -132,6 +134,17 @@ val ON_UPDATE_REQUEST_FAIL =
 
     Perhaps you wanted to create a new party with /create
     Follow the /update command with the existing party name and its new members
+
+    Type /help for more information
+    """.trimIndent()
+
+
+val ON_RUDE_FAIL =
+    """
+    With great power comes great responsibility. 🧐
+    RUDE mode is definitely a great power and you have to use it right!
+
+    Follow the /rude command with either "on" or "off"
 
     Type /help for more information
     """.trimIndent()

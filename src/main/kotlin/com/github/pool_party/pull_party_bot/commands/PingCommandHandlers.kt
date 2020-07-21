@@ -2,11 +2,7 @@ package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
-import com.github.pool_party.pull_party_bot.database.createCommandTransaction
-import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
-import com.github.pool_party.pull_party_bot.database.listCommandTransaction
-import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
-import com.github.pool_party.pull_party_bot.database.updateCommandTransaction
+import com.github.pool_party.pull_party_bot.database.*
 
 fun Bot.initPingCommandHandlers() {
 
@@ -32,6 +28,9 @@ fun Bot.initPingCommandHandlers() {
 
     // Update existing party
     onCommand("/update", ::suspendUpdate)
+
+    //Doesn't work without created parties, will be fixed after DB update
+    onCommand("/rude", ::suspendRude)
 }
 
 
@@ -143,3 +142,27 @@ suspend fun Bot.suspendUpdate(msg: Message, args: String?) {
         else ON_UPDATE_REQUEST_FAIL
     )
 }
+
+
+suspend fun Bot.suspendRude(msg: Message, args: String?) {
+    val parsedArg = args?.trim()?.toLowerCase()
+    val chatId = msg.chat.id
+
+    val res = when (parsedArg) {
+        "on" -> rudeCommandTransaction(chatId, true)
+        "off" -> rudeCommandTransaction(chatId, false)
+        else -> {
+            sendMessage(chatId, ON_RUDE_FAIL)
+            return
+        }
+    }
+
+    val curStatus = if (parsedArg == "on") """😈""" else """😇"""
+    sendMessage(
+        chatId,
+        if (res) """Rude mode is now $parsedArg $curStatus!"""
+        else """Rude mode was already $parsedArg $curStatus!"""
+    )
+}
+
+//TODO override (or wrap) `sendMessage` to handle RUDE mode.
