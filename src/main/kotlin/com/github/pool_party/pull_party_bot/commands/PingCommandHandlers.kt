@@ -2,6 +2,7 @@ package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
+import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
 import com.github.pool_party.pull_party_bot.database.createCommandTransaction
 import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
 import com.github.pool_party.pull_party_bot.database.listCommandTransaction
@@ -16,7 +17,8 @@ fun Bot.initPingCommandHandlers() {
     onNoArgumentsCommand("/list", ::handleList)
 
     onCommand("/party", ::handleParty)
-    onCommand("/delete", ::handleDelete)
+    onAdministratorCommand("/delete", ::handleDelete)
+    onAdministratorCommand("/clear") { msg, _ -> handleClear(msg) }
 
     onCommand("/create", ::handleCreate)
     onCommand("/update", ::handleUpdate)
@@ -26,8 +28,28 @@ fun Bot.initPingCommandHandlers() {
     onMessage(::handleImplicitParty)
 }
 
-private fun Bot.onNoArgumentsCommand(command: String, handler: (Message) -> Unit) =
-    onCommand(command) { msg, _ -> handler(msg) }
+private fun Bot.onNoArgumentsCommand(command: String, action: (Message) -> Unit) =
+    onCommand(command) { msg, _ -> action(msg) }
+
+private fun Bot.onAdministratorCommand(command: String, action: (Message, String?) -> Unit) =
+    onCommand(command) { msg, args ->
+        val sender = msg.from
+        val chatId = msg.chat.id
+        if (sender == null) {
+            sendMessage(chatId, "identify urself")
+            return@onCommand
+        }
+
+        val chatType = msg.chat.type
+        if ((chatType == "group" || chatType == "supergroup") &&
+            getChatAdministrators(chatId).join().all { it.user != sender }
+        ) {
+            sendMessage(chatId, "You are not allowed to disrupt all of the parties, only admins have such powers")
+            return@onCommand
+        }
+
+        action(msg, args)
+    }
 
 /**
  * Initiate the dialog with bot.
@@ -91,7 +113,7 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
 /**
  * Delete given parties from DataBase.
  */
-suspend fun Bot.handleDelete(msg: Message, args: String?) {
+fun Bot.handleDelete(msg: Message, args: String?) {
     val parsedArgs = parseArgs(args)
     val chatId = msg.chat.id
 
@@ -108,6 +130,15 @@ suspend fun Bot.handleDelete(msg: Message, args: String?) {
             else """Not like I knew the $it party, but now I don't know it at all 👍"""
         )
     }
+}
+
+/**
+ * Deletes all the parties of the chat.
+ */
+fun Bot.handleClear(msg: Message) {
+    val chatId = msg.chat.id
+    clearCommandTransaction(chatId)
+    sendMessage(chatId, "There's nothing holding you back, feel free to get the fuck out of this chat")
 }
 
 /**
