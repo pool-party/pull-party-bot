@@ -6,7 +6,6 @@ import com.github.pool_party.pull_party_bot.database.createCommandTransaction
 import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
 import com.github.pool_party.pull_party_bot.database.listCommandTransaction
 import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
-import com.github.pool_party.pull_party_bot.database.partyMessageTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCheckTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.updateCommandTransaction
@@ -185,13 +184,18 @@ private fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = 
     )
 
 suspend fun Bot.handleImplicitParty(msg: Message) {
+    if (msg.forward_from != null) {
+        return
+    }
+    val chatId = msg.chat.id
+
     msg.text?.let {
         it.lineSequence()
             .flatMap { it.split(' ', '\t').asSequence() }
             .filter { it.startsWith('@') }
-            .mapNotNull { partyMessageTransaction(it.substring(1))?.to(it) }
+            .mapNotNull { partyCommandTransaction(chatId, it.substring(1))?.to(it) }
             .forEach { (users, partyName) ->
-                sendMessage(msg.chat.id, pullParty(partyName, users))
+                sendCaseMessage(chatId, pullParty(partyName, users))
             }
     }
 }
