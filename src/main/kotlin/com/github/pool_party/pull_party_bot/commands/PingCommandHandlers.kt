@@ -173,7 +173,7 @@ suspend fun Bot.handleRude(msg: Message, args: String?) {
     )
 }
 
-//TODO create utils package with these functions
+// TODO create utils package with these functions
 fun parseArgs(args: String?): List<String>? =
     args?.split(' ')?.map { it.trim().toLowerCase() }?.distinct()
 
