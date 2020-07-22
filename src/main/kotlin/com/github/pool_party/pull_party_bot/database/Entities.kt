@@ -8,12 +8,23 @@ import org.jetbrains.exposed.sql.*
 class Party(id: EntityID<Int>) : IntEntity(id) {
 
     var name by Parties.name
-    var isRude by Parties.isRude
     var chatId by Parties.chatId
     var users by Parties.users
 
     companion object : IntEntityClass<Party>(Parties) {
         fun find(chatId: Long, partyName: String): Party? =
             find { Parties.chatId.eq(chatId) and Parties.name.eq(partyName) }.firstOrNull()
+
+
+    }
+}
+
+class Chat(id: EntityID<Int>) : IntEntity(id) {
+
+    var chatId by Chats.chatId
+    var isRude by Chats.isRude
+
+    companion object : IntEntityClass<Chat>(Chats) {
+        fun find(chatId: Long): Chat? = find { Chats.chatId.eq(chatId) }.firstOrNull()
     }
 }

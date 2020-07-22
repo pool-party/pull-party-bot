@@ -12,7 +12,8 @@ fun initDB() { // change token for another app
 
     transaction {
         addLogger(StdOutSqlLogger)
-        SchemaUtils.create(Parties)
+
+        SchemaUtils.create(Chats, Parties)
     }
 }
 
@@ -36,16 +37,19 @@ fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
 
 fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
+        if (Chat.find(id) == null) {
+            Chat.new {
+                chatId = id
+                isRude = false
+            }
+        }
+
         if (Party.find(id, partyName) != null) {
             return@transaction false
         }
 
-        val rudeMode = Parties.select { Parties.chatId.eq(id) }
-            .firstOrNull()?.get(Parties.isRude) ?: false //Will be better after DataBase update
-
         Party.new {
             name = partyName
-            isRude = rudeMode
             chatId = id
             users = userList.joinToString(" ")
         }
@@ -63,9 +67,13 @@ fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>
 
 fun rudeCommandTransaction(id: Long, newMode: Boolean): Boolean =
     transaction {
-        val oldMode = Parties.select { Parties.chatId.eq(id) }.first()[Parties.isRude]
+        val chat = Chat.find(id) ?: Chat.new {
+            chatId = id
+            isRude = false
+        }
+        val oldMode = chat.isRude
 
-        Parties.update({ Parties.chatId.eq(id) }) { it[Parties.isRude] = newMode }
+        chat.isRude = newMode
 
         oldMode != newMode
     }
