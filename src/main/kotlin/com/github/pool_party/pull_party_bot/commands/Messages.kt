@@ -51,7 +51,6 @@ val ON_LIST_EMPTY =
     I don't know any parties in this chat yet 😢
     """.trimIndent()
 
-
 val ON_PARTY_SUCCESS =
     """
     😱 Release the

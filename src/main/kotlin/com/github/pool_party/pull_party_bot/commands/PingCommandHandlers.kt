@@ -11,9 +11,9 @@ import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.updateCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
-    onCommand("/start") { msg, _ -> handleStart(msg) }
-    onCommand("/help") { msg, _ -> handleHelp(msg) }
-    onCommand("/list") { msg, _ -> handleList(msg) }
+    onNoArgumentsCommand("/start", ::handleStart)
+    onNoArgumentsCommand("/help", ::handleHelp)
+    onNoArgumentsCommand("/list", ::handleList)
 
     onCommand("/party", ::handleParty)
     onCommand("/delete", ::handleDelete)
@@ -24,26 +24,32 @@ fun Bot.initPingCommandHandlers() {
     onCommand("/rude", ::handleRude)
 }
 
+private fun Bot.onNoArgumentsCommand(command: String, handler: (Message) -> Unit) =
+    onCommand(command) { msg, _ -> handler(msg) }
+
 /**
  * Initiate the dialog with bot.
  */
-fun Bot.handleStart(msg: Message) =
+fun Bot.handleStart(msg: Message) {
     sendMessage(msg.chat.id, INIT_MSG, "Markdown")
+}
 
 /**
  * Return the help message.
  */
-fun Bot.handleHelp(msg: Message) =
+fun Bot.handleHelp(msg: Message) {
     sendMessage(msg.chat.id, HELP_MSG, "Markdown")
+}
 
 /**
  * Show all existing teams.
  */
 fun Bot.handleList(msg: Message) {
-    val res = listCommandTransaction(msg.chat.id)
+    val chatId = msg.chat.id
+    val res = listCommandTransaction(chatId)
 
     sendCaseMessage(
-        msg.chat.id,
+        chatId,
         if (res.isNotBlank()) ON_LIST_SUCCESS + res else ON_LIST_EMPTY
     )
 }
@@ -68,10 +74,14 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
             return@forEach
         }
 
-        sendCaseMessage(chatId, """
+        sendCaseMessage(
+            chatId,
+            """
             $ON_PARTY_SUCCESS $it:
 
-            $res""".trimIndent())
+            $res"""
+                .trimIndent()
+        )
     }
 
     if (hasInvalidRes) {
@@ -98,7 +108,7 @@ suspend fun Bot.handleDelete(msg: Message, args: String?) {
     parsedArgs.forEach {
         sendCaseMessage(
             chatId,
-            if (deleteCommandTransaction(msg.chat.id, it))
+            if (deleteCommandTransaction(chatId, it))
                 """Party $it is just a history now 👍"""
             else """Not like I knew the $it party, but now I don't know it at all 👍"""
         )
@@ -108,14 +118,12 @@ suspend fun Bot.handleDelete(msg: Message, args: String?) {
 /**
  * Create a new party with given members.
  */
-suspend fun Bot.handleCreate(msg: Message, args: String?) =
-    handlePartyPostRequest(true, msg, args)
+suspend fun Bot.handleCreate(msg: Message, args: String?) = handlePartyPostRequest(true, msg, args)
 
 /**
  * Update existing party.
  */
-suspend fun Bot.handleUpdate(msg: Message, args: String?) =
-    handlePartyPostRequest(false, msg, args)
+suspend fun Bot.handleUpdate(msg: Message, args: String?) = handlePartyPostRequest(false, msg, args)
 
 /**
  * Handle both `update` and `create` commands.
@@ -134,7 +142,8 @@ fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: String?) {
         .map { if (!it.startsWith("@")) "@$it" else it }.distinct()
 
     if (if (isNew) createCommandTransaction(chatId, partyName, users)
-        else updateCommandTransaction(chatId, partyName, users)) {
+        else updateCommandTransaction(chatId, partyName, users)
+    ) {
         sendCaseMessage(
             chatId,
             if (isNew) "Party $partyName successfully created!"
@@ -166,21 +175,13 @@ suspend fun Bot.handleRude(msg: Message, args: String?) {
     }
 
     val curStatus = if (parsedArg == "on") """😈""" else """😇"""
-    sendCaseMessage(
-        chatId,
-        if (res) """Rude mode is now $parsedArg $curStatus!"""
-        else """Rude mode was already $parsedArg $curStatus!"""
-    )
+    sendCaseMessage(chatId, """Rude mode ${if (res) "is now" else "was already"} $parsedArg $curStatus!""")
 }
 
 // TODO create utils package with these functions
-fun parseArgs(args: String?): List<String>? =
-    args?.split(' ')?.map { it.trim().toLowerCase() }?.distinct()
+private fun parseArgs(args: String?): List<String>? = args?.split(' ')?.map { it.trim().toLowerCase() }?.distinct()
 
-fun Bot.sendCaseMessage(chatId: Long, msg: String) =
-    sendCaseMessage(chatId, msg, null)
-
-fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String?) =
+private fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = null) =
     sendMessage(
         chatId,
         if (rudeCheckTransaction(chatId)) msg.toUpperCase() else msg,

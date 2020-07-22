@@ -29,6 +29,5 @@ fun main() {
 
     initDB()
     bot.initPingCommandHandlers()
-
     bot.start()
 }

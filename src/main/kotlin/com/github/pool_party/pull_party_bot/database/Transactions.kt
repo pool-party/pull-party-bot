@@ -15,20 +15,16 @@ fun initDB() { // change token for another app
 
     transaction {
         addLogger(StdOutSqlLogger)
-
         SchemaUtils.create(Chats, Parties)
     }
 }
 
 fun listCommandTransaction(id: Long): String =
     transaction {
-        Party.find { Parties.chatId.eq(id) }
-            .map { it.name }
-            .joinToString("\n")
+        Chat.findById(id)?.run { parties.asSequence().map { it.name }.joinToString("\n") } ?: ""
     }
 
-fun partyCommandTransaction(id: Long, partyName: String): String? =
-    transaction { Party.find(id, partyName)?.users }
+fun partyCommandTransaction(id: Long, partyName: String): String? = transaction { Party.find(id, partyName)?.users }
 
 fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
     transaction {
@@ -40,7 +36,7 @@ fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
 
 fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
-        val curChat = Chat.find(id) ?: Chat.new(id) {}
+        val curChat = Chat.findById(id) ?: Chat.new(id) {}
 
         if (Party.find(id, partyName) != null) {
             return@transaction false
@@ -65,7 +61,7 @@ fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>
 
 fun rudeCommandTransaction(id: Long, newMode: Boolean): Boolean =
     transaction {
-        val chat = Chat.find(id) ?: Chat.new(id) {}
+        val chat = Chat.findById(id) ?: Chat.new(id) {}
         val oldMode = chat.isRude
 
         chat.isRude = newMode
@@ -73,4 +69,4 @@ fun rudeCommandTransaction(id: Long, newMode: Boolean): Boolean =
         oldMode != newMode
     }
 
-fun rudeCheckTransaction(id: Long): Boolean = transaction { Chat.find(id)?.isRude ?: false }
+fun rudeCheckTransaction(id: Long): Boolean = transaction { Chat.findById(id)?.isRude ?: false }

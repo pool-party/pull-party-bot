@@ -22,8 +22,7 @@ class Party(id: EntityID<Int>) : IntEntity(id) {
 class Chat(id: EntityID<Long>) : LongEntity(id) {
 
     var isRude by Chats.isRude
+    val parties by Party referrersOn Parties.chatId
 
-    companion object : LongEntityClass<Chat>(Chats) {
-        fun find(chatId: Long): Chat? = find { Chats.id.eq(chatId) }.firstOrNull()
-    }
+    companion object : LongEntityClass<Chat>(Chats)
 }
