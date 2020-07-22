@@ -2,7 +2,6 @@ package com.github.pool_party.pull_party_bot.database
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
-import java.awt.CheckboxGroup
 
 object Parties : IntIdTable() {
     val name = varchar("name", 50)
