@@ -2,13 +2,15 @@ package com.github.pool_party.pull_party_bot.database
 
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 
 class Party(id: EntityID<Int>) : IntEntity(id) {
 
     var name by Parties.name
-    var chatId by Parties.chatId
+    var chat by Chat referencedOn Parties.chatId
     var users by Parties.users
 
     companion object : IntEntityClass<Party>(Parties) {
@@ -19,12 +21,11 @@ class Party(id: EntityID<Int>) : IntEntity(id) {
     }
 }
 
-class Chat(id: EntityID<Int>) : IntEntity(id) {
+class Chat(id: EntityID<Long>) : LongEntity(id) {
 
-    var chatId by Chats.chatId
     var isRude by Chats.isRude
 
-    companion object : IntEntityClass<Chat>(Chats) {
-        fun find(chatId: Long): Chat? = find { Chats.chatId.eq(chatId) }.firstOrNull()
+    companion object : LongEntityClass<Chat>(Chats) {
+        fun find(chatId: Long): Chat? = find { Chats.id.eq(chatId) }.firstOrNull()
     }
 }

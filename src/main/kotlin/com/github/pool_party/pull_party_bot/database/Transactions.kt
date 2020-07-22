@@ -37,12 +37,7 @@ fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
 
 fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
-        if (Chat.find(id) == null) {
-            Chat.new {
-                chatId = id
-                isRude = false
-            }
-        }
+        val curChat = Chat.find(id) ?: Chat.new(id) {}
 
         if (Party.find(id, partyName) != null) {
             return@transaction false
@@ -50,7 +45,7 @@ fun createCommandTransaction(id: Long, partyName: String, userList: List<String>
 
         Party.new {
             name = partyName
-            chatId = id
+            chat = curChat
             users = userList.joinToString(" ")
         }
 
@@ -67,13 +62,12 @@ fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>
 
 fun rudeCommandTransaction(id: Long, newMode: Boolean): Boolean =
     transaction {
-        val chat = Chat.find(id) ?: Chat.new {
-            chatId = id
-            isRude = false
-        }
+        val chat = Chat.find(id) ?: Chat.new(id) {}
         val oldMode = chat.isRude
 
         chat.isRude = newMode
 
         oldMode != newMode
     }
+
+fun rudeCheckTransaction(id: Long): Boolean = transaction { Chat.find(id)?.isRude ?: false }
