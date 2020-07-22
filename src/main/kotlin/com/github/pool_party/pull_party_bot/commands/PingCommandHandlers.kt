@@ -36,7 +36,7 @@ private fun Bot.onAdministratorCommand(command: String, action: (Message, String
         val sender = msg.from
         val chatId = msg.chat.id
         if (sender == null) {
-            sendMessage(chatId, "identify urself")
+            sendMessage(chatId, ON_SENDER_FAIL)
             return@onCommand
         }
 
@@ -44,7 +44,7 @@ private fun Bot.onAdministratorCommand(command: String, action: (Message, String
         if ((chatType == "group" || chatType == "supergroup") &&
             getChatAdministrators(chatId).join().all { it.user != sender }
         ) {
-            sendMessage(chatId, "You are not allowed to disrupt all of the parties, only admins have such powers")
+            sendMessage(chatId, ON_PERMISSION_DENY)
             return@onCommand
         }
 
@@ -138,7 +138,7 @@ fun Bot.handleDelete(msg: Message, args: String?) {
 fun Bot.handleClear(msg: Message) {
     val chatId = msg.chat.id
     clearCommandTransaction(chatId)
-    sendMessage(chatId, "There's nothing holding you back, feel free to get the fuck out of this chat")
+    sendMessage(chatId, ON_CLEAR_SUCCESS)
 }
 
 /**
@@ -204,16 +204,9 @@ suspend fun Bot.handleRude(msg: Message, args: String?) {
     sendCaseMessage(chatId, """Rude mode ${if (res) "is now" else "was already"} $parsedArg $curStatus!""")
 }
 
-// TODO create utils package with these functions
-private fun parseArgs(args: String?): List<String>? = args?.split(' ')?.map { it.trim().toLowerCase() }?.distinct()
-
-private fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = null) =
-    sendMessage(
-        chatId,
-        if (rudeCheckTransaction(chatId)) msg.toUpperCase() else msg,
-        parseMode
-    )
-
+/**
+ * Handle explicit `@party-name`-like calls
+ */
 suspend fun Bot.handleImplicitParty(msg: Message) {
     if (msg.forward_from != null) {
         return
@@ -231,9 +224,19 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
     }
 }
 
-private fun pullParty(partyName: String, flexers: String): String =
+// TODO create utils package with these functions
+private fun parseArgs(args: String?): List<String>? = args?.split(' ')?.map { it.trim().toLowerCase() }?.distinct()
+
+private fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = null) =
+    sendMessage(
+        chatId,
+        if (rudeCheckTransaction(chatId)) msg.toUpperCase() else msg,
+        parseMode
+    )
+
+private fun pullParty(partyName: String, res: String): String =
     """
     $ON_PARTY_SUCCESS $partyName:
 
-    $flexers
+    $res
     """.trimIndent()
