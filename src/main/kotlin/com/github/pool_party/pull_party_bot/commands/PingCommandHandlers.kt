@@ -11,41 +11,34 @@ import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.updateCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
-
-    // Initiate the dialog with bot (might ask to set chat members in the future).
     onCommand("/start") { msg, _ -> handleStart(msg) }
-
-    // Return the help message.
     onCommand("/help") { msg, _ -> handleHelp(msg) }
-
-    // Show all existing teams.
     onCommand("/list") { msg, _ -> handleList(msg) }
 
-
-    // Ping the party members.
     onCommand("/party", ::handleParty)
-
-    // Delete existing party, return if absent.
     onCommand("/delete", ::handleDelete)
 
-
-    // Create a new party with given members.
     onCommand("/create", ::handleCreate)
-
-    // Update existing party
     onCommand("/update", ::handleUpdate)
 
-    //Doesn't work without created parties, will be fixed after DB update
     onCommand("/rude", ::handleRude)
 }
 
-
+/**
+ * Initiate the dialog with bot.
+ */
 fun Bot.handleStart(msg: Message) =
     sendMessage(msg.chat.id, INIT_MSG, "Markdown")
 
+/**
+ * Return the help message.
+ */
 fun Bot.handleHelp(msg: Message) =
     sendMessage(msg.chat.id, HELP_MSG, "Markdown")
 
+/**
+ * Show all existing teams.
+ */
 fun Bot.handleList(msg: Message) {
     val res = listCommandTransaction(msg.chat.id)
 
@@ -55,7 +48,9 @@ fun Bot.handleList(msg: Message) {
     )
 }
 
-
+/**
+ * Ping the members of given parties.
+ */
 suspend fun Bot.handleParty(msg: Message, args: String?) {
     val parsedArgs = parseArgs(args)
     val chatId = msg.chat.id
@@ -88,6 +83,9 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
     }
 }
 
+/**
+ * Delete given parties from DataBase.
+ */
 suspend fun Bot.handleDelete(msg: Message, args: String?) {
     val parsedArgs = parseArgs(args)
     val chatId = msg.chat.id
@@ -107,13 +105,21 @@ suspend fun Bot.handleDelete(msg: Message, args: String?) {
     }
 }
 
-
+/**
+ * Create a new party with given members.
+ */
 suspend fun Bot.handleCreate(msg: Message, args: String?) =
     handlePartyPostRequest(true, msg, args)
 
+/**
+ * Update existing party.
+ */
 suspend fun Bot.handleUpdate(msg: Message, args: String?) =
     handlePartyPostRequest(false, msg, args)
 
+/**
+ * Handle both `update` and `create` commands.
+ */
 fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: String?) {
     val parsedList = args?.split(' ')?.map { it.trim().toLowerCase() }
     val chatId = msg.chat.id
@@ -143,7 +149,9 @@ fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: String?) {
     }
 }
 
-
+/**
+ * Switch RUDE mode on and off.
+ */
 suspend fun Bot.handleRude(msg: Message, args: String?) {
     val parsedArg = args?.trim()?.toLowerCase()
     val chatId = msg.chat.id

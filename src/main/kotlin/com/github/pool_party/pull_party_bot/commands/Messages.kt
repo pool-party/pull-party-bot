@@ -97,7 +97,6 @@ val ON_DELETE_EMPTY =
     Type /help for more information
     """.trimIndent()
 
-
 val ON_CREATE_EMPTY =
     """
     No people - no party. 😔
@@ -137,7 +136,6 @@ val ON_UPDATE_REQUEST_FAIL =
 
     Type /help for more information
     """.trimIndent()
-
 
 val ON_RUDE_FAIL =
     """

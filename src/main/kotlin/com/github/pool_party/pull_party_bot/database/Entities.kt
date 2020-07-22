@@ -16,8 +16,6 @@ class Party(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Party>(Parties) {
         fun find(chatId: Long, partyName: String): Party? =
             find { Parties.chatId.eq(chatId) and Parties.name.eq(partyName) }.firstOrNull()
-
-
     }
 }
 
