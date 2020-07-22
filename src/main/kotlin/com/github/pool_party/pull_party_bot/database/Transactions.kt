@@ -26,6 +26,8 @@ fun listCommandTransaction(id: Long): String =
 
 fun partyCommandTransaction(id: Long, partyName: String): String? = transaction { Party.find(id, partyName)?.users }
 
+fun partyMessageTransaction(partyName: String): String? = transaction { Party.find(partyName)?.users }
+
 fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
     transaction {
         val party = Party.find(id, partyName)

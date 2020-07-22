@@ -6,6 +6,7 @@ import com.github.pool_party.pull_party_bot.database.createCommandTransaction
 import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
 import com.github.pool_party.pull_party_bot.database.listCommandTransaction
 import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
+import com.github.pool_party.pull_party_bot.database.partyMessageTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCheckTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.updateCommandTransaction
@@ -22,6 +23,8 @@ fun Bot.initPingCommandHandlers() {
     onCommand("/update", ::handleUpdate)
 
     onCommand("/rude", ::handleRude)
+
+    onMessage(::handleImplicitParty)
 }
 
 private fun Bot.onNoArgumentsCommand(command: String, handler: (Message) -> Unit) =
@@ -74,14 +77,7 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
             return@forEach
         }
 
-        sendCaseMessage(
-            chatId,
-            """
-            $ON_PARTY_SUCCESS $it:
-
-            $res"""
-                .trimIndent()
-        )
+        sendCaseMessage(chatId, pullParty(it, res))
     }
 
     if (hasInvalidRes) {
@@ -128,7 +124,7 @@ suspend fun Bot.handleUpdate(msg: Message, args: String?) = handlePartyPostReque
 /**
  * Handle both `update` and `create` commands.
  */
-fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: String?) {
+private fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: String?) {
     val parsedList = args?.split(' ')?.map { it.trim().toLowerCase() }
     val chatId = msg.chat.id
 
@@ -187,3 +183,22 @@ private fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = 
         if (rudeCheckTransaction(chatId)) msg.toUpperCase() else msg,
         parseMode
     )
+
+suspend fun Bot.handleImplicitParty(msg: Message) {
+    msg.text?.let {
+        it.lineSequence()
+            .flatMap { it.split(' ', '\t').asSequence() }
+            .filter { it.startsWith('@') }
+            .mapNotNull { partyMessageTransaction(it.substring(1))?.to(it) }
+            .forEach { (users, partyName) ->
+                sendMessage(msg.chat.id, pullParty(partyName, users))
+            }
+    }
+}
+
+private fun pullParty(partyName: String, flexers: String): String =
+    """
+    $ON_PARTY_SUCCESS $partyName:
+
+    $flexers
+    """.trimIndent()
