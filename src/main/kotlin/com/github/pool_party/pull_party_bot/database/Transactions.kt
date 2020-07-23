@@ -1,6 +1,9 @@
 package com.github.pool_party.pull_party_bot.database
 
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun initDB() { // change token for another app
@@ -12,22 +15,13 @@ fun initDB() { // change token for another app
 
     transaction {
         addLogger(StdOutSqlLogger)
-        SchemaUtils.create(Parties)
+        SchemaUtils.create(Chats, Parties)
     }
 }
 
-fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
+fun listCommandTransaction(id: Long): String =
     transaction {
-        if (Party.find(id, partyName) != null) {
-            return@transaction false
-        }
-
-        Party.new {
-            name = partyName
-            chatId = id
-            users = userList.joinToString(" ")
-        }
-        true
+        Chat.findById(id)?.run { parties.asSequence().map { it.name }.joinToString("\n") } ?: ""
     }
 
 fun partyCommandTransaction(id: Long, partyName: String): String? = transaction { Party.find(id, partyName)?.users }
@@ -36,15 +30,43 @@ fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
     transaction {
         val party = Party.find(id, partyName)
         party?.delete()
+
         party != null
     }
 
-fun listCommandTransaction(id: Long): String =
-    transaction { Party.find { Parties.chatId.eq(id) }.map { it.name }.joinToString("\n") }
+fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
+    transaction {
+        val curChat = Chat.findById(id) ?: Chat.new(id) {}
+
+        if (Party.find(id, partyName) != null) {
+            return@transaction false
+        }
+
+        Party.new {
+            name = partyName
+            chat = curChat
+            users = userList.joinToString(" ")
+        }
+
+        true
+    }
 
 fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
         val party = Party.find(id, partyName) ?: return@transaction false
         party.users = userList.joinToString(" ")
+
         true
     }
+
+fun rudeCommandTransaction(id: Long, newMode: Boolean): Boolean =
+    transaction {
+        val chat = Chat.findById(id) ?: Chat.new(id) {}
+        val oldMode = chat.isRude
+
+        chat.isRude = newMode
+
+        oldMode != newMode
+    }
+
+fun rudeCheckTransaction(id: Long): Boolean = transaction { Chat.findById(id)?.isRude ?: false }
