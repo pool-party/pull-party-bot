@@ -145,3 +145,34 @@ val ON_RUDE_FAIL =
 
     Type /help for more information
     """.trimIndent()
+
+val ON_SENDER_FAIL =
+    """
+    Only the chosen ones can perform these actions. 😎
+
+    I were not able to recognize the permissions you have in this chat
+    Operation aborted, ask group admins if you still want to make it happen
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_PERMISSION_DENY =
+    """
+    Parties are all I have. You can't just do this. 🤬
+
+    Sad enough for me, parties can be lost and forgotten, but only by admins.
+    Only group administrators can perform /delete and /clear commands.
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_CLEAR_SUCCESS =
+    """
+    Life is a party. Chat is dead then. 😭
+
+    All parties are over. Hope you did it only to rock even bigger ones
+    Let's rest just a little and I'll be waiting for your new entries
+    Use /create command to start all over again
+
+    Type /help for more information
+    """.trimIndent()

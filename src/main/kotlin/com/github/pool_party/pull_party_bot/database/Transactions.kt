@@ -34,6 +34,8 @@ fun deleteCommandTransaction(id: Long, partyName: String): Boolean =
         party != null
     }
 
+fun clearCommandTransaction(id: Long) = transaction { Chat.findById(id)?.run { parties.forEach { it.delete() } } }
+
 fun createCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
         val curChat = Chat.findById(id) ?: Chat.new(id) {}
