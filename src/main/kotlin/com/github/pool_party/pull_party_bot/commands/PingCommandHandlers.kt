@@ -92,6 +92,11 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
 
     var hasInvalidRes = false
     parsedArgs.forEach {
+        if (it == "admins") {
+            pullEliteParty(msg)
+            return@forEach
+        }
+
         val res = partyCommandTransaction(chatId, it)
         if (res.isNullOrBlank()) {
             hasInvalidRes = true
@@ -164,6 +169,12 @@ private fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: Strin
     }
 
     val partyName = parsedList[0].removePrefix("@")
+
+    // TODO name validation
+    if (partyName == "admins") {
+        sendMessage(chatId, "You can't modify system parties")
+    }
+
     val users = parsedList.drop(1)
         .map { if (!it.startsWith("@")) "@$it" else it }.distinct()
 
@@ -217,7 +228,14 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
         it.lineSequence()
             .flatMap { it.split(' ', '\t').asSequence() }
             .filter { it.startsWith('@') }
-            .mapNotNull { partyCommandTransaction(chatId, it.substring(1))?.to(it) }
+            .mapNotNull {
+                if (it == "@admins") {
+                    pullEliteParty(msg)
+                    null
+                } else {
+                    partyCommandTransaction(chatId, it.substring(1))?.to(it)
+                }
+            }
             .forEach { (users, partyName) ->
                 sendCaseMessage(chatId, pullParty(partyName, users))
             }
@@ -240,3 +258,21 @@ private fun pullParty(partyName: String, res: String): String =
 
     $res
     """.trimIndent()
+
+private fun Bot.pullEliteParty(msg: Message) {
+    val chatId = msg.chat.id
+    val chatType = msg.chat.type
+
+    if (chatType != "group" && chatType != "supergroup") {
+        sendMessage(chatId, "You can pull elite party only in groups")
+        return
+    }
+
+    val eliteParty = getChatAdministrators(chatId)
+        .join()
+        .asSequence()
+        .map { "@" + it.user.username }
+        .joinToString(" ")
+
+    sendMessage(chatId, eliteParty)
+}
