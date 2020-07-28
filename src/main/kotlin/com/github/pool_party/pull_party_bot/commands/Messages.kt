@@ -162,6 +162,7 @@ val ON_PERMISSION_DENY =
 
     Sad enough for me, parties can be lost and forgotten, but only by admins.
     Only group administrators can perform /delete and /clear commands.
+    You can pull @admins party to ask them to perform this command.
 
     Type /help for more information
     """.trimIndent()
@@ -173,6 +174,26 @@ val ON_CLEAR_SUCCESS =
     All parties are over. Hope you did it only to rock even bigger ones
     Let's rest just a little and I'll be waiting for your new entries
     Use /create command to start all over again
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_ADMINS_PARTY_CHANGE =
+    """
+    I would be careful disturbing these ladies and gentlemen. 🤫
+
+    @admins is a reserved group, you can't create, change or delete it.
+    Try to make a new party instead with /create command
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_ADMINS_PARTY_FAIL =
+    """
+    Admins?! What admins?! 🥴
+
+    There is no admins in private chats or channels.
+    @admins is a reserved group, you can't change or delete it.
 
     Type /help for more information
     """.trimIndent()

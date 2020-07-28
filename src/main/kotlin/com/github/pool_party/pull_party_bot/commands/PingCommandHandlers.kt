@@ -44,12 +44,15 @@ private fun Bot.onAdministratorCommand(command: String, action: (Message, String
         if ((chatType == "group" || chatType == "supergroup") &&
             getChatAdministrators(chatId).join().all { it.user != sender }
         ) {
-            sendMessage(chatId, ON_PERMISSION_DENY)
+            sendMessage(chatId, ON_PERMISSION_DENY, "Markdown")
             return@onCommand
         }
 
         action(msg, args)
     }
+
+private fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
+    name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
 
 /**
  * Initiate the dialog with bot.
@@ -92,6 +95,11 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
 
     var hasInvalidRes = false
     parsedArgs.forEach {
+        if (it == "admins") {
+            pullAdminsParty(msg)
+            return@forEach
+        }
+
         val res = partyCommandTransaction(chatId, it)
         if (res.isNullOrBlank()) {
             hasInvalidRes = true
@@ -123,12 +131,14 @@ fun Bot.handleDelete(msg: Message, args: String?) {
     }
 
     parsedArgs.forEach {
-        sendCaseMessage(
-            chatId,
-            if (deleteCommandTransaction(chatId, it))
-                """Party $it is just a history now 👍"""
-            else """Not like I knew the $it party, but now I don't know it at all 👍"""
-        )
+        if (modifyCommandAssertion(chatId, it)) {
+            sendCaseMessage(
+                chatId,
+                if (deleteCommandTransaction(chatId, it))
+                    """Party $it is just a history now 👍"""
+                else """Not like I knew the $it party, but now I don't know it at all 👍"""
+            )
+        }
     }
 }
 
@@ -144,17 +154,17 @@ fun Bot.handleClear(msg: Message) {
 /**
  * Create a new party with given members.
  */
-suspend fun Bot.handleCreate(msg: Message, args: String?) = handlePartyPostRequest(true, msg, args)
+suspend fun Bot.handleCreate(msg: Message, args: String?) = handlePartyChangeRequest(true, msg, args)
 
 /**
  * Update existing party.
  */
-suspend fun Bot.handleUpdate(msg: Message, args: String?) = handlePartyPostRequest(false, msg, args)
+suspend fun Bot.handleUpdate(msg: Message, args: String?) = handlePartyChangeRequest(false, msg, args)
 
 /**
  * Handle both `update` and `create` commands.
  */
-private fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: String?) {
+private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: String?) {
     val parsedList = args?.split(' ')?.map { it.trim().toLowerCase() }
     val chatId = msg.chat.id
 
@@ -164,6 +174,12 @@ private fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: Strin
     }
 
     val partyName = parsedList[0].removePrefix("@")
+
+    // TODO name validation
+    if (!modifyCommandAssertion(chatId, partyName)) {
+        return
+    }
+
     val users = parsedList.drop(1)
         .map { if (!it.startsWith("@")) "@$it" else it }.distinct()
 
@@ -217,7 +233,14 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
         it.lineSequence()
             .flatMap { it.split(' ', '\t').asSequence() }
             .filter { it.startsWith('@') }
-            .mapNotNull { partyCommandTransaction(chatId, it.substring(1))?.to(it) }
+            .mapNotNull {
+                if (it == "@admins") {
+                    pullAdminsParty(msg)
+                    null
+                } else {
+                    partyCommandTransaction(chatId, it.substring(1))?.to(it)
+                }
+            }
             .forEach { (users, partyName) ->
                 sendCaseMessage(chatId, pullParty(partyName, users))
             }
@@ -240,3 +263,21 @@ private fun pullParty(partyName: String, res: String): String =
 
     $res
     """.trimIndent()
+
+private fun Bot.pullAdminsParty(msg: Message) {
+    val chatId = msg.chat.id
+    val chatType = msg.chat.type
+
+    if (chatType != "group" && chatType != "supergroup") {
+        sendMessage(chatId, ON_ADMINS_PARTY_FAIL, "Markdown")
+        return
+    }
+
+    val adminsParty = getChatAdministrators(chatId)
+        .join()
+        .asSequence()
+        .map { "@" + it.user.username }
+        .joinToString(" ")
+
+    sendMessage(chatId, adminsParty)
+}
