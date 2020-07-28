@@ -44,7 +44,7 @@ private fun Bot.onAdministratorCommand(command: String, action: (Message, String
         if ((chatType == "group" || chatType == "supergroup") &&
             getChatAdministrators(chatId).join().all { it.user != sender }
         ) {
-            sendMessage(chatId, ON_PERMISSION_DENY)
+            sendMessage(chatId, ON_PERMISSION_DENY, "Markdown")
             return@onCommand
         }
 
@@ -52,7 +52,7 @@ private fun Bot.onAdministratorCommand(command: String, action: (Message, String
     }
 
 private fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
-    name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ELITE_PARTY_CHANGE) }
+    name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ELITE_PARTY_CHANGE, "Markdown") }
 
 /**
  * Initiate the dialog with bot.
@@ -269,7 +269,7 @@ private fun Bot.pullEliteParty(msg: Message) {
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, ON_ELITE_PARTY_FAIL)
+        sendMessage(chatId, ON_ELITE_PARTY_FAIL, "Markdown")
         return
     }
 
