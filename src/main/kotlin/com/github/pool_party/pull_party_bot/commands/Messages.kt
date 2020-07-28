@@ -160,9 +160,9 @@ val ON_PERMISSION_DENY =
     """
     Parties are all I have. You can't just do this. 🤬
 
-    Sad enough for me, parties can be lost and forgotten, but only by admins.
-    Only group administrators can perform /delete and /clear commands.
-    You can pull @admins party to ask them to perform this command.
+    Sad enough for me, parties can be lost and forgotten, but only by admins
+    Only group administrators can perform /delete and /clear commands
+    You can pull @admins party to ask them to perform this command
 
     Type /help for more information
     """.trimIndent()
@@ -182,7 +182,7 @@ val ON_ADMINS_PARTY_CHANGE =
     """
     I would be careful disturbing these ladies and gentlemen. 🤫
 
-    @admins is a reserved group, you can't create, change or delete it.
+    @admins is a reserved group, you can't create, change or delete it
     Try to make a new party instead with /create command
 
     Type /help for more information
@@ -192,8 +192,28 @@ val ON_ADMINS_PARTY_FAIL =
     """
     Admins?! What admins?! 🥴
 
-    There is no admins in private chats or channels.
-    @admins is a reserved group, you can't change or delete it.
+    There is no admins in private chats or channels
+    @admins is a reserved group, you can't change or delete it
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_PARTY_NAME_FAIL =
+    """
+    As you name the boat, so shall it float. ☝️
+
+    Party name should consist of some non-blank symbols
+    `@` symbols are not allowed in the party name
+
+    Type /help for more information
+    """.trimIndent()
+
+val ON_USERS_FAIL =
+    """
+    Some guests couldn't pass the face control. 👮
+
+    Usernames should consist of letters, digits and underscores only
+    Allowed length of telegram username is from 5 to 32 characters
 
     Type /help for more information
     """.trimIndent()
