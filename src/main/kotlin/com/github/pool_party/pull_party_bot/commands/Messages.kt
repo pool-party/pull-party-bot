@@ -178,7 +178,7 @@ val ON_CLEAR_SUCCESS =
     Type /help for more information
     """.trimIndent()
 
-val ON_ELITE_PARTY_CHANGE =
+val ON_ADMINS_PARTY_CHANGE =
     """
     I would be careful disturbing these ladies and gentlemen. 🤫
 
@@ -188,7 +188,7 @@ val ON_ELITE_PARTY_CHANGE =
     Type /help for more information
     """.trimIndent()
 
-val ON_ELITE_PARTY_FAIL =
+val ON_ADMINS_PARTY_FAIL =
     """
     Admins?! What admins?! 🥴
 

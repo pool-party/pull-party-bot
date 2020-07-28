@@ -52,7 +52,7 @@ private fun Bot.onAdministratorCommand(command: String, action: (Message, String
     }
 
 private fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
-    name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ELITE_PARTY_CHANGE, "Markdown") }
+    name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
 
 /**
  * Initiate the dialog with bot.
@@ -96,7 +96,7 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
     var hasInvalidRes = false
     parsedArgs.forEach {
         if (it == "admins") {
-            pullEliteParty(msg)
+            pullAdminsParty(msg)
             return@forEach
         }
 
@@ -235,7 +235,7 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
             .filter { it.startsWith('@') }
             .mapNotNull {
                 if (it == "@admins") {
-                    pullEliteParty(msg)
+                    pullAdminsParty(msg)
                     null
                 } else {
                     partyCommandTransaction(chatId, it.substring(1))?.to(it)
@@ -264,20 +264,20 @@ private fun pullParty(partyName: String, res: String): String =
     $res
     """.trimIndent()
 
-private fun Bot.pullEliteParty(msg: Message) {
+private fun Bot.pullAdminsParty(msg: Message) {
     val chatId = msg.chat.id
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, ON_ELITE_PARTY_FAIL, "Markdown")
+        sendMessage(chatId, ON_ADMINS_PARTY_FAIL, "Markdown")
         return
     }
 
-    val eliteParty = getChatAdministrators(chatId)
+    val adminsParty = getChatAdministrators(chatId)
         .join()
         .asSequence()
         .map { "@" + it.user.username }
         .joinToString(" ")
 
-    sendMessage(chatId, eliteParty)
+    sendMessage(chatId, adminsParty)
 }
