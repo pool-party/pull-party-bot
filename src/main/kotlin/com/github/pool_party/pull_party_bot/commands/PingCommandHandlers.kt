@@ -172,7 +172,7 @@ private fun Bot.handlePartyPostRequest(isNew: Boolean, msg: Message, args: Strin
 
     // TODO name validation
     if (partyName == "admins") {
-        sendMessage(chatId, "You can't modify system parties")
+        sendMessage(chatId, ON_ELITE_PARTY_CHANGE)
     }
 
     val users = parsedList.drop(1)
@@ -264,7 +264,7 @@ private fun Bot.pullEliteParty(msg: Message) {
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, "You can pull elite party only in groups")
+        sendMessage(chatId, ON_ELITE_PARTY_FAIL)
         return
     }
 
