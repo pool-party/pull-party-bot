@@ -185,7 +185,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
     }
 
     val users = parsedList.drop(1)
-        .map { it.replace("@","") }.distinct()
+        .map { it.replace("@", "") }.distinct()
         .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
         .map { "@$it" }
 
