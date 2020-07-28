@@ -189,7 +189,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
         .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
         .map { "@$it" }
 
-    if (users.size < parsedList.size - 1) {
+    if (users.size < parsedList.distinct().size - 1) {
         sendMessage(chatId, ON_USERS_FAIL)
     }
 
