@@ -175,13 +175,23 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
 
     val partyName = parsedList[0].removePrefix("@")
 
-    // TODO name validation
+    if (partyName.contains('@')) {
+        sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
+        return
+    }
+
     if (!modifyCommandAssertion(chatId, partyName)) {
         return
     }
 
-    val users = parsedList.drop(1)
-        .map { if (!it.startsWith("@")) "@$it" else it }.distinct()
+    val users = parsedList.asSequence().drop(1)
+        .map { it.replace("@", "") }.distinct()
+        .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
+        .map { "@$it" }.toList()
+
+    if (users.size < parsedList.distinct().size - 1) {
+        sendMessage(chatId, ON_USERS_FAIL)
+    }
 
     if (if (isNew) createCommandTransaction(chatId, partyName, users)
         else updateCommandTransaction(chatId, partyName, users)
