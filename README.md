@@ -57,5 +57,5 @@ In order to be able to launch the bot server locally you have to compile sources
 
 + `IS_LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
 
-[![Pull Party Bot](info/logo.jpg)](https://t.me/PullPartyBot)
+[![Pull Party Bot](info/logo-white-no_boarders.png)](https://t.me/PullPartyBot)
 <p align="center">© 2020 Pool Party Corp.</p>
