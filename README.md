@@ -11,11 +11,32 @@
 
 Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to create custom parties and manage them via following commands:
 
+> all commands are not case-sensitive to support RUDE mode \
+> usernames are char sequences of letters, digits and underscores of 5-32 length
+
 + `/create partyName user1 user2...` - create party with mentioned users
+
+    > You can enter users with or without `@` symbol \
+    You can't create empty party \
+    `@admins` party is reserved and already created \
+    `@` prefix will be removed from party name \
+    `@` symbol is not allowed in party name \
+    You can't add single user to one group more than once
 
 + `/update partyName user2 user3...` - update an existing party
 
+    > Inherits `/create` method's rules \
+    You can't change `@admins` party
+
+
 + `/delete partyName1 partyName2...` - forget the parties like it never happened
+
+    > Availible only to admins \
+    You can't delete `@admins` party
+
++ `/clear` - forget all the parties in the chat
+
+    > Inherits `/delete` method's rules
 
 Use these commands to mention members of needed parties, see the information and manage appereance:
 
@@ -23,9 +44,15 @@ Use these commands to mention members of needed parties, see the information and
 
 + `/help` - ask for a short usage guide
 
-+ `/list` - show all the existing parties
++ `/list` - show all the created parties
+
+    > Doesn't show `@admins` party
 
 + `/rude on/off` - enable RUDE _(Caps Lock)_ mode
+
+    > Set `off` by default \
+    Takes only `on` and `off` as correct arguments \
+    Doesn't affect error messages
 
 + `/party partyName1 partyName2...` - mention users according to given parties
 
@@ -57,5 +84,6 @@ In order to be able to launch the bot server locally you have to compile sources
 
 + `IS_LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
 
-[![Pull Party Bot](info/logo-white-no_boarders.png)](https://t.me/PullPartyBot)
+
+<img src="info/logo-white-no_boarders.png" align="center">
 <p align="center">© 2020 Pool Party Corp.</p>
