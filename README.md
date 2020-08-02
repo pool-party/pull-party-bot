@@ -1,9 +1,9 @@
 # Pull party bot
 
 [![Travis CI](https://img.shields.io/travis/com/pool-party/pull-party-bot?logo=travis)](https://travis-ci.com/pool-party/pull-party-bot)
+[![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/pool-party/pull-party-bot?logo=codefactor)](https://www.codefactor.io/repository/github/pool-party/pull-party-bot)
 [![Kotlin Lang](https://img.shields.io/github/languages/top/pool-party/pull-party-bot?logo=kotlin)](https://kotlinlang.org)
 [![Donations](https://img.shields.io/badge/buy_me_a-coffee-orange?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/poolparty)
-<!-- [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/pool-party/pull-party-bot?logo=codefactor)](https://www.codefactor.io/repository/github/pool-party/pull-party-bot) -->
 
 **Pull Party Telegram Bot** helps you pulling people up for a party!
 
@@ -57,5 +57,5 @@ In order to be able to launch the bot server locally you have to compile sources
 
 + `IS_LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
 
-<img src="info/logo.jpg" width=100%>
+[![Pull Party Bot](info/logo.jpg)](https://t.me/PullPartyBot)
 <p align="center">© 2020 Pool Party Corp.</p>
