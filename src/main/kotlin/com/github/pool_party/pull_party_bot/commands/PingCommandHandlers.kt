@@ -9,7 +9,7 @@ import com.github.pool_party.pull_party_bot.database.listCommandTransaction
 import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCheckTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
-import com.github.pool_party.pull_party_bot.database.updateCommandTransaction
+import com.github.pool_party.pull_party_bot.database.changeCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
     onNoArgumentsCommand("/start", ::handleStart)
@@ -21,7 +21,7 @@ fun Bot.initPingCommandHandlers() {
     onAdministratorCommand("/clear") { msg, _ -> handleClear(msg) }
 
     onCommand("/create", ::handleCreate)
-    onCommand("/update", ::handleUpdate)
+    onCommand("/change", ::handleChange)
 
     onCommand("/rude", ::handleRude)
 
@@ -157,19 +157,19 @@ fun Bot.handleClear(msg: Message) {
 suspend fun Bot.handleCreate(msg: Message, args: String?) = handlePartyChangeRequest(true, msg, args)
 
 /**
- * Update existing party.
+ * Change existing party.
  */
-suspend fun Bot.handleUpdate(msg: Message, args: String?) = handlePartyChangeRequest(false, msg, args)
+suspend fun Bot.handleChange(msg: Message, args: String?) = handlePartyChangeRequest(false, msg, args)
 
 /**
- * Handle both `update` and `create` commands.
+ * Handle both `change` and `create` commands.
  */
 private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: String?) {
     val parsedList = args?.split(' ')?.map { it.trim().toLowerCase() }
     val chatId = msg.chat.id
 
     if (parsedList.isNullOrEmpty() || parsedList.size < 2) {
-        sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_UPDATE_EMPTY)
+        sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY)
         return
     }
 
@@ -194,7 +194,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
     }
 
     if (if (isNew) createCommandTransaction(chatId, partyName, users)
-        else updateCommandTransaction(chatId, partyName, users)
+        else changeCommandTransaction(chatId, partyName, users)
     ) {
         sendCaseMessage(
             chatId,
@@ -205,7 +205,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
         sendMessage(
             chatId,
             if (isNew) ON_CREATE_REQUEST_FAIL
-            else ON_UPDATE_REQUEST_FAIL
+            else ON_CHANGE_REQUEST_FAIL
         )
     }
 }

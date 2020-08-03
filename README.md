@@ -23,7 +23,7 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
     `@` symbol is not allowed in party name \
     You can't add single user to one group more than once
 
-+ `/update partyName user2 user3...` - update an existing party
++ `/change partyName user2 user3...` - change an existing party
 
     > Follows all `/create` method's rules \
     You can't change `@admins` party

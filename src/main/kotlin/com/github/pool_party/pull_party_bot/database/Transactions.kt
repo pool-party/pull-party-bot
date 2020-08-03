@@ -53,7 +53,7 @@ fun createCommandTransaction(id: Long, partyName: String, userList: List<String>
         true
     }
 
-fun updateCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
+fun changeCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
     transaction {
         val party = Party.find(id, partyName) ?: return@transaction false
         party.users = userList.joinToString(" ")
