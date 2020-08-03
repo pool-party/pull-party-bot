@@ -25,7 +25,7 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
 
 + `/update partyName user2 user3...` - update an existing party
 
-    > Inherits `/create` method's rules \
+    > Follows all `/create` method's rules \
     You can't change `@admins` party
 
 
@@ -36,7 +36,7 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
 
 + `/clear` - forget all the parties in the chat
 
-    > Inherits `/delete` method's rules
+    > Follows all `/delete` method's rules
 
 Use these commands to mention members of needed parties, see the information and manage appereance:
 
@@ -85,5 +85,7 @@ In order to be able to launch the bot server locally you have to compile sources
 + `IS_LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
 
 
-<img src="info/logo-white-no_boarders.png" align="center">
-<p align="center">© 2020 Pool Party Corp.</p>
+<div align="center">
+    <img src="info/logo-white-no_boarders.png" width=50%>
+<div>
+<p align="center">© 2020 Pool Party Corp. All rights reserved.</p>
