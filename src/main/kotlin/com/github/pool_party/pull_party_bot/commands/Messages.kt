@@ -16,9 +16,8 @@ val INIT_MSG =
 
     I can manage different parties inside your chat and tag their members whenever you need!
 
-    It would be very kind of you to start with creating the group of all members
-    Type in `/create all` and follow it with tags of all users
-    You can skip this step and simply create parties on your own if you want
+    You can start by creating a new party in your chat with /create command
+    Or try to tag admins with default @admins party
 
     Type /help for more information
     """.trimIndent()
