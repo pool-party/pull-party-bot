@@ -16,9 +16,8 @@ val INIT_MSG =
 
     I can manage different parties inside your chat and tag their members whenever you need!
 
-    It would be very kind of you to start with creating the group of all members
-    Type in `/create all` and follow it with tags of all users
-    You can skip this step and simply create parties on your own if you want
+    You can start by creating a new party in your chat with /create command
+    Or try to tag admins with default @admins party
 
     Type /help for more information
     """.trimIndent()
@@ -35,7 +34,7 @@ val HELP_MSG =
         /delete <party-names> - forget the parties as they had never happened
 
         /create <party-name users-list> - create new party
-        /update <party-name users-list> - update an existing party
+        /change <party-name users-list> - change an existing party
 
         /rude <on/off> - switch RUDE(CAPS LOCK) mode
     """.trimIndent()
@@ -110,28 +109,28 @@ val ON_CREATE_REQUEST_FAIL =
     """
     Someone is already rocking this party. 🥳
 
-    Perhaps you wanted to update existing group with /update
+    Perhaps you wanted to change existing group with /change
     Follow the /create command with the new party name and members of a new group
 
     Type /help for more information
     """.trimIndent()
 
-val ON_UPDATE_EMPTY =
+val ON_CHANGE_EMPTY =
     """
     The wind of change is blowing. But where? 🤨
 
     At least name and a single user should be provided
-    Follow the /update command with the existing party name and its new members
+    Follow the /change command with the existing party name and its new members
 
     Type /help for more information
     """.trimIndent()
 
-val ON_UPDATE_REQUEST_FAIL =
+val ON_CHANGE_REQUEST_FAIL =
     """
     Party didn't started yet, but you already changing the plans. 😥
 
     Perhaps you wanted to create a new party with /create
-    Follow the /update command with the existing party name and its new members
+    Follow the /change command with the existing party name and its new members
 
     Type /help for more information
     """.trimIndent()
