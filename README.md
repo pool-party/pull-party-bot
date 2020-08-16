@@ -86,6 +86,6 @@ In order to be able to launch the bot server locally you have to compile sources
 
 
 <div align="center">
-    <img src="info/logo-white-no_boarders.png" width=50%>
+    <img src="assets/logo-white-no_boarders.png" width=50%>
 <div>
 <p align="center">© 2020 Pool Party Corp. All rights reserved.</p>
