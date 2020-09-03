@@ -6,7 +6,7 @@ import com.elbekD.bot.util.AllowedUpdate
 import com.github.pool_party.pull_party_bot.commands.initPingCommandHandlers
 import com.github.pool_party.pull_party_bot.database.initDB
 
-const val APP_URL = "https://pullpartydb.herokuapp.com"
+const val APP_URL = "https://pullpartybot.herokuapp.com"
 const val USER_NAME = "PullPartyBot"
 const val DEFAULT_PORT = 80
 
