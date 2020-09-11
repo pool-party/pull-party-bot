@@ -43,16 +43,12 @@ val ON_LIST_SUCCESS =
     """
     The parties I know:
 
+
     """.trimIndent()
 
 val ON_LIST_EMPTY =
     """
     I don't know any parties in this chat yet 😢
-    """.trimIndent()
-
-val ON_PARTY_SUCCESS =
-    """
-    😱 Release the
     """.trimIndent()
 
 val ON_PARTY_EMPTY =
@@ -99,7 +95,7 @@ val ON_CREATE_EMPTY =
     """
     No people - no party. 😔
 
-    At least name and a single user should be provided
+    At least name and a single valid user should be provided
     Follow the /create command with the new party name and members of a new group
 
     Type /help for more information
@@ -119,7 +115,7 @@ val ON_CHANGE_EMPTY =
     """
     The wind of change is blowing. But where? 🤨
 
-    At least name and a single user should be provided
+    At least name and a single valid user should be provided
     Follow the /change command with the existing party name and its new members
 
     Type /help for more information
@@ -211,7 +207,7 @@ val ON_USERS_FAIL =
     """
     Some guests couldn't pass the face control. 👮
 
-    Usernames should consist of letters, digits and underscores only
+    Usernames should consist of latin letters, digits and underscores only
     Allowed length of telegram username is from 5 to 32 characters
 
     Type /help for more information
