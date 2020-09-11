@@ -24,7 +24,7 @@ fun listCommandTransaction(id: Long): String =
         Chat.findById(id)
             ?.run {
                 parties.asSequence().map { "${it.name}: ${it.users.replace("@", "")}" }
-                .joinToString("\n")
+                    .joinToString("\n")
             } ?: ""
     }
 
