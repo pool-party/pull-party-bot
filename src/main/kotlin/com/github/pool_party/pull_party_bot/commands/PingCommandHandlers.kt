@@ -10,6 +10,7 @@ import com.github.pool_party.pull_party_bot.database.listCommandTransaction
 import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCheckTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
+import java.lang.StringBuilder
 
 fun Bot.initPingCommandHandlers() {
     onNoArgumentsCommand("/start", ::handleStart)
@@ -94,9 +95,10 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
     }
 
     var hasInvalidRes = false
+    val sb = StringBuilder()
     parsedArgs.forEach {
         if (it == "admins") {
-            pullAdminsParty(msg)
+            sb.append(pullAdminsParty(msg) ?: "")
             return@forEach
         }
 
@@ -106,8 +108,14 @@ suspend fun Bot.handleParty(msg: Message, args: String?) {
             return@forEach
         }
 
-        sendCaseMessage(chatId, pullParty(it, res))
+        sb.append("$res\n")
     }
+
+    sendCaseMessage(
+        chatId,
+        sb.toString().split(" ").distinct().joinToString(" "),
+        msg.message_id
+    )
 
     if (hasInvalidRes) {
         sendMessage(
@@ -189,8 +197,12 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
         .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
         .map { "@$it" }.toList()
 
-    if (users.size < parsedList.distinct().size - 1) {
+    if (users.size < parsedList.drop(1).distinct().size) {
         sendMessage(chatId, ON_USERS_FAIL)
+        if (users.isEmpty()) {
+            sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY)
+            return
+        }
     }
 
     if (if (isNew) createCommandTransaction(chatId, partyName, users)
@@ -240,54 +252,49 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
     val chatId = msg.chat.id
 
     msg.text?.let {
-        it.lineSequence()
+        val res = it.lineSequence()
             .flatMap { it.split(' ', '\t').asSequence() }
             .filter { it.startsWith('@') }
+            .map { it.toLowerCase() }
+            .distinct()
             .mapNotNull {
                 if (it == "@admins") {
                     pullAdminsParty(msg)
-                    null
                 } else {
-                    partyCommandTransaction(chatId, it.substring(1))?.to(it)
+                    partyCommandTransaction(chatId, it.substring(1))
                 }
             }
-            .forEach { (users, partyName) ->
-                sendCaseMessage(chatId, pullParty(partyName, users))
-            }
+            .flatMap { it.split(" ").asSequence() }
+            .distinct()
+            .joinToString(" ")
+
+        sendCaseMessage(chatId, res, msg.message_id)
     }
 }
 
 // TODO create utils package with these functions
 private fun parseArgs(args: String?): List<String>? = args?.split(' ')?.map { it.trim().toLowerCase() }?.distinct()
 
-private fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = null) =
+private fun Bot.sendCaseMessage(chatId: Long, msg: String, replyTo: Int? = null, parseMode: String? = null) =
     sendMessage(
         chatId,
         if (rudeCheckTransaction(chatId)) msg.toUpperCase() else msg,
-        parseMode
+        parseMode,
+        replyTo = replyTo
     )
 
-private fun pullParty(partyName: String, res: String): String =
-    """
-    $ON_PARTY_SUCCESS $partyName:
-
-    $res
-    """.trimIndent()
-
-private fun Bot.pullAdminsParty(msg: Message) {
+private fun Bot.pullAdminsParty(msg: Message): String? {
     val chatId = msg.chat.id
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
         sendMessage(chatId, ON_ADMINS_PARTY_FAIL, "Markdown")
-        return
+        return null
     }
 
-    val adminsParty = getChatAdministrators(chatId)
+    return getChatAdministrators(chatId)
         .join()
         .asSequence()
         .map { "@" + it.user.username }
         .joinToString(" ")
-
-    sendMessage(chatId, adminsParty)
 }

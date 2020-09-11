@@ -21,7 +21,9 @@ fun initDB() { // change token for another app
 
 fun listCommandTransaction(id: Long): String =
     transaction {
-        Chat.findById(id)?.run { parties.asSequence().map { it.name }.joinToString("\n") } ?: ""
+        Chat.findById(id)
+            ?.run { parties.asSequence().map { "${it.name}: ${it.users.replace("@", "")}" }
+                .joinToString("\n") } ?: ""
     }
 
 fun partyCommandTransaction(id: Long, partyName: String): String? = transaction { Party.find(id, partyName)?.users }
