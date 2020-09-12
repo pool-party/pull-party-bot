@@ -87,8 +87,7 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
 
     val partyNames = text.lineSequence()
         .flatMap { it.split(' ', '\t').asSequence() }
-        .filter { it.startsWith('@') }
-        .map { it.substring(1) }
+        .map { it.removePrefix("@") }
 
     handleParty(partyNames, msg)
 }
