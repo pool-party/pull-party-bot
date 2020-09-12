@@ -11,7 +11,11 @@ const val USER_NAME = "PullPartyBot"
 const val DEFAULT_PORT = 80
 
 fun main() {
-    val token = System.getenv("TELEGRAM_TOKEN") ?: throw RuntimeException("Unable to get system variable for token")
+    val token = System.getenv("TELEGRAM_TOKEN")
+    if (token == null) {
+        println("Unable to get system variable for token")
+        return
+    }
 
     val bot = if (System.getenv("IS_LONGPOLL") == "true") {
         Bot.createPolling(USER_NAME, token)
@@ -27,7 +31,12 @@ fun main() {
         }
     }
 
-    initDB()
+    try {
+        initDB()
+    } catch (e: Exception) {
+        println(e.message)
+        return
+    }
     bot.initPingCommandHandlers()
     bot.start()
 }
