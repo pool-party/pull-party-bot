@@ -198,7 +198,7 @@ val ON_PARTY_NAME_FAIL =
     As you name the boat, so shall it float. ☝️
 
     Party name should consist of some non-blank symbols
-    `@` symbols are not allowed in the party name
+    `@`, ${prohibitedSymbols.map { "`$it`" }.joinToString() } symbols and trailing `-` are not allowed in the party name
 
     Type /help for more information
     """.trimIndent()

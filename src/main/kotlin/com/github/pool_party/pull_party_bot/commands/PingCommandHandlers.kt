@@ -27,6 +27,8 @@ fun Bot.initPingCommandHandlers() {
     onMessage(::handleImplicitParty)
 }
 
+val prohibitedSymbols = listOf('!', ',', '.', '?', ':', ';', '(', ')')
+
 /**
  * Initiate the dialog with bot.
  */
@@ -85,10 +87,14 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
         return
     }
 
+    val prohibitedSymbolsString = prohibitedSymbols.joinToString("")
+    val regex = Regex("(?<party>[^$prohibitedSymbolsString]*)[$prohibitedSymbolsString]*")
+
     val partyNames = text.lineSequence()
         .flatMap { it.split(' ', '\t').asSequence() }
         .filter { it.startsWith('@') }
         .map { it.removePrefix("@") }
+        .mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }
 
     handleParty(partyNames, msg)
 }
@@ -195,7 +201,8 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
 
     val partyName = parsedList[0].removePrefix("@")
 
-    if (partyName.contains('@')) {
+    val regex = Regex("(.*[@${ prohibitedSymbols.joinToString("") }].*)|(.*\\-)")
+    if (partyName.matches(regex)) {
         sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
         return
     }
