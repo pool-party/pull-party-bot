@@ -12,9 +12,9 @@ import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
     onNoArgumentsCommand("/start", ::handleStart)
-    onNoArgumentsCommand("/help", ::handleHelp)
     onNoArgumentsCommand("/list", ::handleList)
 
+    onCommand("/help", ::handleHelp)
     onCommand("/party", ::handleExplicitParty)
     onAdministratorCommand("/delete", ::handleDelete)
     onAdministratorCommand("/clear") { msg, _ -> handleClear(msg) }
@@ -33,14 +33,40 @@ val prohibitedSymbols = listOf('!', ',', '.', '?', ':', ';', '(', ')')
  * Initiate the dialog with bot.
  */
 fun Bot.handleStart(msg: Message) {
-    sendMessage(msg.chat.id, INIT_MSG, "Markdown")
+    sendMessage(msg.chat.id, INIT_MSG)
 }
 
 /**
  * Return the help message.
  */
-fun Bot.handleHelp(msg: Message) {
-    sendMessage(msg.chat.id, HELP_MSG, "Markdown")
+fun Bot.handleHelp(msg: Message, args: String?) {
+    val parsedArgs = parseArgs(args)
+
+    if (parsedArgs.isNullOrEmpty()) {
+        sendMessage(msg.chat.id, HELP_MSG)
+        return
+    }
+
+    if (parsedArgs.size > 1) {
+        sendMessage(msg.chat.id, ON_HELP_ERROR)
+        return
+    }
+
+    sendMessage(
+        msg.chat.id,
+        when (parsedArgs[0].removePrefix("/")) {
+            "start" -> HELP_START
+            "list" -> HELP_LIST
+            "party" -> HELP_PARTY
+            "delete" -> HELP_DELETE
+            "clear" -> HELP_CLEAR
+            "create" -> HELP_CREATE
+            "change" -> HELP_CHANGE
+            "rude" -> HELP_RUDE
+            else -> ON_HELP_ERROR
+        },
+        "Markdown"
+    )
 }
 
 /**
@@ -133,7 +159,7 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, ON_ADMINS_PARTY_FAIL, "Markdown")
+        sendMessage(chatId, ON_ADMINS_PARTY_FAIL)
         return null
     }
 
@@ -201,7 +227,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
 
     val partyName = parsedList[0].removePrefix("@")
 
-    val regex = Regex("(.*[@${ prohibitedSymbols.joinToString("") }].*)|(.*\\-)")
+    val regex = Regex("(.*[@${prohibitedSymbols.joinToString("")}].*)|(.*\\-)")
     if (partyName.matches(regex)) {
         sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
         return
