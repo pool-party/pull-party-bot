@@ -62,7 +62,7 @@ fun Bot.handleHelp(msg: Message, args: String?) {
             "clear" -> HELP_CLEAR
             "create" -> HELP_CREATE
             "change" -> HELP_CHANGE
-            "/rude" -> HELP_RUDE
+            "rude" -> HELP_RUDE
             else -> ON_HELP_ERROR
         },
         "Markdown"
