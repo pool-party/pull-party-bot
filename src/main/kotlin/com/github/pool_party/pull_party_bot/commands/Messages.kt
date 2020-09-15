@@ -80,7 +80,7 @@ val HELP_CREATE =
     Party should consist of at least one user
     You can enter users with or without `@` symbol
     @admins is a reserved party and already exists
-    `@`, ${prohibitedSymbols.map { "`$it`" }.joinToString() } symbols and trailing `-` are not allowed in the party name
+    `@`, ${prohibitedSymbols.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
     """.trimIndent()
 
 val HELP_CHANGE =
@@ -268,7 +268,7 @@ val ON_PARTY_NAME_FAIL =
     As you name the boat, so shall it float. ☝️
 
     Party name should consist of some non-blank symbols
-    `@`, ${prohibitedSymbols.map { "`$it`" }.joinToString() } symbols and trailing `-` are not allowed in the party name
+    `@`, ${prohibitedSymbols.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
     Type /help for more information
     """.trimIndent()
