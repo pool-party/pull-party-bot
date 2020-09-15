@@ -39,6 +39,38 @@ val HELP_MSG =
         /rude <on/off> - switch RUDE(CAPS LOCK) mode
     """.trimIndent()
 
+const val HELP_START = """"""
+const val HELP_LIST = """"""
+const val HELP_PARTY = """"""
+const val HELP_DELETE = """"""
+const val HELP_CLEAR = """"""
+const val HELP_CREATE = """"""
+
+val HELP_CHANGE =
+    """
+    /change <party-name users-list> - change an existing party
+
+    A shorter way to delete and create party again 👍
+    @admins party can't be changed, follows all /create rules
+
+    Type /help create for more information
+    """.trimIndent()
+
+val HELP_RUDE = """
+    /rude <on/off> - switch RUDE(CAPS LOCK) mode
+
+    To enable or disable mode follow the command with either `on` or `off`
+    Mode is turned off by default and never affects error messages
+    """.trimIndent()
+
+val ON_HELP_ERROR =
+    """
+    The Lord helps those who help themselves 👼
+
+    Expected no arguments or command to explain
+    Follow /help with unclear command or leave empty for general guide
+    """.trimIndent() //TODO looking for a better phrase
+
 val ON_LIST_SUCCESS =
     """
     The parties I know:
@@ -134,8 +166,8 @@ val ON_CHANGE_REQUEST_FAIL =
 val ON_RUDE_FAIL =
     """
     With great power comes great responsibility. 🧐
-    RUDE mode is definitely a great power and you have to use it right!
 
+    RUDE mode is definitely a great power and you have to use it right!
     Follow the /rude command with either "on" or "off"
 
     Type /help for more information

@@ -12,9 +12,9 @@ import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
     onNoArgumentsCommand("/start", ::handleStart)
-    onNoArgumentsCommand("/help", ::handleHelp)
     onNoArgumentsCommand("/list", ::handleList)
 
+    onCommand("/help", ::handleHelp)
     onCommand("/party", ::handleExplicitParty)
     onAdministratorCommand("/delete", ::handleDelete)
     onAdministratorCommand("/clear") { msg, _ -> handleClear(msg) }
@@ -39,8 +39,31 @@ fun Bot.handleStart(msg: Message) {
 /**
  * Return the help message.
  */
-fun Bot.handleHelp(msg: Message) {
-    sendMessage(msg.chat.id, HELP_MSG, "Markdown")
+fun Bot.handleHelp(msg: Message, args: String?) {
+    val parsedArgs = parseArgs(args)
+
+    if (parsedArgs.isNullOrEmpty()) {
+        sendMessage(msg.chat.id, HELP_MSG, "Markdown")
+        return
+    }
+
+    if (parsedArgs.size > 1) {
+        sendMessage(msg.chat.id, ON_HELP_ERROR, "Markdown")
+        return
+    }
+
+    sendMessage(msg.chat.id,
+        when (parsedArgs[0].removePrefix("/")) {
+            "start" -> HELP_START
+            "list" -> HELP_LIST
+            "party" -> HELP_PARTY
+            "delete" -> HELP_DELETE
+            "clear" -> HELP_CLEAR
+            "create" -> HELP_CREATE
+            "change" -> HELP_CHANGE
+            "/rude" -> HELP_RUDE
+            else -> ON_HELP_ERROR
+        })
 }
 
 /**
