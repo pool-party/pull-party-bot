@@ -93,7 +93,8 @@ val HELP_CHANGE =
     Type `/help create` for more information
     """.trimIndent()
 
-val HELP_RUDE = """
+val HELP_RUDE =
+    """
     /rude <on/off> - switch RUDE(CAPS LOCK) mode
 
     To enable or disable mode follow the command with either `on` or `off`
@@ -106,7 +107,7 @@ val ON_HELP_ERROR =
 
     Expected no arguments or command to explain
     Follow /help with the unclear command or leave empty for general guide
-    """.trimIndent() //TODO looking for a better phrase
+    """.trimIndent() // TODO looking for a better phrase
 
 val ON_LIST_SUCCESS =
     """
