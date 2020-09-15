@@ -33,7 +33,7 @@ val prohibitedSymbols = listOf('!', ',', '.', '?', ':', ';', '(', ')')
  * Initiate the dialog with bot.
  */
 fun Bot.handleStart(msg: Message) {
-    sendMessage(msg.chat.id, INIT_MSG, "Markdown")
+    sendMessage(msg.chat.id, INIT_MSG)
 }
 
 /**
@@ -43,16 +43,17 @@ fun Bot.handleHelp(msg: Message, args: String?) {
     val parsedArgs = parseArgs(args)
 
     if (parsedArgs.isNullOrEmpty()) {
-        sendMessage(msg.chat.id, HELP_MSG, "Markdown")
+        sendMessage(msg.chat.id, HELP_MSG)
         return
     }
 
     if (parsedArgs.size > 1) {
-        sendMessage(msg.chat.id, ON_HELP_ERROR, "Markdown")
+        sendMessage(msg.chat.id, ON_HELP_ERROR)
         return
     }
 
-    sendMessage(msg.chat.id,
+    sendMessage(
+        msg.chat.id,
         when (parsedArgs[0].removePrefix("/")) {
             "start" -> HELP_START
             "list" -> HELP_LIST
@@ -63,7 +64,9 @@ fun Bot.handleHelp(msg: Message, args: String?) {
             "change" -> HELP_CHANGE
             "/rude" -> HELP_RUDE
             else -> ON_HELP_ERROR
-        })
+        },
+        "Markdown"
+    )
 }
 
 /**
@@ -156,7 +159,7 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, ON_ADMINS_PARTY_FAIL, "Markdown")
+        sendMessage(chatId, ON_ADMINS_PARTY_FAIL)
         return null
     }
 
@@ -224,7 +227,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
 
     val partyName = parsedList[0].removePrefix("@")
 
-    val regex = Regex("(.*[@${ prohibitedSymbols.joinToString("") }].*)|(.*\\-)")
+    val regex = Regex("(.*[@${prohibitedSymbols.joinToString("")}].*)|(.*\\-)")
     if (partyName.matches(regex)) {
         sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
         return

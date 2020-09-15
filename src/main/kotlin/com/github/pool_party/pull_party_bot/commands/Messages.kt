@@ -28,10 +28,11 @@ val HELP_MSG =
 
         /start - awake the bot
         /help  - show this usage guide
-        /list  - show the parties of the chat
+        /list  - show the parties of the chat and their members
+        /clear - delete all parties of the chat
 
         /party  <party-names> - tag the members of existing parties
-        /delete <party-names> - forget the parties as they had never happened
+        /delete <party-names> - delete the parties you provided
 
         /create <party-name users-list> - create new party
         /change <party-name users-list> - change an existing party
@@ -39,28 +40,64 @@ val HELP_MSG =
         /rude <on/off> - switch RUDE(CAPS LOCK) mode
     """.trimIndent()
 
-const val HELP_START = """"""
-const val HELP_LIST = """"""
-const val HELP_PARTY = """"""
-const val HELP_DELETE = """"""
-const val HELP_CLEAR = """"""
-const val HELP_CREATE = """"""
+val HELP_START =
+    """
+    /start - awake the bot
+
+    Or simply remember how it all started 😉
+    """.trimIndent()
+val HELP_LIST =
+    """
+    /list  - show the parties of the chat and their members
+
+    Doesn't show @admins party
+    """.trimIndent()
+val HELP_PARTY =
+    """
+    /party <party-names> - tag the members of existing parties
+
+    Keep in mind that you can simply tag the parties with `@<party-name>` syntax
+    If you mention multiple parties - their members will be gathered in a single message and will have no repeats
+    """.trimIndent()
+val HELP_DELETE =
+    """
+    /delete <party-names> - delete the parties you provided
+
+    Only admins have access to /delete and /clear commands
+    @admins is a reserved party and can't be deleted
+    """.trimIndent()
+val HELP_CLEAR =
+    """
+    /clear - delete all parties of the chat
+
+    Type `/clear delete` for more information
+    """.trimIndent()
+val HELP_CREATE =
+    """
+    /create <party-name users-list> - create new party
+
+    Users within the party are not repeating
+    Party should consist of at least one user
+    You can enter users with or without `@` symbol
+    @admins is a reserved party and already exists
+    `@`, ${prohibitedSymbols.map { "`$it`" }.joinToString() } symbols and trailing `-` are not allowed in the party name
+    """.trimIndent()
 
 val HELP_CHANGE =
     """
     /change <party-name users-list> - change an existing party
 
-    A shorter way to delete and create party again 👍
+    A shorter way to delete and create the party again 👍
     @admins party can't be changed, follows all /create rules
 
-    Type /help create for more information
+    Type `/help create` for more information
     """.trimIndent()
 
 val HELP_RUDE = """
     /rude <on/off> - switch RUDE(CAPS LOCK) mode
 
     To enable or disable mode follow the command with either `on` or `off`
-    Mode is turned off by default and never affects error messages
+    The mode is turned off by default and never affects error messages
     """.trimIndent()
 
 val ON_HELP_ERROR =
@@ -68,7 +105,7 @@ val ON_HELP_ERROR =
     The Lord helps those who help themselves 👼
 
     Expected no arguments or command to explain
-    Follow /help with unclear command or leave empty for general guide
+    Follow /help with the unclear command or leave empty for general guide
     """.trimIndent() //TODO looking for a better phrase
 
 val ON_LIST_SUCCESS =
