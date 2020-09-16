@@ -86,12 +86,17 @@ val HELP_CREATE =
     Party should consist of at least one user
     You can enter users with or without `@` symbol
 <<<<<<< HEAD
+<<<<<<< HEAD
     `@admins` is a reserved party and already exists
     `@`, ${prohibitedSymbols.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 =======
     @admins is a reserved party and already exists
     `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 >>>>>>> d7c7029... concrete help suggestions, singleton handling
+=======
+    @admins is a reserved party and already exists
+    `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
+>>>>>>> d7c7029c2063ac17e5b2f85b811d9e4dbd50a288
     """.trimIndent()
 
 val HELP_CHANGE =
