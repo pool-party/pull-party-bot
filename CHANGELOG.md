@@ -19,7 +19,7 @@
 
 - No party with no people, when all members had fc/dc problems
 - Implicit party calls are not case sensitive now (`@pArTy` will call `party` memebers)
-- You unable to create party called as the only user in the party (e.g. `\create PullPartyBot PullPartyBot`)
+- You unable to create party called as the only user in the party (e.g. `/create PullPartyBot PullPartyBot`)
 
 ## [1.0.0] - 16.08.2020
 
