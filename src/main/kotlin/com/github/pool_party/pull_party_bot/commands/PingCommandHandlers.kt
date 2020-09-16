@@ -14,20 +14,18 @@ fun Bot.initPingCommandHandlers() {
     onNoArgumentsCommand("/start", ::handleStart)
     onNoArgumentsCommand("/list", ::handleList)
 
-    onCommand("/help", ::handleHelp)
-    onCommand("/party", ::handleExplicitParty)
     onAdministratorCommand("/delete", ::handleDelete)
     onAdministratorCommand("/clear") { msg, _ -> handleClear(msg) }
 
+    onCommand("/party", ::handleExplicitParty)
     onCommand("/create", ::handleCreate)
     onCommand("/change", ::handleChange)
+    onCommand("/help", ::handleHelp)
 
     onCommand("/rude", ::handleRude)
 
     onMessage(::handleImplicitParty)
 }
-
-val prohibitedSymbols = listOf('!', ',', '.', '?', ':', ';', '(', ')')
 
 /**
  * Initiate the dialog with bot.
@@ -90,7 +88,7 @@ suspend fun Bot.handleExplicitParty(msg: Message, args: String?) {
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
-        sendMessage(chatId, ON_PARTY_EMPTY)
+        sendMessage(chatId, ON_PARTY_EMPTY, "Markdown")
         return
     }
 
@@ -98,7 +96,8 @@ suspend fun Bot.handleExplicitParty(msg: Message, args: String?) {
         sendMessage(
             chatId,
             if (parsedArgs.size == 1) ON_PARTY_REQUEST_FAIL
-            else ON_PARTY_REQUEST_FAILS
+            else ON_PARTY_REQUEST_FAILS,
+            "Markdown"
         )
     }
 }
@@ -113,7 +112,7 @@ suspend fun Bot.handleImplicitParty(msg: Message) {
         return
     }
 
-    val prohibitedSymbolsString = prohibitedSymbols.joinToString("")
+    val prohibitedSymbolsString = PROHIBITED_SYMBOLS.joinToString("")
     val regex = Regex("(?<party>[^$prohibitedSymbolsString]*)[$prohibitedSymbolsString]*")
 
     val partyNames = text.lineSequence()
@@ -221,13 +220,13 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
     val chatId = msg.chat.id
 
     if (parsedList.isNullOrEmpty() || parsedList.size < 2) {
-        sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY)
+        sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY, "Markdown")
         return
     }
 
     val partyName = parsedList[0].removePrefix("@")
 
-    val regex = Regex("(.*[@${prohibitedSymbols.joinToString("")}].*)|(.*\\-)")
+    val regex = Regex("(.*[@${PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*\\-)")
     if (partyName.matches(regex)) {
         sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
         return
@@ -242,10 +241,15 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
         .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
         .map { "@$it" }.toList()
 
+    if (users.singleOrNull()?.removePrefix("@") == partyName) {
+        sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
+        return
+    }
+
     if (users.size < parsedList.drop(1).distinct().size) {
-        sendMessage(chatId, ON_USERS_FAIL)
+        sendMessage(chatId, ON_USERS_FAIL, "Markdown")
         if (users.isEmpty()) {
-            sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY)
+            sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY, "Markdown")
             return
         }
     }
@@ -262,7 +266,8 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
         sendMessage(
             chatId,
             if (isNew) ON_CREATE_REQUEST_FAIL
-            else ON_CHANGE_REQUEST_FAIL
+            else ON_CHANGE_REQUEST_FAIL,
+            "Markdown"
         )
     }
 }
@@ -278,7 +283,7 @@ suspend fun Bot.handleRude(msg: Message, args: String?) {
         "on" -> rudeCommandTransaction(chatId, true)
         "off" -> rudeCommandTransaction(chatId, false)
         else -> {
-            sendMessage(chatId, ON_RUDE_FAIL)
+            sendMessage(chatId, ON_RUDE_FAIL, "Markdown")
             return
         }
     }
