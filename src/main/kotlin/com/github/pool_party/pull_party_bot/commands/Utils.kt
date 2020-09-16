@@ -4,6 +4,8 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.database.rudeCheckTransaction
 
+val PROHIBITED_SYMBOLS = listOf('!', ',', '.', '?', ':', ';', '(', ')')
+
 fun Bot.onNoArgumentsCommand(command: String, action: (Message) -> Unit) =
     onCommand(command) { msg, _ -> action(msg) }
 
@@ -12,7 +14,7 @@ fun Bot.onAdministratorCommand(command: String, action: (Message, String?) -> Un
         val sender = msg.from
         val chatId = msg.chat.id
         if (sender == null) {
-            sendMessage(chatId, ON_SENDER_FAIL)
+            sendMessage(chatId, ON_SENDER_FAIL, "Markdown")
             return@onCommand
         }
 

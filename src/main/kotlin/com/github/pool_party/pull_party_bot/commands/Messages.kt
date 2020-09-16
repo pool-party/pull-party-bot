@@ -85,8 +85,8 @@ val HELP_CREATE =
     Users within the party are not repeating
     Party should consist of at least one user
     You can enter users with or without `@` symbol
-    `@admins` is a reserved party and already exists
-    `@`, ${prohibitedSymbols.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
+    @admins is a reserved party and already exists
+    `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
     """.trimIndent()
 
 val HELP_CHANGE =
@@ -134,7 +134,7 @@ val ON_PARTY_EMPTY =
     Perhaps you forgot to enter the party names
     Follow the /party command with the names of existing parties
 
-    Type /help for more information
+    Type `/help party` for more information
     """.trimIndent()
 
 val ON_PARTY_REQUEST_FAIL =
@@ -144,7 +144,7 @@ val ON_PARTY_REQUEST_FAIL =
     Perhaps you wanted to /create the party or misspelled its name
     Follow the /party command with the names of existing parties
 
-    Type /help for more information
+    Type `/help party` or `/help create` for more information
     """.trimIndent()
 
 val ON_PARTY_REQUEST_FAILS =
@@ -154,7 +154,7 @@ val ON_PARTY_REQUEST_FAILS =
     Perhaps you misspelled some names
     Follow the /party command with the names of existing parties
 
-    Type /help for more information
+    Type `/help party` for more information
     """.trimIndent()
 
 val ON_DELETE_EMPTY =
@@ -164,7 +164,17 @@ val ON_DELETE_EMPTY =
     Perhaps you forgot to enter the name of party to remove
     Follow the /delete command with the name of redundant party
 
-    Type /help for more information
+    Type `/help delete` for more information
+    """.trimIndent()
+
+val ON_SINGLETON_PARTY =
+    """
+    A person may not be a party, but if you had a few... 👫
+
+    Perhaps you want to create a party for a single user with an alternative name though
+    You can mention a single user by his original name with telegram functionality
+
+    Type `/help create` or `/help change` for more information
     """.trimIndent()
 
 val ON_CREATE_EMPTY =
@@ -174,7 +184,7 @@ val ON_CREATE_EMPTY =
     At least name and a single valid user should be provided
     Follow the /create command with the new party name and members of a new group
 
-    Type /help for more information
+    Type `/help create` for more information
     """.trimIndent()
 
 val ON_CREATE_REQUEST_FAIL =
@@ -184,7 +194,7 @@ val ON_CREATE_REQUEST_FAIL =
     Perhaps you wanted to change existing group with /change
     Follow the /create command with the new party name and members of a new group
 
-    Type /help for more information
+    Type `/help create` or `/help change` for more information
     """.trimIndent()
 
 val ON_CHANGE_EMPTY =
@@ -194,7 +204,7 @@ val ON_CHANGE_EMPTY =
     At least name and a single valid user should be provided
     Follow the /change command with the existing party name and its new members
 
-    Type /help for more information
+    Type `/help change` for more information
     """.trimIndent()
 
 val ON_CHANGE_REQUEST_FAIL =
@@ -204,7 +214,7 @@ val ON_CHANGE_REQUEST_FAIL =
     Perhaps you wanted to create a new party with /create
     Follow the /change command with the existing party name and its new members
 
-    Type /help for more information
+    Type `/help create` or `/help change` for more information
     """.trimIndent()
 
 val ON_RUDE_FAIL =
@@ -214,7 +224,7 @@ val ON_RUDE_FAIL =
     RUDE mode is definitely a great power and you have to use it right!
     Follow the /rude command with either "on" or "off"
 
-    Type /help for more information
+    Type `/help rude` for more information
     """.trimIndent()
 
 val ON_SENDER_FAIL =
@@ -224,7 +234,7 @@ val ON_SENDER_FAIL =
     I were not able to recognize the permissions you have in this chat
     Operation aborted, ask group admins if you still want to make it happen
 
-    Type /help for more information
+    Type `/help delete` or `/help clear` for more information
     """.trimIndent()
 
 val ON_PERMISSION_DENY =
@@ -235,7 +245,7 @@ val ON_PERMISSION_DENY =
     Only group administrators can perform /delete and /clear commands
     You can pull @admins party to ask them to perform this command
 
-    Type /help for more information
+    Type `/help delete` or `/help clear` for more information
     """.trimIndent()
 
 val ON_CLEAR_SUCCESS =
@@ -246,7 +256,7 @@ val ON_CLEAR_SUCCESS =
     Let's rest just a little and I'll be waiting for your new entries
     Use /create command to start all over again
 
-    Type /help for more information
+    Type `/help create` for more information
     """.trimIndent()
 
 val ON_ADMINS_PARTY_CHANGE =
@@ -256,7 +266,7 @@ val ON_ADMINS_PARTY_CHANGE =
     @admins is a reserved group, you can't create, change or delete it
     Try to make a new party instead with /create command
 
-    Type /help for more information
+    Type `/help change` or `/help delete` for more information
     """.trimIndent()
 
 val ON_ADMINS_PARTY_FAIL =
@@ -274,9 +284,9 @@ val ON_PARTY_NAME_FAIL =
     As you name the boat, so shall it float. ☝️
 
     Party name should consist of some non-blank symbols
-    `@`, ${prohibitedSymbols.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
+    `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
-    Type /help for more information
+    Type `/help create` for more information
     """.trimIndent()
 
 val ON_USERS_FAIL =
@@ -286,5 +296,5 @@ val ON_USERS_FAIL =
     Usernames should consist of latin letters, digits and underscores only
     Allowed length of telegram username is from 5 to 32 characters
 
-    Type /help for more information
+    Type `/help create` or `/help change` for more information
     """.trimIndent()
