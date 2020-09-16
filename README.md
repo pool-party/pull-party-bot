@@ -14,49 +14,54 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
 > all commands are not case-sensitive to support RUDE mode \
 > usernames are char sequences of letters, digits and underscores of 5-32 length
 
-+ `/create partyName user1 user2...` - create party with mentioned users
++ `/create partyName user1 user2...` - create new party with mentioned users
 
-    > You can enter users with or without `@` symbol \
-    You can't create empty party \
-    `@admins` party is reserved and already created \
-    `@` prefix will be removed from party name \
-    `@` symbol is not allowed in party name \
-    You can't add single user to one group more than once
+    > Users within the party are not repeating \
+    Party should consist of at least one user \
+    You can enter users with or without `@` symbol \
+    `@admins` is a reserved party and already exists \
+    `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
 
-+ `/change partyName user2 user3...` - change an existing party
++ `/change partyName user1 user2...` - change an existing party
 
     > Follows all `/create` method's rules \
     You can't change `@admins` party
 
 
-+ `/delete partyName1 partyName2...` - forget the parties like it never happened
++ `/delete partyName1 partyName2...` - delete the parties you provided
 
-    > Availible only to admins \
-    You can't delete `@admins` party
+    > Only admins have access to `/delete` \
+    @admins is a reserved party and can't be deleted
 
-+ `/clear` - forget all the parties in the chat
++ `/clear` - delete all parties of the chat
 
     > Follows all `/delete` method's rules
 
 Use these commands to mention members of needed parties, see the information and manage appereance:
 
-+ `/start` - start the conversation and see welcoming message
++ `/party partyName1 partyName2...` - tag the members of existing parties
 
-+ `/help` - ask for a short usage guide
+    > You can also tag the party members directly in your message with `@partyName` syntax \
+    If you mention multiple parties - their members will be gathered in a single message and will have no repeats
 
-+ `/list` - show all the created parties
++ `/list` - show the parties of the chat and their members
 
     > Doesn't show `@admins` party
 
-+ `/rude on/off` - enable RUDE _(Caps Lock)_ mode
+
++ `/start` - start the conversation and see welcoming message
+
++ `/help command?` - ask for a usage guide
+
+    > Provides general guide on empty input \
+    Shows command usage guide while argument is given
+
++ `/rude on/off` - switch RUDE _(Caps Lock)_ mode
 
     > Set `off` by default \
     Takes only `on` and `off` as correct arguments \
     Doesn't affect error messages
 
-+ `/party partyName1 partyName2...` - mention users according to given parties
-
-You can also tag the party members directly in your message with `@partyName` syntax.
 
 ## Tools and libraries
 

@@ -26,15 +26,16 @@ val HELP_MSG =
     """
     Available commands:
 
-        /start - awake the bot
-        /help  - show this usage guide
+        /start - start the conversation and see welcoming message
         /list  - show the parties of the chat and their members
         /clear - delete all parties of the chat
+        /help  - show this usage guide
+        /help <command>  - show the usage guide of given command
 
         /party  <party-names> - tag the members of existing parties
         /delete <party-names> - delete the parties you provided
 
-        /create <party-name users-list> - create new party
+        /create <party-name users-list> - create new party with mentioned users
         /change <party-name users-list> - change an existing party
 
         /rude <on/off> - switch RUDE(CAPS LOCK) mode
@@ -42,16 +43,18 @@ val HELP_MSG =
 
 val HELP_START =
     """
-    /start - awake the bot
+    /start - start the conversation and see welcoming message
 
     Or simply remember how it all started 😉
     """.trimIndent()
+
 val HELP_LIST =
     """
     /list  - show the parties of the chat and their members
 
     Doesn't show @admins party
     """.trimIndent()
+
 val HELP_PARTY =
     """
     /party <party-names> - tag the members of existing parties
@@ -59,6 +62,7 @@ val HELP_PARTY =
     Keep in mind that you can simply tag the parties with `@<party-name>` syntax
     If you mention multiple parties - their members will be gathered in a single message and will have no repeats
     """.trimIndent()
+
 val HELP_DELETE =
     """
     /delete <party-names> - delete the parties you provided
@@ -66,20 +70,22 @@ val HELP_DELETE =
     Only admins have access to /delete and /clear commands
     @admins is a reserved party and can't be deleted
     """.trimIndent()
+
 val HELP_CLEAR =
     """
     /clear - delete all parties of the chat
 
     Type `/clear delete` for more information
     """.trimIndent()
+
 val HELP_CREATE =
     """
-    /create <party-name users-list> - create new party
+    /create <party-name users-list> - create new party with mentioned users
 
     Users within the party are not repeating
     Party should consist of at least one user
     You can enter users with or without `@` symbol
-    @admins is a reserved party and already exists
+    `@admins` is a reserved party and already exists
     `@`, ${prohibitedSymbols.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
     """.trimIndent()
 
