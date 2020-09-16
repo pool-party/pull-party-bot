@@ -4,19 +4,22 @@
 
 ### Added
 
-- Party name case sensitiveness
 - Bot replies on implicit tags
-- You can write trailing punctuation symbols when tagging (they will be ignored).
+- You can write trailing punctuation symbols when tagging (they will be ignored). \
   And corresponding party name validation rules were added
-- Extended help message for each command (e.g. `/help party`)
+- Extended help message for each command (e.g. `/help party`). \
+  Make error message suggestions concrete respectively
 
 ### Changed
 
 - `/list` command lists members as well
+- If you tag multiple parties - their members will be gathered in a single message and will have no repeats
 
 ### Fixed
 
 - No party with no people, when all members had fc/dc problems
+- Implicit party calls are not case sensitive now (`@pArTy` will call `party` memebers)
+- You unable to create party called as the only user in the party (e.g. `\create PullPartyBot PullPartyBot`)
 
 ## [1.0.0] - 16.08.2020
 
