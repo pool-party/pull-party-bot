@@ -1,24 +1,8 @@
-package com.github.pool_party.pull_party_bot.database
+package com.github.pool_party.pull_party_bot.database.transaction
 
-import com.github.pool_party.pull_party_bot.Configuration
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
+import com.github.pool_party.pull_party_bot.database.Chat
+import com.github.pool_party.pull_party_bot.database.Party
 import org.jetbrains.exposed.sql.transactions.transaction
-
-fun initDB() {
-    Database.connect(
-        Configuration.DATABASE_URL,
-        user = Configuration.DATABASE_USERNAME,
-        password = Configuration.DATABASE_PASSWORD
-    )
-
-    transaction {
-        addLogger(StdOutSqlLogger)
-        SchemaUtils.create(Chats, Parties)
-    }
-}
 
 fun listCommandTransaction(id: Long): String =
     transaction {

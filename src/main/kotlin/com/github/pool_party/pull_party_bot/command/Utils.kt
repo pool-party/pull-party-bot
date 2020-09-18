@@ -1,8 +1,8 @@
-package com.github.pool_party.pull_party_bot.commands
+package com.github.pool_party.pull_party_bot.command
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
-import com.github.pool_party.pull_party_bot.database.rudeCheckTransaction
+import com.github.pool_party.pull_party_bot.database.transaction.rudeCheckTransaction
 
 val PROHIBITED_SYMBOLS = listOf('!', ',', '.', '?', ':', ';', '(', ')')
 
@@ -33,6 +33,17 @@ fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
     name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
 
 fun parseArgs(args: String?): List<String>? = args?.split(' ')?.map { it.trim().toLowerCase() }?.distinct()
+
+fun Bot.onArgs(msg: Message, name: String?, flipping: (Long, String) -> String) {
+    val chatId = msg.chat.id
+
+    if (name.isNullOrEmpty()) {
+        sendMessage(chatId, "provide name")
+        return
+    }
+
+    parseArgs(name)?.forEach { sendMessage(chatId, flipping(chatId, it), "Markdown") }
+}
 
 fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = null, replyTo: Int? = null) =
     sendMessage(

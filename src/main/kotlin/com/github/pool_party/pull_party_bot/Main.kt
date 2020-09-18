@@ -3,8 +3,8 @@ package com.github.pool_party.pull_party_bot
 import com.elbekD.bot.Bot
 import com.elbekD.bot.server
 import com.elbekD.bot.util.AllowedUpdate
-import com.github.pool_party.pull_party_bot.commands.initPingCommandHandlers
-import com.github.pool_party.pull_party_bot.database.initDB
+import com.github.pool_party.pull_party_bot.command.handler.initCommandHandlers
+import com.github.pool_party.pull_party_bot.database.transaction.initDB
 
 fun main() {
     val token = Configuration.TELEGRAM_TOKEN
@@ -30,6 +30,6 @@ fun main() {
         println(e.message)
         return
     }
-    bot.initPingCommandHandlers()
+    bot.initCommandHandlers()
     bot.start()
 }

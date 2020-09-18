@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.commands
+package com.github.pool_party.pull_party_bot.command
 
 // Comment template:
 // """

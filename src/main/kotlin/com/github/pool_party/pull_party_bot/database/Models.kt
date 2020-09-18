@@ -13,3 +13,18 @@ object Chats : LongIdTable() {
     override val id = long("chat_id").entityId()
     val isRude = bool("is_rude").default(false)
 }
+
+object StickerAliases : IntIdTable() {
+    val stickerId = varchar("sticker_id", 255)
+    val alias = varchar("alias", 50)
+    val packName = reference("pack_id", AliasPacks)
+}
+
+object AliasPacks : IntIdTable() {
+    val name = varchar("pack_name", 50)
+}
+
+object ActivatedPacks : IntIdTable() {
+    val chatId = reference("chat_id", Chats)
+    val aliasPack = reference("alias_pack_id", AliasPacks)
+}

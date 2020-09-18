@@ -1,17 +1,38 @@
-package com.github.pool_party.pull_party_bot.commands
+package com.github.pool_party.pull_party_bot.command.handler
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
-import com.github.pool_party.pull_party_bot.database.changeCommandTransaction
-import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
-import com.github.pool_party.pull_party_bot.database.createCommandTransaction
-import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
-import com.github.pool_party.pull_party_bot.database.listCommandTransaction
-import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
-import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
+import com.github.pool_party.pull_party_bot.command.ON_ADMINS_PARTY_FAIL
+import com.github.pool_party.pull_party_bot.command.ON_CHANGE_EMPTY
+import com.github.pool_party.pull_party_bot.command.ON_CHANGE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.command.ON_CLEAR_SUCCESS
+import com.github.pool_party.pull_party_bot.command.ON_CREATE_EMPTY
+import com.github.pool_party.pull_party_bot.command.ON_CREATE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.command.ON_DELETE_EMPTY
+import com.github.pool_party.pull_party_bot.command.ON_LIST_EMPTY
+import com.github.pool_party.pull_party_bot.command.ON_LIST_SUCCESS
+import com.github.pool_party.pull_party_bot.command.ON_PARTY_EMPTY
+import com.github.pool_party.pull_party_bot.command.ON_PARTY_NAME_FAIL
+import com.github.pool_party.pull_party_bot.command.ON_PARTY_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.command.ON_PARTY_REQUEST_FAILS
+import com.github.pool_party.pull_party_bot.command.ON_RUDE_FAIL
+import com.github.pool_party.pull_party_bot.command.ON_SINGLETON_PARTY
+import com.github.pool_party.pull_party_bot.command.ON_USERS_FAIL
+import com.github.pool_party.pull_party_bot.command.PROHIBITED_SYMBOLS
+import com.github.pool_party.pull_party_bot.command.modifyCommandAssertion
+import com.github.pool_party.pull_party_bot.command.onAdministratorCommand
+import com.github.pool_party.pull_party_bot.command.onNoArgumentsCommand
+import com.github.pool_party.pull_party_bot.command.parseArgs
+import com.github.pool_party.pull_party_bot.command.sendCaseMessage
+import com.github.pool_party.pull_party_bot.database.transaction.changeCommandTransaction
+import com.github.pool_party.pull_party_bot.database.transaction.clearCommandTransaction
+import com.github.pool_party.pull_party_bot.database.transaction.createCommandTransaction
+import com.github.pool_party.pull_party_bot.database.transaction.deleteCommandTransaction
+import com.github.pool_party.pull_party_bot.database.transaction.listCommandTransaction
+import com.github.pool_party.pull_party_bot.database.transaction.partyCommandTransaction
+import com.github.pool_party.pull_party_bot.database.transaction.rudeCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
-    onNoArgumentsCommand("/start", ::handleStart)
     onNoArgumentsCommand("/list", ::handleList)
 
     onAdministratorCommand("/delete", ::handleDelete)
@@ -20,51 +41,10 @@ fun Bot.initPingCommandHandlers() {
     onCommand("/party", ::handleExplicitParty)
     onCommand("/create", ::handleCreate)
     onCommand("/change", ::handleChange)
-    onCommand("/help", ::handleHelp)
 
     onCommand("/rude", ::handleRude)
 
     onMessage(::handleImplicitParty)
-}
-
-/**
- * Initiate the dialog with bot.
- */
-fun Bot.handleStart(msg: Message) {
-    sendMessage(msg.chat.id, INIT_MSG)
-}
-
-/**
- * Return the help message.
- */
-fun Bot.handleHelp(msg: Message, args: String?) {
-    val parsedArgs = parseArgs(args)
-
-    if (parsedArgs.isNullOrEmpty()) {
-        sendMessage(msg.chat.id, HELP_MSG)
-        return
-    }
-
-    if (parsedArgs.size > 1) {
-        sendMessage(msg.chat.id, ON_HELP_ERROR)
-        return
-    }
-
-    sendMessage(
-        msg.chat.id,
-        when (parsedArgs[0].removePrefix("/")) {
-            "start" -> HELP_START
-            "list" -> HELP_LIST
-            "party" -> HELP_PARTY
-            "delete" -> HELP_DELETE
-            "clear" -> HELP_CLEAR
-            "create" -> HELP_CREATE
-            "change" -> HELP_CHANGE
-            "rude" -> HELP_RUDE
-            else -> ON_HELP_ERROR
-        },
-        "Markdown"
-    )
 }
 
 /**
@@ -83,7 +63,7 @@ fun Bot.handleList(msg: Message) {
 /**
  * Ping the members of given parties.
  */
-suspend fun Bot.handleExplicitParty(msg: Message, args: String?) {
+fun Bot.handleExplicitParty(msg: Message, args: String?) {
     val parsedArgs = parseArgs(args)
     val chatId = msg.chat.id
 
@@ -205,12 +185,12 @@ fun Bot.handleClear(msg: Message) {
 /**
  * Create a new party with given members.
  */
-suspend fun Bot.handleCreate(msg: Message, args: String?) = handlePartyChangeRequest(true, msg, args)
+fun Bot.handleCreate(msg: Message, args: String?) = handlePartyChangeRequest(true, msg, args)
 
 /**
  * Change an existing party.
  */
-suspend fun Bot.handleChange(msg: Message, args: String?) = handlePartyChangeRequest(false, msg, args)
+fun Bot.handleChange(msg: Message, args: String?) = handlePartyChangeRequest(false, msg, args)
 
 /**
  * Handle both `change` and `create` commands.
@@ -226,7 +206,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
 
     val partyName = parsedList[0].removePrefix("@")
 
-    val regex = Regex("(.*[@${PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*\\-)")
+    val regex = Regex("(.*[@${PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*-)")
     if (partyName.matches(regex)) {
         sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
         return
@@ -275,7 +255,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
 /**
  * Switch RUDE mode on and off.
  */
-suspend fun Bot.handleRude(msg: Message, args: String?) {
+fun Bot.handleRude(msg: Message, args: String?) {
     val parsedArg = args?.trim()?.toLowerCase()
     val chatId = msg.chat.id
 
