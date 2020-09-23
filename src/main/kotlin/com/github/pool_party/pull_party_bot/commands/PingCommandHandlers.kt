@@ -106,7 +106,7 @@ suspend fun Bot.handleExplicitParty(msg: Message, args: String?) {
  * Handle implicit `@party-name`-like calls
  */
 suspend fun Bot.handleImplicitParty(msg: Message) {
-    val text = msg.text
+    val text = msg.text ?: msg.caption
 
     if (msg.forward_from != null || text == null) {
         return
