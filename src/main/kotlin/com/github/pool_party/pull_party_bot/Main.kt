@@ -7,14 +7,11 @@ import com.github.pool_party.pull_party_bot.command.handler.initCommandHandlers
 import com.github.pool_party.pull_party_bot.database.transaction.initDB
 
 fun main() {
-    val token = Configuration.TELEGRAM_TOKEN
-    val userName = Configuration.USER_NAME
-
-    val bot = if (Configuration.IS_LONGPOLL) {
-        Bot.createPolling(userName, token)
+    val bot = if (Configuration.IS_LONGPOLLING) {
+        Bot.createPolling(Configuration.USER_NAME, Configuration.TELEGRAM_TOKEN)
     } else {
-        Bot.createWebhook(userName, token) {
-            url = "${Configuration.APP_URL}/$token"
+        Bot.createWebhook(Configuration.USER_NAME, Configuration.TELEGRAM_TOKEN) {
+            url = "${Configuration.APP_URL}/${Configuration.TELEGRAM_TOKEN}"
             allowedUpdates = listOf(AllowedUpdate.Message)
 
             server {
@@ -25,7 +22,7 @@ fun main() {
     }
 
     try {
-        initDB()
+        initDB(Configuration.DATABASE_URl, Configuration.DATABASE_USERNAME, Configuration.DATABASE_PASSWORD)
     } catch (e: Exception) {
         println(e.message)
         return

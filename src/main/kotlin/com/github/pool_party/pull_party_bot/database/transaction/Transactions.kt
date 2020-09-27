@@ -10,16 +10,11 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun initDB() { // change token for another app
-    Database.connect(
-        System.getenv("JDBC_DATABASE_URL"),
-        user = System.getenv("JDBC_DATABASE_USERNAME"),
-        password = System.getenv("JDBC_DATABASE_PASSWORD")
-    )
+fun initDB(url: String, username: String, password: String) {
+    Database.connect(url, user = username, password = password)
 
     transaction {
         addLogger(StdOutSqlLogger)
-        SchemaUtils.create(Chats, Parties)
         SchemaUtils.create(Chats, Parties, StickerAliases, ActivatedPacks)
     }
 }
