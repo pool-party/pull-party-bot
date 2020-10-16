@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.2.1] - 17.10.2020
+
+### Fixed
+
+- Heroku Continious deployment build fixed
+
 ## [1.0.2] - 16.10.2020
 
 ### Fixed
@@ -35,6 +41,7 @@
 - Implicit party pulling
 - Rude mode
 
+[1.0.2.1]: https://github.com/pool-party/pull-party-bot/compare/v1.0.2...v1.0.2.1
 [1.0.2]: https://github.com/pool-party/pull-party-bot/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/pool-party/pull-party-bot/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/pool-party/pull-party-bot/releases/tag/v1.0.0
