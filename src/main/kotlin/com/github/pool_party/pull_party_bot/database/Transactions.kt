@@ -1,16 +1,17 @@
 package com.github.pool_party.pull_party_bot.database
 
+import com.github.pool_party.pull_party_bot.Configuration
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun initDB() { // change token for another app
+fun initDB() {
     Database.connect(
-        System.getenv("JDBC_DATABASE_URL"),
-        user = System.getenv("JDBC_DATABASE_USERNAME"),
-        password = System.getenv("JDBC_DATABASE_PASSWORD")
+        Configuration.DATABASE_URL,
+        user = Configuration.DATABASE_USERNAME,
+        password = Configuration.DATABASE_PASSWORD
     )
 
     transaction {
