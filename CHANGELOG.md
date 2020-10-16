@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.2] - 16.10.2020
+
+### Fixed
+
+- Implicit party pulling with media attached
+
 ## [1.0.1] - 16.09.2020
 
 ### Added
@@ -18,16 +24,17 @@
 ### Fixed
 
 - No party with no people, when all members had fc/dc problems
-- Implicit party calls are not case sensitive now (`@pArTy` will call `party` memebers)
-- You unable to create party called as the only user in the party (e.g. `/create PullPartyBot PullPartyBot`)
+- Implicit party calls are not case-sensitive now (`@pArTy` will call `party` members)
+- You unable to create a party called as the only user in the party (e.g. `/create PullPartyBot PullPartyBot`)
 
 ## [1.0.0] - 16.08.2020
 
 ### Added
 
-- Creating, modifying, tagging and deleting parties
+- Creating, modifying, tagging, and deleting parties
 - Implicit party pulling
 - Rude mode
 
+[1.0.2]: https://github.com/pool-party/pull-party-bot/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/pool-party/pull-party-bot/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/pool-party/pull-party-bot/releases/tag/v1.0.0
