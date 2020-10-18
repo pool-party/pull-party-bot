@@ -87,7 +87,7 @@ In order to be able to launch the bot server locally you have to compile sources
 
 + `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME`, `JDBC_DATABASE_PASSWORD` - all provided by heroku on database deployment
 
-+ `IS_LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
++ `LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
 
 
 <div align="center">
