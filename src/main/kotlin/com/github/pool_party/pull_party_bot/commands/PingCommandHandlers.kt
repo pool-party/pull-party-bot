@@ -166,7 +166,7 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
         .join()
         .asSequence()
         .mapNotNull { it.user.username }
-        .filter { it.length < 3 || it.substring(it.length - 3).toLowerCase() != "bot" }
+        .filter { it.substring(it.length - 3).toLowerCase() != "bot" }
         .map { "@$it" }
         .joinToString(" ")
 }
