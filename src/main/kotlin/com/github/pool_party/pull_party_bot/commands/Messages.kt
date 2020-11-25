@@ -19,6 +19,8 @@ val INIT_MSG =
     You can start by creating a new party in your chat with /create command
     Or try to tag admins with default @admins party
 
+    It would be very kind of you to promote me to admin, so I could tag the parties implicitly right in your messages
+
     Type /help for more information
     """.trimIndent()
 
@@ -32,6 +34,7 @@ val HELP_MSG =
         /help  - show this usage guide
         /help <command>  - show the usage guide of given command
 
+                  @partyName  - tag existing party right in your message
         /party  <party-names> - tag the members of existing parties
         /delete <party-names> - delete the parties you provided
 
