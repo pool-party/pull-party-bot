@@ -12,7 +12,7 @@
 Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to create custom parties and manage them via following commands:
 
 > all commands are not case-sensitive to support RUDE mode \
-> usernames are char sequences of letters, digits and underscores of 5-32 length
+usernames are char sequences of letters, digits and underscores of 5-32 length
 
 + `/create partyName user1 user2...` - create new party with mentioned users
 
@@ -37,12 +37,15 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
 
     > Follows all `/delete` method's rules
 
-Use these commands to mention members of needed parties, see the information and manage appereance:
+Use these commands to mention members of needed parties, see the information and manage appearance:
+
++ `@partyName` - syntax for tagging parties implicitly right inside your messages
+
+    > To enable this function you need to grant admins rights to the bot
 
 + `/party partyName1 partyName2...` - tag the members of existing parties
 
-    > You can also tag the party members directly in your message with `@partyName` syntax \
-    If you mention multiple parties - their members will be gathered in a single message and will have no repeats
+    > If you mention multiple parties - their members will be gathered in a single message and will have no repeats
 
 + `/list` - show the parties of the chat and their members
 
@@ -61,7 +64,6 @@ Use these commands to mention members of needed parties, see the information and
     > Set `off` by default \
     Takes only `on` and `off` as correct arguments \
     Doesn't affect error messages
-
 
 ## Tools and libraries
 
@@ -91,6 +93,6 @@ In order to be able to launch the bot server locally you have to compile sources
 
 
 <div align="center">
-    <img src="assets/logo-white-no_boarders.png" width=50%>
-<div>
+    <img src="assets/logo-white-no_boarders.png" width=50% alt="logo">
+</div>
 <p align="center">© 2020 Pool Party Corp. All rights reserved.</p>

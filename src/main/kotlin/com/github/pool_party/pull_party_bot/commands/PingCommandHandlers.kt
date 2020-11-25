@@ -165,7 +165,9 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
     return getChatAdministrators(chatId)
         .join()
         .asSequence()
-        .map { "@" + it.user.username }
+        .mapNotNull { it.user.username }
+        .filter { it.substring(it.length - 3).toLowerCase() != "bot" }
+        .map { "@$it" }
         .joinToString(" ")
 }
 
