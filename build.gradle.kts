@@ -24,6 +24,8 @@ dependencies {
     implementation("org.postgresql:postgresql:42.2.2")
 
     implementation("com.natpryce:konfig:1.6.10.0")
+
+    implementation("org.slf4j:slf4j-simple:2.0.0-alpha1")
 }
 
 tasks.withType<Jar> {
