@@ -7,6 +7,11 @@ object Parties : IntIdTable() {
     val name = varchar("name", 50)
     val chatId = reference("chat_id", Chats)
     val users = text("users")
+
+    init {
+        index(false, name, chatId)
+        uniqueIndex(chatId, name)
+    }
 }
 
 object Chats : LongIdTable() {
