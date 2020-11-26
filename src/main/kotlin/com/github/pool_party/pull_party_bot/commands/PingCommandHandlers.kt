@@ -176,7 +176,7 @@ val delete = newCommand("delete", "forget the parties as they have never happene
 /**
  * Delete all the parties of the chat.
  */
-val clear = newNoArgumentCommand("clear", "TODO", HELP_CLEAR) { msg -> // TODO
+val clear = newNoArgumentCommand("clear", "shut down all the parties ever existed", HELP_CLEAR) { msg ->
     val chatId = msg.chat.id
     clearCommandTransaction(chatId)
     sendMessage(chatId, ON_CLEAR_SUCCESS)
