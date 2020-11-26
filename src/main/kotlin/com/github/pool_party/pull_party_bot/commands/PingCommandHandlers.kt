@@ -38,7 +38,7 @@ fun Bot.handleStart(msg: Message) {
  * Return the help message.
  */
 fun Bot.handleHelp(msg: Message, args: String?) {
-    val parsedArgs = parseArgs(args)
+    val parsedArgs = parseArgs(args)?.distinct()
 
     if (parsedArgs.isNullOrEmpty()) {
         sendMessage(msg.chat.id, HELP_MSG)
@@ -84,7 +84,7 @@ fun Bot.handleList(msg: Message) {
  * Ping the members of given parties.
  */
 suspend fun Bot.handleExplicitParty(msg: Message, args: String?) {
-    val parsedArgs = parseArgs(args)
+    val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
@@ -175,7 +175,7 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
  * Delete given parties from DataBase.
  */
 fun Bot.handleDelete(msg: Message, args: String?) {
-    val parsedArgs = parseArgs(args)
+    val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
@@ -218,7 +218,7 @@ suspend fun Bot.handleChange(msg: Message, args: String?) = handlePartyChangeReq
  * Handle both `change` and `create` commands.
  */
 private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: String?) {
-    val parsedList = args?.split(' ')?.map { it.trim().toLowerCase() }
+    val parsedList = parseArgs(args)
     val chatId = msg.chat.id
 
     if (parsedList.isNullOrEmpty() || parsedList.size < 2) {
@@ -278,7 +278,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
  * Switch RUDE mode on and off.
  */
 suspend fun Bot.handleRude(msg: Message, args: String?) {
-    val parsedArg = args?.trim()?.toLowerCase()
+    val parsedArg = parseArgs(args)?.singleOrNull()
     val chatId = msg.chat.id
 
     val res = when (parsedArg) {
