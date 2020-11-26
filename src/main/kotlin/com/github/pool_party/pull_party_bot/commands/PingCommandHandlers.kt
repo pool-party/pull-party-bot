@@ -11,58 +11,36 @@ import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
-    onNoArgumentsCommand("/start", ::handleStart)
-    onNoArgumentsCommand("/list", ::handleList)
-
-    onAdministratorCommand("/delete", ::handleDelete)
-    onAdministratorCommand("/clear") { msg, _ -> handleClear(msg) }
-
-    onCommand("/party", ::handleExplicitParty)
-    onCommand("/create", ::handleCreate)
-    onCommand("/change", ::handleChange)
-    onCommand("/help", ::handleHelp)
-
-    onCommand("/rude", ::handleRude)
-
     onMessage(::handleImplicitParty)
+    registerCommands()
 }
 
 /**
  * Initiate the dialog with bot.
  */
-fun Bot.handleStart(msg: Message) {
+val start = newNoArgumentCommand("start", "awake the bot", HELP_START) { msg ->
     sendMessage(msg.chat.id, INIT_MSG)
 }
 
 /**
  * Return the help message.
  */
-fun Bot.handleHelp(msg: Message, args: String?) {
+val help = newCommand("help", "show this usage guide", HELP_MSG) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
 
     if (parsedArgs.isNullOrEmpty()) {
         sendMessage(msg.chat.id, HELP_MSG)
-        return
+        return@newCommand
     }
 
     if (parsedArgs.size > 1) {
         sendMessage(msg.chat.id, ON_HELP_ERROR)
-        return
+        return@newCommand
     }
 
     sendMessage(
         msg.chat.id,
-        when (parsedArgs[0].removePrefix("/")) {
-            "start" -> HELP_START
-            "list" -> HELP_LIST
-            "party" -> HELP_PARTY
-            "delete" -> HELP_DELETE
-            "clear" -> HELP_CLEAR
-            "create" -> HELP_CREATE
-            "change" -> HELP_CHANGE
-            "rude" -> HELP_RUDE
-            else -> ON_HELP_ERROR
-        },
+        Command.helpMessages[parsedArgs[0].removePrefix("/")] ?: ON_HELP_ERROR,
         "Markdown"
     )
 }
@@ -70,7 +48,7 @@ fun Bot.handleHelp(msg: Message, args: String?) {
 /**
  * Show all existing teams.
  */
-fun Bot.handleList(msg: Message) {
+val list = newNoArgumentCommand("list", "show the parties of the chat", HELP_LIST) { msg ->
     val chatId = msg.chat.id
     val res = listCommandTransaction(chatId)
 
@@ -83,13 +61,13 @@ fun Bot.handleList(msg: Message) {
 /**
  * Ping the members of given parties.
  */
-suspend fun Bot.handleExplicitParty(msg: Message, args: String?) {
+val party = newCommand("party", "tag the members of existing parties", HELP_PARTY) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
         sendMessage(chatId, ON_PARTY_EMPTY, "Markdown")
-        return
+        return@newCommand
     }
 
     handleParty(parsedArgs.asSequence(), msg) {
@@ -174,13 +152,13 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
 /**
  * Delete given parties from DataBase.
  */
-fun Bot.handleDelete(msg: Message, args: String?) {
+val delete = newCommand("delete", "forget the parties as they have never happened", HELP_DELETE) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
         sendMessage(chatId, ON_DELETE_EMPTY)
-        return
+        return@newCommand
     }
 
     parsedArgs.forEach {
@@ -198,7 +176,7 @@ fun Bot.handleDelete(msg: Message, args: String?) {
 /**
  * Delete all the parties of the chat.
  */
-fun Bot.handleClear(msg: Message) {
+val clear = newNoArgumentCommand("clear", "TODO", HELP_CLEAR) { msg -> // TODO
     val chatId = msg.chat.id
     clearCommandTransaction(chatId)
     sendMessage(chatId, ON_CLEAR_SUCCESS)
@@ -207,12 +185,16 @@ fun Bot.handleClear(msg: Message) {
 /**
  * Create a new party with given members.
  */
-suspend fun Bot.handleCreate(msg: Message, args: String?) = handlePartyChangeRequest(true, msg, args)
+val create = newCommand("create", "create new party", HELP_CREATE) { msg, args ->
+    handlePartyChangeRequest(true, msg, args)
+}
 
 /**
  * Change an existing party.
  */
-suspend fun Bot.handleChange(msg: Message, args: String?) = handlePartyChangeRequest(false, msg, args)
+val change = newCommand("change", "change an existing party", HELP_CHANGE) { msg, args ->
+    handlePartyChangeRequest(false, msg, args)
+}
 
 /**
  * Handle both `change` and `create` commands.
@@ -277,7 +259,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
 /**
  * Switch RUDE mode on and off.
  */
-suspend fun Bot.handleRude(msg: Message, args: String?) {
+val rude = newCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE) { msg, args ->
     val parsedArg = parseArgs(args)?.singleOrNull()
     val chatId = msg.chat.id
 
@@ -286,7 +268,7 @@ suspend fun Bot.handleRude(msg: Message, args: String?) {
         "off" -> rudeCommandTransaction(chatId, false)
         else -> {
             sendMessage(chatId, ON_RUDE_FAIL, "Markdown")
-            return
+            return@newCommand
         }
     }
 
