@@ -32,7 +32,8 @@ fun Bot.onAdministratorCommand(command: String, action: (Message, String?) -> Un
 fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
     name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
 
-fun parseArgs(args: String?): List<String>? = args?.split(' ')?.map { it.trim().toLowerCase() }?.filter { it.isNotBlank() }
+fun parseArgs(args: String?): List<String>? =
+    args?.split(' ')?.map { it.trim().toLowerCase() }?.filter { it.isNotBlank() }
 
 fun Bot.sendCaseMessage(chatId: Long, msg: String, parseMode: String? = null, replyTo: Int? = null) =
     sendMessage(
