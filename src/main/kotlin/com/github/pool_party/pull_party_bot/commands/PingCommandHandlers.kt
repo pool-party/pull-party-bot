@@ -152,13 +152,13 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
 /**
  * Delete given parties from DataBase.
  */
-val delete = newCommand("delete", "forget the parties as they have never happened", HELP_DELETE) { msg, args ->
+val delete = newAdministratorCommand("delete", "forget the parties as they have never happened", HELP_DELETE) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
         sendMessage(chatId, ON_DELETE_EMPTY)
-        return@newCommand
+        return@newAdministratorCommand
     }
 
     parsedArgs.forEach {
@@ -176,7 +176,7 @@ val delete = newCommand("delete", "forget the parties as they have never happene
 /**
  * Delete all the parties of the chat.
  */
-val clear = newNoArgumentCommand("clear", "shut down all the parties ever existed", HELP_CLEAR) { msg ->
+val clear = newAdministratorCommand("clear", "shut down all the parties ever existed", HELP_CLEAR) { msg, _ ->
     val chatId = msg.chat.id
     clearCommandTransaction(chatId)
     sendMessage(chatId, ON_CLEAR_SUCCESS)

@@ -30,7 +30,7 @@ class Command(
 }
 
 fun newCommand(commandName: String, description: String, helpMessage: String, action: Bot.(Message, String?) -> Unit) =
-    Command("/" + commandName, description, helpMessage, action)
+    Command("/$commandName", description, helpMessage, action)
 
 fun newNoArgumentCommand(commandName: String, description: String, helpMessage: String, action: Bot.(Message) -> Unit) =
     newCommand(commandName, description, helpMessage) { msg, _ -> action(msg) }
