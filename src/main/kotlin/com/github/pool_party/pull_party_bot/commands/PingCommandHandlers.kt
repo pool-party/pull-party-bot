@@ -152,7 +152,11 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
 /**
  * Delete given parties from DataBase.
  */
-val delete = newAdministratorCommand("delete", "forget the parties as they have never happened", HELP_DELETE) { msg, args ->
+val delete = newAdministratorCommand(
+    "delete",
+    "forget the parties as they have never happened",
+    HELP_DELETE
+) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
 
