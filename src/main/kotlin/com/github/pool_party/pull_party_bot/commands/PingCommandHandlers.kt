@@ -16,16 +16,10 @@ fun Bot.initPingCommandHandlers() {
     registerCommands()
 }
 
-/**
- * Initiate the dialog with bot.
- */
 val start = newNoArgumentCommand("start", "awake the bot", HELP_START) { msg ->
     sendMessage(msg.chat.id, INIT_MSG)
 }
 
-/**
- * Return the help message.
- */
 val help = newCommand("help", "show this usage guide", HELP_MSG) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
 
@@ -46,9 +40,6 @@ val help = newCommand("help", "show this usage guide", HELP_MSG) { msg, args ->
     )
 }
 
-/**
- * Show all existing teams.
- */
 val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, args ->
     fun Party.format() = "$name: ${users.replace("@", "")}"
 
@@ -88,9 +79,6 @@ val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, 
     )
 }
 
-/**
- * Ping the members of given parties.
- */
 val party = newCommand("party", "tag the members of existing parties", HELP_PARTY) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
@@ -179,9 +167,6 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
         .joinToString(" ")
 }
 
-/**
- * Delete given parties from DataBase.
- */
 val delete = newAdministratorCommand(
     "delete",
     "forget the parties as they have never happened",
@@ -207,27 +192,57 @@ val delete = newAdministratorCommand(
     }
 }
 
-/**
- * Delete all the parties of the chat.
- */
 val clear = newAdministratorCommand("clear", "shut down all the parties ever existed", HELP_CLEAR) { msg, _ ->
     val chatId = msg.chat.id
     clearCommandTransaction(chatId)
     sendMessage(chatId, ON_CLEAR_SUCCESS)
 }
 
-/**
- * Create a new party with given members.
- */
 val create = newCommand("create", "create new party", HELP_CREATE) { msg, args ->
     handlePartyChangeRequest(true, msg, args)
 }
 
-/**
- * Change an existing party.
- */
 val change = newCommand("change", "change an existing party", HELP_CHANGE) { msg, args ->
     handlePartyChangeRequest(false, msg, args)
+}
+
+val add = newCommand("add", "add a member to an existing party", HELP_ADD) { msg, args ->
+    handlePartyChangeMembersRequest(msg, args, List<String>::plus)
+}
+
+val remove = newCommand("remove", "remove a member to an existing party", HELP_REMOVE) { msg, args ->
+    handlePartyChangeMembersRequest(msg, args) { newArgs, party ->
+        val partyName = newArgs[0]
+        val argSet = newArgs.subList(1, newArgs.size).asSequence().map { it.removePrefix("@") }.toSet()
+        listOf(partyName) + party.asSequence().map { it.removePrefix("@") }.filter { !argSet.contains(it) }
+    }
+}
+
+private fun Bot.handlePartyChangeMembersRequest(
+    msg: Message,
+    args: String?,
+    concat: (List<String>, List<String>) -> List<String>
+) {
+    val chatId = msg.chat.id
+    val parsedArgs = parseArgs(args)?.distinct()
+
+    if (parsedArgs.isNullOrEmpty()) {
+        sendCaseMessage(chatId, ON_CHANGE_EMPTY, parseMode = "Markdown")
+        return
+    }
+
+    val partyList = partyCommandTransaction(chatId, parsedArgs[0])
+    if (partyList == null) {
+        sendCaseMessage(chatId, ON_CHANGE_REQUEST_FAIL, parseMode = "Markdown")
+        return
+    }
+
+    val newArgs = concat(parsedArgs, partyList.split(" "))
+        .asSequence()
+        .distinct()
+        .joinToString(" ")
+
+    handlePartyChangeRequest(false, msg, newArgs)
 }
 
 /**
@@ -290,9 +305,6 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
     }
 }
 
-/**
- * Switch RUDE mode on and off.
- */
 val rude = newCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE) { msg, args ->
     val parsedArg = parseArgs(args)?.singleOrNull()
     val chatId = msg.chat.id

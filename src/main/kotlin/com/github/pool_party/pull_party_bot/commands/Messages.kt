@@ -107,6 +107,16 @@ val HELP_CHANGE =
     Type `/help create` for more information
     """.trimIndent()
 
+val HELP_ADD =
+    """
+    /add <party> <member>
+    """.trimIndent()
+
+val HELP_REMOVE =
+    """
+    /remove <party> <member>
+    """.trimIndent()
+
 val HELP_RUDE =
     """
     /rude <on/off> - switch RUDE(CAPS LOCK) mode
