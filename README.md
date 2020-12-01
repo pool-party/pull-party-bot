@@ -20,6 +20,7 @@ usernames are char sequences of letters, digits and underscores of 5-32 length
     Party should consist of at least one user \
     You can enter users with or without `@` symbol \
     `@admins` is a reserved party and already exists \
+    Party name should be no longer than 50 characters \
     `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
 
 + `/change partyName user1 user2...` - change an existing party
