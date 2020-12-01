@@ -73,11 +73,13 @@ val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, 
         .flatMap { arg ->
             val party = partyMap[arg]
             if (party != null) {
-                sequenceOf(party.format())
+                sequenceOf(party)
             } else {
-                partyMap.values.asSequence().filter { arg in it.users }.map { it.format() }
+                partyMap.values.asSequence().filter { arg in it.users }
             }
         }
+        .distinct()
+        .map { it.format() }
         .joinToString("\n")
 
     sendCaseMessage(
