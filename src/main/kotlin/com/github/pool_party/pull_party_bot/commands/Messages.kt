@@ -29,10 +29,11 @@ val HELP_MSG =
     Available commands:
 
         /start - start the conversation and see welcoming message
-        /list  - show the parties of the chat and their members
         /clear - delete all parties of the chat
         /help  - show this usage guide
-        /help <command>  - show the usage guide of given command
+        /help <command> - show the usage guide of given command
+        /list  - show all the parties of the chat and their members
+        /list <entries> - show the parties and their members according to entries
 
                   @partyName  - tag existing party right in your message
         /party  <party-names> - tag the members of existing parties
@@ -53,8 +54,12 @@ val HELP_START =
 
 val HELP_LIST =
     """
-    /list  - show the parties of the chat and their members
+    /list entry1? entry2?... - show the parties of the chat and their members
 
+    Returns all parties with no arguments given
+    Entry is either user or partyName:
+      - on the given party shows its members
+      - on the given user shows all parties he is part of
     Doesn't show @admins party
     """.trimIndent()
 
@@ -116,7 +121,7 @@ val ON_HELP_ERROR =
 
     Expected no arguments or command to explain
     Follow /help with the unclear command or leave empty for general guide
-    """.trimIndent() // TODO looking for a better phrase
+    """.trimIndent()
 
 val ON_LIST_SUCCESS =
     """
@@ -128,6 +133,23 @@ val ON_LIST_SUCCESS =
 val ON_LIST_EMPTY =
     """
     I don't know any parties in this chat yet 😢
+    """.trimIndent()
+
+val ON_ARGUMENT_LIST_SUCCESS =
+    """
+    Matched parties:
+
+
+    """.trimIndent()
+
+val ON_ARGUMENT_LIST_EMPTY =
+    """
+    I can't find who you are looking for 📭
+
+    Perhaps you misspelled the name of party or user
+    Follow the /list command with correct users and party names
+
+    Type `/help list` for more information
     """.trimIndent()
 
 val ON_PARTY_EMPTY =
