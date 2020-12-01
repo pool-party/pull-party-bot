@@ -245,7 +245,7 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
     val partyName = parsedList[0].removePrefix("@")
 
     val regex = Regex("(.*[@${PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*\\-)")
-    if (partyName.matches(regex)) {
+    if (partyName.length > 50 || partyName.matches(regex)) {
         sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
         return
     }
