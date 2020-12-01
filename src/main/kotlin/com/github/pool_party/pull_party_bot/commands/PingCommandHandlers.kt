@@ -2,6 +2,7 @@ package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
+import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.changeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
 import com.github.pool_party.pull_party_bot.database.createCommandTransaction
@@ -48,13 +49,40 @@ val help = newCommand("help", "show this usage guide", HELP_MSG) { msg, args ->
 /**
  * Show all existing teams.
  */
-val list = newNoArgumentCommand("list", "show the parties of the chat", HELP_LIST) { msg ->
+val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, args ->
+    fun Party.format() = "$name: ${users.replace("@", "")}"
+
+    val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
-    val res = listCommandTransaction(chatId)
+    val list = listCommandTransaction(chatId)
+
+    if (parsedArgs.isNullOrEmpty()) {
+        val partyList = list.asSequence()
+            .map { it.format() }
+            .joinToString("\n")
+
+        sendCaseMessage(
+            chatId,
+            if (partyList.isNotBlank()) ON_LIST_SUCCESS + partyList else ON_LIST_EMPTY
+        )
+        return@newCommand
+    }
+
+    val partyMap = list.associateBy { it.name }
+    val requestedParties = parsedArgs.asSequence()
+        .flatMap { arg ->
+            val party = partyMap[arg]
+            if (party != null) {
+                sequenceOf(party.format())
+            } else {
+                partyMap.values.asSequence().filter { arg in it.users }.map { it.format() }
+            }
+        }
+        .joinToString("\n")
 
     sendCaseMessage(
         chatId,
-        if (res.isNotBlank()) ON_LIST_SUCCESS + res else ON_LIST_EMPTY
+        if (requestedParties.isNotBlank()) ON_ARGUMENT_LIST_SUCCESS + requestedParties else ON_ARGUMENT_LIST_EMPTY
     )
 }
 

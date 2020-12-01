@@ -20,14 +20,7 @@ fun initDB() {
     }
 }
 
-fun listCommandTransaction(id: Long): String =
-    transaction {
-        Chat.findById(id)
-            ?.run {
-                parties.asSequence().map { "${it.name}: ${it.users.replace("@", "")}" }
-                    .joinToString("\n")
-            } ?: ""
-    }
+fun listCommandTransaction(id: Long): List<Party> = transaction { Chat.findById(id)?.parties?.toList() } ?: emptyList()
 
 fun partyCommandTransaction(id: Long, partyName: String): String? = transaction { Party.find(id, partyName)?.users }
 

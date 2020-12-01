@@ -130,6 +130,18 @@ val ON_LIST_EMPTY =
     I don't know any parties in this chat yet 😢
     """.trimIndent()
 
+val ON_ARGUMENT_LIST_SUCCESS =
+    """
+    Matched parties:
+
+
+    """.trimIndent()
+
+val ON_ARGUMENT_LIST_EMPTY =
+    """
+    I can't find who you are looking for 😢
+    """.trimIndent()
+
 val ON_PARTY_EMPTY =
     """
     I could call up all parties, but it doesn't sound like a good idea. 🤪
