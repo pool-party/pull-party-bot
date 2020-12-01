@@ -47,16 +47,14 @@ Use these commands to mention members of needed parties, see the information and
 
     > If you mention multiple parties - their members will be gathered in a single message and will have no repeats
 
-+ `/list` - show the parties of the chat and their members
++ `/list entry1? entry2?...` - show the parties of the chat and their members
 
-    + `/list member1 member2...` - shows all the parties with at least one of the members provided
-
-    + `/list partyName1 partyName2...` - shows members of only provided parties
-
-    > It can be combined into `/list member partyName`
-
-    > Doesn't show `@admins` party
-
+    > Returns all parties on empty input \
+    Entries are either users or partyNames: \
+        - on the given user shows all parties he is part of \
+        - on the given party shows its members \                                                                                >
+    List doesn't contain repetitive values \
+    Doesn't show `@admins` party
 
 + `/start` - start the conversation and see welcoming message
 
@@ -77,7 +75,7 @@ Use these commands to mention members of needed parties, see the information and
 
 + [Gradle](https://gradle.org) building system
 
-    > To setup required version of gradle and dependencies run `gradlew` script (according to your system) with `build` target.
+    > To set up required version of gradle and dependencies run `gradlew` script (according to your system) with `build` target.
 
 + [Telegram Bot Api kotlin library](https://github.com/elbekD/kt-telegram-bot)
 
