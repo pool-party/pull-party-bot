@@ -49,6 +49,12 @@ Use these commands to mention members of needed parties, see the information and
 
 + `/list` - show the parties of the chat and their members
 
+    + `/list member1 member2...` - shows all the parties with at least one of the members provided
+
+    + `/list partyName1 partyName2...` - shows members of only provided parties
+
+    > It can be combined into `/list member partyName`
+
     > Doesn't show `@admins` party
 
 
