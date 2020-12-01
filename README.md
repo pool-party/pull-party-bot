@@ -52,7 +52,7 @@ Use these commands to mention members of needed parties, see the information and
     > Returns all parties on empty input \
     Entries are either users or partyNames: \
         - on the given user shows all parties he is part of \
-        - on the given party shows its members \                                                                                >
+        - on the given party shows its members \
     List doesn't contain repetitive values \
     Doesn't show `@admins` party
 
