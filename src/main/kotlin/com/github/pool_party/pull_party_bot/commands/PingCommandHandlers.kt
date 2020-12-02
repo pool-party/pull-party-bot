@@ -206,11 +206,11 @@ val change = newCommand("change", "change an existing party", HELP_CHANGE) { msg
     handlePartyChangeRequest(false, msg, args)
 }
 
-val add = newCommand("add", "add a member to an existing party", HELP_ADD) { msg, args ->
+val add = newCommand("add", "add new users to the given party", HELP_ADD) { msg, args ->
     handlePartyChangeMembersRequest(msg, args, List<String>::plus)
 }
 
-val remove = newCommand("remove", "remove a member to an existing party", HELP_REMOVE) { msg, args ->
+val remove = newCommand("remove", "remove given users from the provided party", HELP_REMOVE) { msg, args ->
     handlePartyChangeMembersRequest(msg, args) { newArgs, party ->
         val partyName = newArgs[0]
         val argSet = newArgs.subList(1, newArgs.size).asSequence().map { it.removePrefix("@") }.toSet()
@@ -218,6 +218,9 @@ val remove = newCommand("remove", "remove a member to an existing party", HELP_R
     }
 }
 
+/**
+ * Handle both `add` and `remove` commands.
+ */
 private fun Bot.handlePartyChangeMembersRequest(
     msg: Message,
     args: String?,

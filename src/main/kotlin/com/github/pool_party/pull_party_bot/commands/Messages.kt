@@ -29,18 +29,20 @@ val HELP_MSG =
     Available commands:
 
         /start - start the conversation and see welcoming message
-        /clear - delete all parties of the chat
         /help  - show this usage guide
         /help <command> - show the usage guide of given command
         /list  - show all the parties of the chat and their members
         /list <entries> - show the parties and their members according to entries
+        /clear - delete all parties of the chat
 
-                  @partyName  - tag existing party right in your message
-        /party  <party-names> - tag the members of existing parties
+                  @partyName  - tag existing party right in your message (bot has to be an admin)
+        /party  <party-names> - tag the members of the given parties
         /delete <party-names> - delete the parties you provided
 
         /create <party-name users-list> - create new party with mentioned users
         /change <party-name users-list> - change an existing party
+        /add    <party-name users-list> - add new users to the given party
+        /remove <party-name users-list> - remove given users from the provided party
 
         /rude <on/off> - switch RUDE(CAPS LOCK) mode
     """.trimIndent()
@@ -57,7 +59,7 @@ val HELP_LIST =
     /list entry1? entry2?... - show the parties of the chat and their members
 
     Returns all parties with no arguments given
-    Entry is either user or partyName:
+    Entry is either user or party-name:
       - on the given party shows its members
       - on the given user shows all parties he is part of
     Doesn't show @admins party
@@ -65,9 +67,9 @@ val HELP_LIST =
 
 val HELP_PARTY =
     """
-    /party <party-names> - tag the members of existing parties
+    /party <party-names> - tag the members of the given parties
 
-    Keep in mind that you can simply tag the parties with `@<party-name>` syntax
+    Keep in mind that you can simply tag the parties with `@<party-name>` syntax (bot has to be an admin)
     If you mention multiple parties - their members will be gathered in a single message and will have no repeats
     """.trimIndent()
 
@@ -109,12 +111,18 @@ val HELP_CHANGE =
 
 val HELP_ADD =
     """
-    /add <party> <member>
+    /add <party-name users-list> - add new users to the given party
+
+    You can enter users with or without `@` symbol
+    You can't update @admins party
     """.trimIndent()
 
 val HELP_REMOVE =
     """
-    /remove <party> <member>
+    /remove <party-name users-list> - remove given users from the provided party
+
+    You can enter users with or without `@` symbol
+    You can't change @admins party
     """.trimIndent()
 
 val HELP_RUDE =
