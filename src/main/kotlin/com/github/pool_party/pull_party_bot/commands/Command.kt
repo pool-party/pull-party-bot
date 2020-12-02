@@ -4,6 +4,7 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.BotCommand
 import com.elbekD.bot.types.Message
 import mu.KotlinLogging
+import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -11,7 +12,9 @@ fun Bot.registerCommands() {
     val commands = Command.all
     commands.forEach {
         onCommand(it.command) { msg, args ->
-            logger.info { "${it.command} <- ${msg.from?.username}@\"${msg.chat.title}\": \"${msg.text}\"" }
+            logger.info {
+                "${LocalDateTime.now()} ${it.command} <- ${msg.from?.username}@\"${msg.chat.title}\": \"${msg.text}\""
+            }
             it.action.invoke(this, msg, args)
         }
     }
