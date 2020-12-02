@@ -227,7 +227,7 @@ private fun Bot.handlePartyChangeMembersRequest(
     concat: (List<String>, List<String>) -> List<String>
 ) {
     val chatId = msg.chat.id
-    val parsedArgs = parseArgs(args)?.distinct()
+    val parsedArgs = parseArgs(args)
 
     if (parsedArgs.isNullOrEmpty()) {
         sendCaseMessage(chatId, ON_CHANGE_EMPTY, parseMode = "Markdown")
