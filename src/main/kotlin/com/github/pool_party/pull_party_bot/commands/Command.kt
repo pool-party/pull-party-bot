@@ -3,10 +3,18 @@ package com.github.pool_party.pull_party_bot.commands
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.BotCommand
 import com.elbekD.bot.types.Message
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
 
 fun Bot.registerCommands() {
     val commands = Command.all
-    commands.forEach { onCommand(it.command) { msg, args -> it.action.invoke(this, msg, args) } }
+    commands.forEach {
+        onCommand(it.command) { msg, args ->
+            logger.info { "${it.command} <- ${msg.from?.username}@\"${msg.chat.title}\": \"${msg.text}\"" }
+            it.action.invoke(this, msg, args)
+        }
+    }
     setMyCommands(commands.map { it.toBotCommand() }).join()
 }
 
