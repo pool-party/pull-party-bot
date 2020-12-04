@@ -2,6 +2,7 @@ package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
+import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
 import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
@@ -289,4 +290,12 @@ val rude = newCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE) { msg, a
 
     val curStatus = if (parsedArg == "on") """😈""" else """😇"""
     sendCaseMessage(chatId, """Rude mode ${if (res) "is now" else "was already"} $parsedArg $curStatus!""")
+}
+
+val feedback = newCommand("feedback", "give some feedback, feature ideas", HELP_FEEDBACK) { msg, args ->
+    val developChatId = Configuration.DEVELOP_CHAT_ID
+    if (developChatId == 0L || args == null) return@newCommand
+
+    // TODO probably ban users when they abuse this command
+    sendMessage(developChatId, "New feedback from @${msg.from?.username} in \"${msg.chat.title}\":\n\n" + args)
 }

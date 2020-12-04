@@ -135,6 +135,11 @@ val HELP_RUDE =
     The mode is turned off by default and never affects error messages
     """.trimIndent()
 
+val HELP_FEEDBACK =
+    """
+    /feedback - give some feedback, feature ideas or issues
+    """.trimIndent()
+
 val ON_HELP_ERROR =
     """
     The Lord helps those who help themselves 👼
