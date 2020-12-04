@@ -260,8 +260,6 @@ private fun Bot.handlePartyChangeRequest(
         }
     }
 
-    // TODO
-
     if (transaction(chatId, partyName, users)) {
         sendCaseMessage(
             chatId,
