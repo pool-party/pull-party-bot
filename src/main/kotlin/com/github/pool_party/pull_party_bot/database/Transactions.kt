@@ -51,10 +51,23 @@ fun createCommandTransaction(id: Long, partyName: String, userList: List<String>
         true
     }
 
+fun addUsersCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
+    changeUsersTransaction(id, partyName) { it.also { it.addAll(userList) } }
+
+fun removeUsersCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
+    changeUsersTransaction(id, partyName) { it.also { it.removeAll(userList) } }
+
 fun changeCommandTransaction(id: Long, partyName: String, userList: List<String>): Boolean =
+    changeUsersTransaction(id, partyName) { userList }
+
+private fun changeUsersTransaction(
+    id: Long,
+    partyName: String,
+    transform: (MutableSet<String>) -> Collection<String>
+): Boolean =
     transaction {
         val party = Party.find(id, partyName) ?: return@transaction false
-        party.users = userList.joinToString(" ")
+        party.users = transform(party.users.split(' ').toMutableSet()).joinToString(" ")
 
         true
     }

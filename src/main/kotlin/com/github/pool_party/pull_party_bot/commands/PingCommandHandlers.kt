@@ -3,12 +3,14 @@ package com.github.pool_party.pull_party_bot.commands
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.database.Party
+import com.github.pool_party.pull_party_bot.database.addUsersCommandTransaction
 import com.github.pool_party.pull_party_bot.database.changeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
 import com.github.pool_party.pull_party_bot.database.createCommandTransaction
 import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
 import com.github.pool_party.pull_party_bot.database.listCommandTransaction
 import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
+import com.github.pool_party.pull_party_bot.database.removeUsersCommandTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
@@ -199,59 +201,27 @@ val clear = newAdministratorCommand("clear", "shut down all the parties ever exi
 }
 
 val create = newCommand("create", "create new party", HELP_CREATE) { msg, args ->
-    handlePartyChangeRequest(true, msg, args)
+    handlePartyChangeRequest(msg, args, true, ::createCommandTransaction)
 }
 
 val change = newCommand("change", "change an existing party", HELP_CHANGE) { msg, args ->
-    handlePartyChangeRequest(false, msg, args)
+    handlePartyChangeRequest(msg, args, false, ::changeCommandTransaction)
 }
 
 val add = newCommand("add", "add new users to the given party", HELP_ADD) { msg, args ->
-    handlePartyChangeMembersRequest(msg, args, List<String>::plus)
+    handlePartyChangeRequest(msg, args, false, ::addUsersCommandTransaction)
 }
 
 val remove = newCommand("remove", "remove given users from the provided party", HELP_REMOVE) { msg, args ->
-    handlePartyChangeMembersRequest(msg, args) { newArgs, party ->
-        val partyName = newArgs[0]
-        val argSet = newArgs.subList(1, newArgs.size).asSequence().map { it.removePrefix("@") }.toSet()
-        listOf(partyName) + party.asSequence().map { it.removePrefix("@") }.filter { !argSet.contains(it) }
-    }
+    handlePartyChangeRequest(msg, args, false, ::removeUsersCommandTransaction)
 }
 
-/**
- * Handle both `add` and `remove` commands.
- */
-private fun Bot.handlePartyChangeMembersRequest(
+private fun Bot.handlePartyChangeRequest(
     msg: Message,
     args: String?,
-    concat: (List<String>, List<String>) -> List<String>
+    isNew: Boolean,
+    transaction: (Long, String, List<String>) -> Boolean
 ) {
-    val chatId = msg.chat.id
-    val parsedArgs = parseArgs(args)
-
-    if (parsedArgs.isNullOrEmpty()) {
-        sendCaseMessage(chatId, ON_CHANGE_EMPTY, parseMode = "Markdown")
-        return
-    }
-
-    val partyList = partyCommandTransaction(chatId, parsedArgs[0])
-    if (partyList == null) {
-        sendCaseMessage(chatId, ON_CHANGE_REQUEST_FAIL, parseMode = "Markdown")
-        return
-    }
-
-    val newArgs = concat(parsedArgs, partyList.split(" "))
-        .asSequence()
-        .distinct()
-        .joinToString(" ")
-
-    handlePartyChangeRequest(false, msg, newArgs)
-}
-
-/**
- * Handle both `change` and `create` commands.
- */
-private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: String?) {
     val parsedList = parseArgs(args)
     val chatId = msg.chat.id
 
@@ -290,9 +260,9 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
         }
     }
 
-    if (if (isNew) createCommandTransaction(chatId, partyName, users)
-        else changeCommandTransaction(chatId, partyName, users)
-    ) {
+    // TODO
+
+    if (transaction(chatId, partyName, users)) {
         sendCaseMessage(
             chatId,
             if (isNew) "Party $partyName successfully created!"
