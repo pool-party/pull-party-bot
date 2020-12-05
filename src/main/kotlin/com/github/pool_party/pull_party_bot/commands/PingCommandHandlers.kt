@@ -293,7 +293,7 @@ private fun Bot.handlePartyChangeRequest(
         when (status) {
             PartyChangeStatus.CREATE -> ON_CREATE_REQUEST_FAIL
             PartyChangeStatus.CHANGE -> ON_CHANGE_REQUEST_FAIL
-            PartyChangeStatus.ADD    -> ON_ADD_REQUEST_FAIL
+            PartyChangeStatus.ADD -> ON_ADD_REQUEST_FAIL
             PartyChangeStatus.REMOVE -> ON_REMOVE_REQUEST_FAIL
         },
         "Markdown"
