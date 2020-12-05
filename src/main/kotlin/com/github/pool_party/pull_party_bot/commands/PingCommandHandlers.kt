@@ -3,14 +3,10 @@ package com.github.pool_party.pull_party_bot.commands
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.database.Party
-import com.github.pool_party.pull_party_bot.database.addUsersCommandTransaction
-import com.github.pool_party.pull_party_bot.database.changeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
-import com.github.pool_party.pull_party_bot.database.createCommandTransaction
 import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
 import com.github.pool_party.pull_party_bot.database.listCommandTransaction
 import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
-import com.github.pool_party.pull_party_bot.database.removeUsersCommandTransaction
 import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
 
 fun Bot.initPingCommandHandlers() {
@@ -205,27 +201,22 @@ val clear = newAdministratorCommand("clear", "shut down all the parties ever exi
 }
 
 val create = newCommand("create", "create new party", HELP_CREATE) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.CREATE, ::createCommandTransaction)
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.CREATE)
 }
 
 val change = newCommand("change", "change an existing party", HELP_CHANGE) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.CHANGE, ::changeCommandTransaction)
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.CHANGE)
 }
 
 val add = newCommand("add", "add new users to the given party", HELP_ADD) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.ADD, ::addUsersCommandTransaction)
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.ADD)
 }
 
 val remove = newCommand("remove", "remove given users from the provided party", HELP_REMOVE) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.REMOVE, ::removeUsersCommandTransaction)
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.REMOVE)
 }
 
-private fun Bot.handlePartyChangeRequest(
-    msg: Message,
-    args: String?,
-    status: PartyChangeStatus,
-    transaction: (Long, String, List<String>) -> Boolean
-) {
+private fun Bot.handlePartyChangeRequest(msg: Message, args: String?, status: PartyChangeStatus) {
     val parsedArgs = parseArgs(args)
     val chatId = msg.chat.id
 
@@ -256,7 +247,7 @@ private fun Bot.handlePartyChangeRequest(
         .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
         .map { "@$it" }.toList()
 
-    if (status.mode < 2 && users.singleOrNull()?.removePrefix("@") == partyName) {
+    if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
         sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
         return
     }
@@ -275,29 +266,12 @@ private fun Bot.handlePartyChangeRequest(
         sendMessage(chatId, ON_USERS_FAIL, "Markdown")
     }
 
-    if (transaction(chatId, partyName, users)) {
-        sendCaseMessage(
-            chatId,
-            when (status) {
-                PartyChangeStatus.CREATE -> """Party $partyName successfully created!"""
-                PartyChangeStatus.CHANGE -> """Party $partyName changed beyond recognition!"""
-                PartyChangeStatus.ADD -> """Party $partyName is getting bigger and bigger!"""
-                PartyChangeStatus.REMOVE -> """Party $partyName lost somebody, but not the vibe!"""
-            }
-        )
+    if (status.transaction(chatId, partyName, users)) {
+        sendCaseMessage(chatId, status.onSuccess(partyName))
         return
     }
 
-    sendMessage(
-        chatId,
-        when (status) {
-            PartyChangeStatus.CREATE -> ON_CREATE_REQUEST_FAIL
-            PartyChangeStatus.CHANGE -> ON_CHANGE_REQUEST_FAIL
-            PartyChangeStatus.ADD -> ON_ADD_REQUEST_FAIL
-            PartyChangeStatus.REMOVE -> ON_REMOVE_REQUEST_FAIL
-        },
-        "Markdown"
-    )
+    sendMessage(chatId, status.onFailure, "Markdown")
 }
 
 val rude = newCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE) { msg, args ->
