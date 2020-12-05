@@ -5,6 +5,13 @@ import com.github.pool_party.pull_party_bot.database.rudeCheckTransaction
 
 val PROHIBITED_SYMBOLS = listOf('!', ',', '.', '?', ':', ';', '(', ')')
 
+enum class PartyChangeStatus(val mode: Int) {
+    CREATE(0),
+    CHANGE(1),
+    ADD(2),
+    REMOVE(3)
+}
+
 fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
     name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
 

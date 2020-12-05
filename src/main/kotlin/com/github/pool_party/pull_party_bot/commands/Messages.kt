@@ -245,9 +245,9 @@ val ON_CHANGE_EMPTY =
     The wind of change is blowing. But where? 🤨
 
     At least name and a single valid user should be provided
-    Follow the /change command with the existing party name and its new members
+    You can change the party with /change, /add and /remove commands
 
-    Type `/help change` for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_CHANGE_REQUEST_FAIL =
@@ -259,6 +259,16 @@ val ON_CHANGE_REQUEST_FAIL =
 
     Type `/help create` or `/help change` for more information
     """.trimIndent()
+
+val ON_ADD_REQUEST_FAIL =
+    """
+
+    """.trimIndent() // TODO.
+
+val ON_REMOVE_REQUEST_FAIL =
+    """
+
+    """.trimIndent() // TODO.
 
 val ON_RUDE_FAIL =
     """
@@ -309,7 +319,7 @@ val ON_ADMINS_PARTY_CHANGE =
     @admins is a reserved group, you can't create, change or delete it
     Try to make a new party instead with /create command
 
-    Type `/help change` or `/help delete` for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_ADMINS_PARTY_FAIL =
@@ -319,7 +329,7 @@ val ON_ADMINS_PARTY_FAIL =
     There is no admins in private chats or channels
     @admins is a reserved group, you can't change or delete it
 
-    Type /help for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_PARTY_NAME_FAIL =
@@ -329,7 +339,7 @@ val ON_PARTY_NAME_FAIL =
     Party name should consist of less than 50 non-blank symbols
     `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
-    Type `/help create` for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_USERS_FAIL =
@@ -339,5 +349,5 @@ val ON_USERS_FAIL =
     Usernames should consist of latin letters, digits and underscores only
     Allowed length of telegram username is from 5 to 32 characters
 
-    Type `/help create` or `/help change` for more information
+    Type `/help` for more information
     """.trimIndent()
