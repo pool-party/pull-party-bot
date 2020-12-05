@@ -281,7 +281,7 @@ private fun Bot.handlePartyChangeRequest(
             when (status) {
                 PartyChangeStatus.CREATE -> """Party $partyName successfully created!"""
                 PartyChangeStatus.CHANGE -> """Party $partyName changed beyond recognition!"""
-                PartyChangeStatus.ADD    -> """Party $partyName is getting bigger and bigger!"""
+                PartyChangeStatus.ADD -> """Party $partyName is getting bigger and bigger!"""
                 PartyChangeStatus.REMOVE -> """Party $partyName lost somebody, but not the vibe!"""
             }
         )
