@@ -10,8 +10,14 @@ import com.natpryce.konfig.stringType
 
 object Configuration {
 
-    private val configuration = EnvironmentVariables() overriding
-        ConfigurationProperties.fromResource("defaults.properties")
+    private val configuration = EnvironmentVariables()
+        .overriding(ConfigurationProperties.fromResource("defaults.properties"))
+        .let {
+            val testProperties = "test.properties"
+            if (ClassLoader.getSystemClassLoader().getResource(testProperties) != null)
+                ConfigurationProperties.fromResource(testProperties) overriding it
+            else it
+        }
 
     val APP_URL = configuration[Key("app.url", stringType)]
     val USER_NAME = configuration[Key("username", stringType)]

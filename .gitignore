@@ -1,6 +1,6 @@
-.gitignore
 .gradle
 .idea
 build
 out
 .DS_store
+test.properties
