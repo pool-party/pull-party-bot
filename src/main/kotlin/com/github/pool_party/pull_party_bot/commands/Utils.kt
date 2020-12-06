@@ -22,7 +22,7 @@ enum class PartyChangeStatus(
         override fun onSuccess(partyName: String) = "Party $partyName changed beyond recognition!"
     },
 
-    ADD(false, ::addUsersCommandTransaction, ON_ADD_REQUEST_FAIL) {
+    ADD(false, ::addUsersCommandTransaction, ON_CHANGE_REQUEST_FAIL) {
         override fun onSuccess(partyName: String) = "Party $partyName is getting bigger and bigger!"
     },
 

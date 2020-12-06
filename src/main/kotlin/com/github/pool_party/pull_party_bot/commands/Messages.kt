@@ -121,6 +121,8 @@ val HELP_REMOVE =
     """
     /remove <party-name users-list> - remove given users from the provided party
 
+    Action can't leave the party empty
+    Action can't leave the party with a single user if name of the user equal to the party name
     You can enter users with or without `@` symbol
     You can't change @admins party
     """.trimIndent()
@@ -255,19 +257,19 @@ val ON_CHANGE_REQUEST_FAIL =
     Party didn't started yet, but you already changing the plans. 😥
 
     Perhaps you wanted to create a new party with /create
-    Follow the /change command with the existing party name and its new members
+    Follow /add or /change command with the name of existing party and new users
 
-    Type `/help create` or `/help change` for more information
+    Type `/help` for more information
     """.trimIndent()
-
-val ON_ADD_REQUEST_FAIL =
-    """
-
-    """.trimIndent() // TODO.
 
 val ON_REMOVE_REQUEST_FAIL =
     """
+    It is easier to break than to make. 🧱
 
+    Perhaps this action will leave the party invalid or given party doesn't exist at all
+    Follow /remove command with the name of existing party and users to delete
+
+    Type `/help remove` for more information
     """.trimIndent() // TODO.
 
 val ON_RUDE_FAIL =
