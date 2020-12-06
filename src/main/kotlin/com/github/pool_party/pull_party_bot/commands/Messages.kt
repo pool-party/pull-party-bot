@@ -29,18 +29,20 @@ val HELP_MSG =
     Available commands:
 
         /start - start the conversation and see welcoming message
-        /clear - delete all parties of the chat
         /help  - show this usage guide
         /help <command> - show the usage guide of given command
         /list  - show all the parties of the chat and their members
         /list <entries> - show the parties and their members according to entries
+        /clear - delete all parties of the chat
 
-                  @partyName  - tag existing party right in your message
-        /party  <party-names> - tag the members of existing parties
+                  @partyName  - tag existing party right in your message (bot has to be an admin)
+        /party  <party-names> - tag the members of the given parties
         /delete <party-names> - delete the parties you provided
 
         /create <party-name users-list> - create new party with mentioned users
         /change <party-name users-list> - change an existing party
+        /add    <party-name users-list> - add new users to the given party
+        /remove <party-name users-list> - remove given users from the provided party
 
         /rude <on/off> - switch RUDE(CAPS LOCK) mode
     """.trimIndent()
@@ -57,7 +59,7 @@ val HELP_LIST =
     /list entry1? entry2?... - show the parties of the chat and their members
 
     Returns all parties with no arguments given
-    Entry is either user or partyName:
+    Entry is either user or party-name:
       - on the given party shows its members
       - on the given user shows all parties he is part of
     Doesn't show @admins party
@@ -65,9 +67,9 @@ val HELP_LIST =
 
 val HELP_PARTY =
     """
-    /party <party-names> - tag the members of existing parties
+    /party <party-names> - tag the members of the given parties
 
-    Keep in mind that you can simply tag the parties with `@<party-name>` syntax
+    Keep in mind that you can simply tag the parties with `@<party-name>` syntax (bot has to be an admin)
     If you mention multiple parties - their members will be gathered in a single message and will have no repeats
     """.trimIndent()
 
@@ -105,6 +107,24 @@ val HELP_CHANGE =
     @admins party can't be changed, follows all /create rules
 
     Type `/help create` for more information
+    """.trimIndent()
+
+val HELP_ADD =
+    """
+    /add <party-name users-list> - add new users to the given party
+
+    You can enter users with or without `@` symbol
+    You can't update @admins party
+    """.trimIndent()
+
+val HELP_REMOVE =
+    """
+    /remove <party-name users-list> - remove given users from the provided party
+
+    Action can't leave the party empty
+    Action can't leave the party with a single user if name of the user is equal to the party name
+    You can enter users with or without `@` symbol
+    You can't change @admins party
     """.trimIndent()
 
 val HELP_RUDE =
@@ -227,9 +247,9 @@ val ON_CHANGE_EMPTY =
     The wind of change is blowing. But where? 🤨
 
     At least name and a single valid user should be provided
-    Follow the /change command with the existing party name and its new members
+    You can change the party with /change, /add and /remove commands
 
-    Type `/help change` for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_CHANGE_REQUEST_FAIL =
@@ -237,10 +257,20 @@ val ON_CHANGE_REQUEST_FAIL =
     Party didn't started yet, but you already changing the plans. 😥
 
     Perhaps you wanted to create a new party with /create
-    Follow the /change command with the existing party name and its new members
+    Follow /add or /change command with the name of existing party and new users
 
-    Type `/help create` or `/help change` for more information
+    Type `/help` for more information
     """.trimIndent()
+
+val ON_REMOVE_REQUEST_FAIL =
+    """
+    It is easier to break than to make. 🧱
+
+    Perhaps this action will leave the party invalid or given party doesn't exist at all
+    Follow /remove command with the name of existing party and users to delete
+
+    Type `/help remove` for more information
+    """.trimIndent() // TODO.
 
 val ON_RUDE_FAIL =
     """
@@ -291,7 +321,7 @@ val ON_ADMINS_PARTY_CHANGE =
     @admins is a reserved group, you can't create, change or delete it
     Try to make a new party instead with /create command
 
-    Type `/help change` or `/help delete` for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_ADMINS_PARTY_FAIL =
@@ -301,7 +331,7 @@ val ON_ADMINS_PARTY_FAIL =
     There is no admins in private chats or channels
     @admins is a reserved group, you can't change or delete it
 
-    Type /help for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_PARTY_NAME_FAIL =
@@ -311,7 +341,7 @@ val ON_PARTY_NAME_FAIL =
     Party name should consist of less than 50 non-blank symbols
     `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
-    Type `/help create` for more information
+    Type `/help` for more information
     """.trimIndent()
 
 val ON_USERS_FAIL =
@@ -321,5 +351,5 @@ val ON_USERS_FAIL =
     Usernames should consist of latin letters, digits and underscores only
     Allowed length of telegram username is from 5 to 32 characters
 
-    Type `/help create` or `/help change` for more information
+    Type `/help` for more information
     """.trimIndent()

@@ -3,9 +3,7 @@ package com.github.pool_party.pull_party_bot.commands
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.database.Party
-import com.github.pool_party.pull_party_bot.database.changeCommandTransaction
 import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
-import com.github.pool_party.pull_party_bot.database.createCommandTransaction
 import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
 import com.github.pool_party.pull_party_bot.database.listCommandTransaction
 import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
@@ -16,16 +14,10 @@ fun Bot.initPingCommandHandlers() {
     registerCommands()
 }
 
-/**
- * Initiate the dialog with bot.
- */
 val start = newNoArgumentCommand("start", "awake the bot", HELP_START) { msg ->
     sendMessage(msg.chat.id, INIT_MSG)
 }
 
-/**
- * Return the help message.
- */
 val help = newCommand("help", "show this usage guide", HELP_MSG) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
 
@@ -46,9 +38,6 @@ val help = newCommand("help", "show this usage guide", HELP_MSG) { msg, args ->
     )
 }
 
-/**
- * Show all existing teams.
- */
 val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, args ->
     fun Party.format() = "$name: ${users.replace("@", "")}"
 
@@ -61,10 +50,12 @@ val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, 
             .map { it.format() }
             .joinToString("\n")
 
-        sendCaseMessage(
-            chatId,
-            if (partyList.isNotBlank()) ON_LIST_SUCCESS + partyList else ON_LIST_EMPTY
-        )
+        if (partyList.isNotBlank()) {
+            sendCaseMessage(chatId, ON_LIST_SUCCESS + partyList)
+        } else {
+            sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
+        }
+
         return@newCommand
     }
 
@@ -82,15 +73,14 @@ val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, 
         .map { it.format() }
         .joinToString("\n")
 
-    sendCaseMessage(
-        chatId,
-        if (requestedParties.isNotBlank()) ON_ARGUMENT_LIST_SUCCESS + requestedParties else ON_ARGUMENT_LIST_EMPTY
-    )
+    if (requestedParties.isNotBlank()) {
+        sendCaseMessage(chatId, ON_ARGUMENT_LIST_SUCCESS + requestedParties)
+        return@newCommand
+    }
+
+    sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
 }
 
-/**
- * Ping the members of given parties.
- */
 val party = newCommand("party", "tag the members of existing parties", HELP_PARTY) { msg, args ->
     val parsedArgs = parseArgs(args)?.distinct()
     val chatId = msg.chat.id
@@ -166,7 +156,7 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, ON_ADMINS_PARTY_FAIL)
+        sendMessage(chatId, ON_ADMINS_PARTY_FAIL, "Markdown")
         return null
     }
 
@@ -179,9 +169,6 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
         .joinToString(" ")
 }
 
-/**
- * Delete given parties from DataBase.
- */
 val delete = newAdministratorCommand(
     "delete",
     "forget the parties as they have never happened",
@@ -191,7 +178,7 @@ val delete = newAdministratorCommand(
     val chatId = msg.chat.id
 
     if (parsedArgs.isNullOrEmpty()) {
-        sendMessage(chatId, ON_DELETE_EMPTY)
+        sendMessage(chatId, ON_DELETE_EMPTY, "Markdown")
         return@newAdministratorCommand
     }
 
@@ -207,42 +194,43 @@ val delete = newAdministratorCommand(
     }
 }
 
-/**
- * Delete all the parties of the chat.
- */
 val clear = newAdministratorCommand("clear", "shut down all the parties ever existed", HELP_CLEAR) { msg, _ ->
     val chatId = msg.chat.id
     clearCommandTransaction(chatId)
-    sendMessage(chatId, ON_CLEAR_SUCCESS)
+    sendMessage(chatId, ON_CLEAR_SUCCESS, "Markdown")
 }
 
-/**
- * Create a new party with given members.
- */
 val create = newCommand("create", "create new party", HELP_CREATE) { msg, args ->
-    handlePartyChangeRequest(true, msg, args)
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.CREATE)
 }
 
-/**
- * Change an existing party.
- */
 val change = newCommand("change", "change an existing party", HELP_CHANGE) { msg, args ->
-    handlePartyChangeRequest(false, msg, args)
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.CHANGE)
 }
 
-/**
- * Handle both `change` and `create` commands.
- */
-private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: String?) {
-    val parsedList = parseArgs(args)
+val add = newCommand("add", "add new users to the given party", HELP_ADD) { msg, args ->
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.ADD)
+}
+
+val remove = newCommand("remove", "remove given users from the provided party", HELP_REMOVE) { msg, args ->
+    handlePartyChangeRequest(msg, args, PartyChangeStatus.REMOVE)
+}
+
+private fun Bot.handlePartyChangeRequest(msg: Message, args: String?, status: PartyChangeStatus) {
+    val parsedArgs = parseArgs(args)
     val chatId = msg.chat.id
 
-    if (parsedList.isNullOrEmpty() || parsedList.size < 2) {
-        sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY, "Markdown")
+    if (parsedArgs.isNullOrEmpty() || parsedArgs.size < 2) {
+        sendMessage(
+            chatId,
+            if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
+            else ON_CHANGE_EMPTY,
+            "Markdown"
+        )
         return
     }
 
-    val partyName = parsedList[0].removePrefix("@")
+    val partyName = parsedArgs[0].removePrefix("@")
 
     val regex = Regex("(.*[@${PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*\\-)")
     if (partyName.length > 50 || partyName.matches(regex)) {
@@ -254,45 +242,38 @@ private fun Bot.handlePartyChangeRequest(isNew: Boolean, msg: Message, args: Str
         return
     }
 
-    val users = parsedList.asSequence().drop(1)
+    val users = parsedArgs.asSequence().drop(1)
         .map { it.replace("@", "") }.distinct()
         .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
         .map { "@$it" }.toList()
 
-    if (users.singleOrNull()?.removePrefix("@") == partyName) {
+    if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
         sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
         return
     }
 
-    if (users.size < parsedList.drop(1).distinct().size) {
-        sendMessage(chatId, ON_USERS_FAIL, "Markdown")
+    if (users.size < parsedArgs.drop(1).distinct().size) {
         if (users.isEmpty()) {
-            sendMessage(chatId, if (isNew) ON_CREATE_EMPTY else ON_CHANGE_EMPTY, "Markdown")
+            sendMessage(
+                chatId,
+                if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
+                else ON_CHANGE_EMPTY,
+                "Markdown"
+            )
             return
         }
+
+        sendMessage(chatId, ON_USERS_FAIL, "Markdown")
     }
 
-    if (if (isNew) createCommandTransaction(chatId, partyName, users)
-        else changeCommandTransaction(chatId, partyName, users)
-    ) {
-        sendCaseMessage(
-            chatId,
-            if (isNew) "Party $partyName successfully created!"
-            else """Party $partyName became even better now!"""
-        )
-    } else {
-        sendMessage(
-            chatId,
-            if (isNew) ON_CREATE_REQUEST_FAIL
-            else ON_CHANGE_REQUEST_FAIL,
-            "Markdown"
-        )
+    if (status.transaction(chatId, partyName, users)) {
+        sendCaseMessage(chatId, status.onSuccess(partyName))
+        return
     }
+
+    sendMessage(chatId, status.onFailure, "Markdown")
 }
 
-/**
- * Switch RUDE mode on and off.
- */
 val rude = newCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE) { msg, args ->
     val parsedArg = parseArgs(args)?.singleOrNull()
     val chatId = msg.chat.id
