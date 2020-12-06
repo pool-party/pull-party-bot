@@ -122,7 +122,7 @@ val HELP_REMOVE =
     /remove <party-name users-list> - remove given users from the provided party
 
     Action can't leave the party empty
-    Action can't leave the party with a single user if name of the user equal to the party name
+    Action can't leave the party with a single user if name of the user is equal to the party name
     You can enter users with or without `@` symbol
     You can't change @admins party
     """.trimIndent()
