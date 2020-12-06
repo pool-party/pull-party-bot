@@ -67,7 +67,12 @@ private fun changeUsersTransaction(
 ): Boolean =
     transaction {
         val party = Party.find(id, partyName) ?: return@transaction false
-        party.users = transform(party.users.split(' ').toMutableSet()).joinToString(" ")
+        val newUsers = transform(party.users.split(' ').toMutableSet())
+        if (newUsers.isEmpty() || newUsers.singleOrNull() == "@${party.name}") {
+            return@transaction false
+        }
+
+        party.users = newUsers.joinToString(" ")
 
         true
     }
