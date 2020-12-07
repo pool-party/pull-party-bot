@@ -297,6 +297,5 @@ val feedback = newCommand("feedback", "share your ideas and experience with deve
     val developChatId = Configuration.DEVELOP_CHAT_ID
     if (developChatId == 0L || parsedArgs.isNullOrBlank()) return@newCommand
 
-    // TODO probably ban users when they abuse this command
     sendMessage(developChatId, "New #feedback from @${msg.from?.username} in \"${msg.chat.title}\":\n\n" + parsedArgs)
 }
