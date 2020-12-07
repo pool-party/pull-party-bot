@@ -18,7 +18,7 @@ class Command(
 ) {
     init {
         all.add(this)
-        helpMessages[command]
+        helpMessages[command.drop(1)] = helpMessage
     }
 
     fun toBotCommand() = BotCommand(command, description)
