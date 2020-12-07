@@ -5,6 +5,7 @@ import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.booleanType
 import com.natpryce.konfig.intType
+import com.natpryce.konfig.longType
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 
@@ -30,4 +31,6 @@ object Configuration {
     val DATABASE_URL = configuration[Key("jdbc.database.url", stringType)]
     val DATABASE_USERNAME = configuration[Key("jdbc.database.username", stringType)]
     val DATABASE_PASSWORD = configuration[Key("jdbc.database.password", stringType)]
+
+    val DEVELOP_CHAT_ID = configuration[Key("develop.chat.id", longType)]
 }
