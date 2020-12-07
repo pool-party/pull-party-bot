@@ -44,7 +44,8 @@ val HELP_MSG =
         /add    <party-name users-list> - add new users to the given party
         /remove <party-name users-list> - remove given users from the provided party
 
-        /rude <on/off> - switch RUDE(CAPS LOCK) mode
+        /rude      <on/off> - switch RUDE(CAPS LOCK) mode
+        /feedback <message> - share your ideas and experience with developers
     """.trimIndent()
 
 val HELP_START =
@@ -65,6 +66,13 @@ val HELP_LIST =
     Doesn't show @admins party
     """.trimIndent()
 
+val HELP_CLEAR =
+    """
+    /clear - delete all parties of the chat
+
+    Type `/clear delete` for more information
+    """.trimIndent()
+
 val HELP_PARTY =
     """
     /party <party-names> - tag the members of the given parties
@@ -79,13 +87,6 @@ val HELP_DELETE =
 
     Only admins have access to /delete and /clear commands
     @admins is a reserved party and can't be deleted
-    """.trimIndent()
-
-val HELP_CLEAR =
-    """
-    /clear - delete all parties of the chat
-
-    Type `/clear delete` for more information
     """.trimIndent()
 
 val HELP_CREATE =
@@ -137,7 +138,10 @@ val HELP_RUDE =
 
 val HELP_FEEDBACK =
     """
-    /feedback - give some feedback, feature ideas or issues
+    /feedback <message> - share your ideas and experience with developers
+
+    You might suggest the functionality you want to have, report the bugs or share your experience
+    We are always willing to get better for the comfort of our users!
     """.trimIndent()
 
 val ON_HELP_ERROR =
@@ -275,7 +279,7 @@ val ON_REMOVE_REQUEST_FAIL =
     Follow /remove command with the name of existing party and users to delete
 
     Type `/help remove` for more information
-    """.trimIndent() // TODO.
+    """.trimIndent()
 
 val ON_RUDE_FAIL =
     """

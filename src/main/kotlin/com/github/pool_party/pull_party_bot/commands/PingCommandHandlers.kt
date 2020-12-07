@@ -292,10 +292,11 @@ val rude = newCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE) { msg, a
     sendCaseMessage(chatId, """Rude mode ${if (res) "is now" else "was already"} $parsedArg $curStatus!""")
 }
 
-val feedback = newCommand("feedback", "give some feedback, feature ideas", HELP_FEEDBACK) { msg, args ->
+val feedback = newCommand("feedback", "share your ideas and experience with developers", HELP_FEEDBACK) { msg, args ->
+    val parsedArgs = args?.trim()
     val developChatId = Configuration.DEVELOP_CHAT_ID
-    if (developChatId == 0L || args == null) return@newCommand
+    if (developChatId == 0L || parsedArgs.isNullOrBlank()) return@newCommand
 
     // TODO probably ban users when they abuse this command
-    sendMessage(developChatId, "New #feedback from @${msg.from?.username} in \"${msg.chat.title}\":\n\n" + args)
+    sendMessage(developChatId, "New #feedback from @${msg.from?.username} in \"${msg.chat.title}\":\n\n" + parsedArgs)
 }
