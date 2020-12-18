@@ -98,7 +98,6 @@ class HelpCommand(private val helpMessages: Map<String, String>) :
             "Markdown"
         )
     }
-
 }
 
 class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :

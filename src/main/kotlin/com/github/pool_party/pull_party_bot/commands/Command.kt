@@ -52,7 +52,6 @@ abstract class AbstractCommand(
 
     protected fun parseArgs(args: String?): List<String>? =
         args?.split(' ')?.map { it.trim().toLowerCase() }?.filter { it.isNotBlank() }
-
 }
 
 abstract class CaseCommand(command: String, description: String, helpMessage: String, protected val chatDao: ChatDao) :
