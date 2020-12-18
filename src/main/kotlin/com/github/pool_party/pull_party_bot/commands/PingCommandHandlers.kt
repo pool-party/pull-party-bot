@@ -3,128 +3,180 @@ package com.github.pool_party.pull_party_bot.commands
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
+import com.github.pool_party.pull_party_bot.database.ChatDao
+import com.github.pool_party.pull_party_bot.database.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.Party
-import com.github.pool_party.pull_party_bot.database.clearCommandTransaction
-import com.github.pool_party.pull_party_bot.database.deleteCommandTransaction
-import com.github.pool_party.pull_party_bot.database.listCommandTransaction
-import com.github.pool_party.pull_party_bot.database.partyCommandTransaction
-import com.github.pool_party.pull_party_bot.database.rudeCommandTransaction
+import com.github.pool_party.pull_party_bot.database.PartyDao
+import com.github.pool_party.pull_party_bot.database.PartyDaoImpl
+
+// TODO split into couple of files
 
 fun Bot.initPingCommandHandlers() {
-    onMessage(::handleImplicitParty)
-    registerCommands()
-}
 
-val start = newNoArgumentCommand("start", "awake the bot", HELP_START) { msg ->
-    sendMessage(msg.chat.id, INIT_MSG)
-}
+    val partyDaoImpl = PartyDaoImpl()
 
-val help = newCommand("help", "show this usage guide", HELP_MSG) { msg, args ->
-    val parsedArgs = parseArgs(args)?.distinct()
+    val chatDaoImpl = ChatDaoImpl()
 
-    if (parsedArgs.isNullOrEmpty()) {
-        sendMessage(msg.chat.id, HELP_MSG)
-        return@newCommand
-    }
-
-    if (parsedArgs.size > 1) {
-        sendMessage(msg.chat.id, ON_HELP_ERROR)
-        return@newCommand
-    }
-
-    sendMessage(
-        msg.chat.id,
-        Command.helpMessages[parsedArgs[0].removePrefix("/")] ?: ON_HELP_ERROR,
-        "Markdown"
+    // TODO probably use some kind of injections
+    val commands = mutableListOf(
+        StartCommand(),
+        ListCommand(partyDaoImpl, chatDaoImpl),
+        PartyCommand(partyDaoImpl),
+        DeleteCommand(partyDaoImpl, chatDaoImpl),
+        ClearCommand(chatDaoImpl),
+        CreateCommand(partyDaoImpl, chatDaoImpl),
+        ChangeCommand(partyDaoImpl, chatDaoImpl),
+        AddCommand(partyDaoImpl, chatDaoImpl),
+        RemoveCommand(partyDaoImpl, chatDaoImpl),
+        RudeCommand(chatDaoImpl),
+        FeedbackCommand()
     )
+
+    val helpCommand = HelpCommand(commands.associate { it.command.removePrefix("/") to it.helpMessage })
+    commands.add(helpCommand)
+
+    val implicitPartyHandler = ImplicitPartyHandler(partyDaoImpl)
+
+    implicitPartyHandler.onMessage(this)
+    commands.forEach { it.onMessage(this) }
+    setMyCommands(commands.map { it.toBotCommand() })
 }
 
-val list = newCommand("list", "show the parties of the chat", HELP_LIST) { msg, args ->
-    fun Party.format() = "$name: ${users.replace("@", "")}"
+class ImplicitPartyHandler(private val partyDao: PartyDao) {
 
-    val parsedArgs = parseArgs(args)?.distinct()
-    val chatId = msg.chat.id
-    val list = listCommandTransaction(chatId)
+    /**
+     * Handle implicit `@party-name`-like calls
+     */
+    fun onMessage(bot: Bot) = bot.onMessage { bot.action(it) }
 
-    if (parsedArgs.isNullOrEmpty()) {
-        val partyList = list.asSequence()
-            .map { it.format() }
-            .joinToString("\n")
+    private fun Bot.action(message: Message) {
+        val text = message.text ?: message.caption
 
-        if (partyList.isNotBlank()) {
-            sendCaseMessage(chatId, ON_LIST_SUCCESS + partyList)
-        } else {
-            sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
+        if (message.forward_from != null || text == null) {
+            return
         }
 
-        return@newCommand
+        val prohibitedSymbolsString = PROHIBITED_SYMBOLS.joinToString("")
+        val regex = Regex("(?<party>[^$prohibitedSymbolsString]*)[$prohibitedSymbolsString]*")
+
+        val partyNames = text.lineSequence()
+            .flatMap { it.split(' ', '\t').asSequence() }
+            .filter { it.startsWith('@') }
+            .map { it.removePrefix("@") }
+            .mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }
+
+        handleParty(partyNames, message, partyDao)
     }
-
-    val partyMap = list.associateBy { it.name }
-    val requestedParties = parsedArgs.asSequence()
-        .flatMap { arg ->
-            val party = partyMap[arg]
-            if (party != null) {
-                sequenceOf(party)
-            } else {
-                partyMap.values.asSequence().filter { arg in it.users }
-            }
-        }
-        .distinct()
-        .map { it.format() }
-        .joinToString("\n")
-
-    if (requestedParties.isNotBlank()) {
-        sendCaseMessage(chatId, ON_ARGUMENT_LIST_SUCCESS + requestedParties)
-        return@newCommand
-    }
-
-    sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
 }
 
-val party = newCommand("party", "tag the members of existing parties", HELP_PARTY) { msg, args ->
-    val parsedArgs = parseArgs(args)?.distinct()
-    val chatId = msg.chat.id
+class StartCommand : AbstractCommand("start", "awake the bot", HELP_START) {
 
-    if (parsedArgs.isNullOrEmpty()) {
-        sendMessage(chatId, ON_PARTY_EMPTY, "Markdown")
-        return@newCommand
+    override fun Bot.action(message: Message, args: String?) {
+        sendMessage(message.chat.id, INIT_MSG)
     }
+}
 
-    handleParty(parsedArgs.asSequence(), msg) {
+class HelpCommand(private val helpMessages: Map<String, String>) :
+    AbstractCommand("help", "show this usage guide", HELP_MSG) {
+
+    override fun Bot.action(message: Message, args: String?) {
+        val parsedArgs = parseArgs(args)?.distinct()
+
+        if (parsedArgs.isNullOrEmpty()) {
+            sendMessage(message.chat.id, HELP_MSG)
+            return
+        }
+
+        if (parsedArgs.size > 1) {
+            sendMessage(message.chat.id, ON_HELP_ERROR)
+            return
+        }
+
         sendMessage(
-            chatId,
-            if (parsedArgs.size == 1) ON_PARTY_REQUEST_FAIL
-            else ON_PARTY_REQUEST_FAILS,
+            message.chat.id,
+            helpMessages[parsedArgs[0].removePrefix("/")] ?: ON_HELP_ERROR,
             "Markdown"
         )
     }
+
 }
 
-/**
- * Handle implicit `@party-name`-like calls
- */
-suspend fun Bot.handleImplicitParty(msg: Message) {
-    val text = msg.text ?: msg.caption
+class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
+    CaseCommand("list", "show the parties of the chat", HELP_LIST, chatDao) {
 
-    if (msg.forward_from != null || text == null) {
-        return
+    override fun Bot.action(message: Message, args: String?) {
+
+        fun Party.format() = "$name: ${users.replace("@", "")}"
+
+        val parsedArgs = parseArgs(args)?.distinct()
+        val chatId = message.chat.id
+        val list = partyDao.getAll(chatId)
+
+        if (parsedArgs.isNullOrEmpty()) {
+            val partyList = list.asSequence().map { it.format() }.joinToString("\n")
+
+            if (partyList.isNotBlank()) {
+                sendCaseMessage(chatId, ON_LIST_SUCCESS + partyList)
+            } else {
+                sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
+            }
+
+            return
+        }
+
+        val partyMap = list.associateBy { it.name }
+        val requestedParties = parsedArgs.asSequence()
+            .flatMap { arg ->
+                val party = partyMap[arg]
+                if (party != null) {
+                    sequenceOf(party)
+                } else {
+                    partyMap.values.asSequence().filter { arg in it.users }
+                }
+            }
+            .distinct()
+            .map { it.format() }
+            .joinToString("\n")
+
+        if (requestedParties.isNotBlank()) {
+            sendCaseMessage(chatId, ON_ARGUMENT_LIST_SUCCESS + requestedParties)
+            return
+        }
+
+        sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
     }
-
-    val prohibitedSymbolsString = PROHIBITED_SYMBOLS.joinToString("")
-    val regex = Regex("(?<party>[^$prohibitedSymbolsString]*)[$prohibitedSymbolsString]*")
-
-    val partyNames = text.lineSequence()
-        .flatMap { it.split(' ', '\t').asSequence() }
-        .filter { it.startsWith('@') }
-        .map { it.removePrefix("@") }
-        .mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }
-
-    handleParty(partyNames, msg)
 }
 
-private fun Bot.handleParty(partyNames: Sequence<String>, msg: Message, onFailure: () -> Unit = {}) {
-    val chatId = msg.chat.id
+class PartyCommand(private val partyDao: PartyDao) :
+    AbstractCommand("party", "tag the members of existing parties", HELP_PARTY) {
+
+    override fun Bot.action(message: Message, args: String?) {
+        val parsedArgs = parseArgs(args)?.distinct()
+        val chatId = message.chat.id
+
+        if (parsedArgs.isNullOrEmpty()) {
+            sendMessage(chatId, ON_PARTY_EMPTY, "Markdown")
+            return
+        }
+
+        handleParty(parsedArgs.asSequence(), message, partyDao) {
+            sendMessage(
+                chatId,
+                if (parsedArgs.size == 1) ON_PARTY_REQUEST_FAIL
+                else ON_PARTY_REQUEST_FAILS,
+                "Markdown"
+            )
+        }
+    }
+}
+
+private fun Bot.handleParty(
+    partyNames: Sequence<String>,
+    message: Message,
+    partyDao: PartyDao,
+    onFailure: () -> Unit = {}
+) {
+    val chatId = message.chat.id
     var failure = false
 
     val res = partyNames
@@ -132,9 +184,9 @@ private fun Bot.handleParty(partyNames: Sequence<String>, msg: Message, onFailur
         .distinct()
         .mapNotNull {
             if (it == "admins") {
-                handleAdminsParty(msg)
+                handleAdminsParty(message)
             } else {
-                val users = partyCommandTransaction(chatId, it)
+                val users = partyDao.getByIdAndName(chatId, it)
                 if (users.isNullOrBlank()) {
                     failure = true
                 }
@@ -145,7 +197,7 @@ private fun Bot.handleParty(partyNames: Sequence<String>, msg: Message, onFailur
         .distinct()
         .joinToString(" ")
 
-    sendCaseMessage(chatId, res, replyTo = msg.message_id)
+    sendMessage(chatId, res, replyTo = message.message_id)
 
     if (failure) {
         onFailure()
@@ -170,91 +222,57 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
         .joinToString(" ")
 }
 
-val delete = newAdministratorCommand(
-    "delete",
-    "forget the parties as they have never happened",
-    HELP_DELETE
-) { msg, args ->
-    val parsedArgs = parseArgs(args)?.distinct()
-    val chatId = msg.chat.id
+class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
+    AdministratorCommand("delete", "forget the parties as they have never happened", HELP_DELETE, chatDao) {
 
-    if (parsedArgs.isNullOrEmpty()) {
-        sendMessage(chatId, ON_DELETE_EMPTY, "Markdown")
-        return@newAdministratorCommand
-    }
+    override fun Bot.mainAction(message: Message, args: String?) {
+        val parsedArgs = parseArgs(args)?.distinct()
+        val chatId = message.chat.id
 
-    parsedArgs.forEach {
-        if (modifyCommandAssertion(chatId, it)) {
-            sendCaseMessage(
-                chatId,
-                if (deleteCommandTransaction(chatId, it))
-                    """Party $it is just a history now 👍"""
-                else """Not like I knew the $it party, but now I don't know it at all 👍"""
-            )
+        if (parsedArgs.isNullOrEmpty()) {
+            sendMessage(chatId, ON_DELETE_EMPTY, "Markdown")
+            return
+        }
+
+        parsedArgs.forEach {
+            if (modifyCommandAssertion(chatId, it)) {
+                sendCaseMessage(
+                    chatId,
+                    if (partyDao.delete(chatId, it))
+                        """Party $it is just a history now 👍"""
+                    else """Not like I knew the $it party, but now I don't know it at all 👍"""
+                )
+            }
         }
     }
 }
 
-val clear = newAdministratorCommand("clear", "shut down all the parties ever existed", HELP_CLEAR) { msg, _ ->
-    val chatId = msg.chat.id
-    clearCommandTransaction(chatId)
-    sendMessage(chatId, ON_CLEAR_SUCCESS, "Markdown")
-}
+class ClearCommand(chatDao: ChatDao) :
+    AdministratorCommand("clear", "shut down all the parties ever existed", HELP_CLEAR, chatDao) {
 
-val create = newCommand("create", "create new party", HELP_CREATE) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.CREATE)
-}
-
-val change = newCommand("change", "change an existing party", HELP_CHANGE) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.CHANGE)
-}
-
-val add = newCommand("add", "add new users to the given party", HELP_ADD) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.ADD)
-}
-
-val remove = newCommand("remove", "remove given users from the provided party", HELP_REMOVE) { msg, args ->
-    handlePartyChangeRequest(msg, args, PartyChangeStatus.REMOVE)
-}
-
-private fun Bot.handlePartyChangeRequest(msg: Message, args: String?, status: PartyChangeStatus) {
-    val parsedArgs = parseArgs(args)
-    val chatId = msg.chat.id
-
-    if (parsedArgs.isNullOrEmpty() || parsedArgs.size < 2) {
-        sendMessage(
-            chatId,
-            if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
-            else ON_CHANGE_EMPTY,
-            "Markdown"
-        )
-        return
+    override fun Bot.mainAction(message: Message, args: String?) {
+        val chatId = message.chat.id
+        chatDao.clear(chatId)
+        sendMessage(chatId, ON_CLEAR_SUCCESS, "Markdown")
     }
+}
 
-    val partyName = parsedArgs[0].removePrefix("@")
+abstract class AbstractChangeCommand(
+    command: String,
+    description: String,
+    helpMessage: String,
+    private val status: PartyChangeStatus,
+    private val partyDao: PartyDao,
+    chatDao: ChatDao
+) :
+    CaseCommand(command, description, helpMessage, chatDao) {
 
-    val regex = Regex("(.*[@${PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*\\-)")
-    if (partyName.length > 50 || partyName.matches(regex)) {
-        sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
-        return
-    }
+    override fun Bot.action(message: Message, args: String?) {
 
-    if (!modifyCommandAssertion(chatId, partyName)) {
-        return
-    }
+        val parsedArgs = parseArgs(args)
+        val chatId = message.chat.id
 
-    val users = parsedArgs.asSequence().drop(1)
-        .map { it.replace("@", "") }.distinct()
-        .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
-        .map { "@$it" }.toList()
-
-    if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
-        sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
-        return
-    }
-
-    if (users.size < parsedArgs.drop(1).distinct().size) {
-        if (users.isEmpty()) {
+        if (parsedArgs.isNullOrEmpty() || parsedArgs.size < 2) {
             sendMessage(
                 chatId,
                 if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
@@ -264,38 +282,92 @@ private fun Bot.handlePartyChangeRequest(msg: Message, args: String?, status: Pa
             return
         }
 
-        sendMessage(chatId, ON_USERS_FAIL, "Markdown")
-    }
+        val partyName = parsedArgs[0].removePrefix("@")
 
-    if (status.transaction(chatId, partyName, users)) {
-        sendCaseMessage(chatId, status.onSuccess(partyName))
-        return
-    }
-
-    sendMessage(chatId, status.onFailure, "Markdown")
-}
-
-val rude = newCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE) { msg, args ->
-    val parsedArg = parseArgs(args)?.singleOrNull()
-    val chatId = msg.chat.id
-
-    val res = when (parsedArg) {
-        "on" -> rudeCommandTransaction(chatId, true)
-        "off" -> rudeCommandTransaction(chatId, false)
-        else -> {
-            sendMessage(chatId, ON_RUDE_FAIL, "Markdown")
-            return@newCommand
+        val regex = Regex("(.*[@${PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*-)")
+        if (partyName.length > 50 || partyName.matches(regex)) {
+            sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
+            return
         }
-    }
 
-    val curStatus = if (parsedArg == "on") """😈""" else """😇"""
-    sendCaseMessage(chatId, """Rude mode ${if (res) "is now" else "was already"} $parsedArg $curStatus!""")
+        if (!modifyCommandAssertion(chatId, partyName)) {
+            return
+        }
+
+        val users = parsedArgs.asSequence().drop(1)
+            .map { it.replace("@", "") }.distinct()
+            .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
+            .map { "@$it" }.toList()
+
+        if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
+            sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
+            return
+        }
+
+        if (users.size < parsedArgs.drop(1).distinct().size) {
+            if (users.isEmpty()) {
+                sendMessage(
+                    chatId,
+                    if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
+                    else ON_CHANGE_EMPTY,
+                    "Markdown"
+                )
+                return
+            }
+
+            sendMessage(chatId, ON_USERS_FAIL, "Markdown")
+        }
+
+        if (status.transaction.invoke(partyDao, chatId, partyName, users)) {
+            sendCaseMessage(chatId, status.onSuccess(partyName))
+            return
+        }
+
+        sendMessage(chatId, status.onFailure, "Markdown")
+    }
 }
 
-val feedback = newCommand("feedback", "share your ideas and experience with developers", HELP_FEEDBACK) { msg, args ->
-    val parsedArgs = args?.trim()
-    val developChatId = Configuration.DEVELOP_CHAT_ID
-    if (developChatId == 0L || parsedArgs.isNullOrBlank()) return@newCommand
+class CreateCommand(partyDao: PartyDao, chatDao: ChatDao) :
+    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao, chatDao)
 
-    sendMessage(developChatId, "New #feedback from @${msg.from?.username} in \"${msg.chat.title}\":\n\n" + parsedArgs)
+class ChangeCommand(partyDao: PartyDao, chatDao: ChatDao) :
+    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CHANGE, partyDao, chatDao)
+
+class AddCommand(partyDao: PartyDao, chatDao: ChatDao) :
+    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.ADD, partyDao, chatDao)
+
+class RemoveCommand(partyDao: PartyDao, chatDao: ChatDao) :
+    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.REMOVE, partyDao, chatDao)
+
+class RudeCommand(chatDao: ChatDao) : CaseCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE, chatDao) {
+    override fun Bot.action(message: Message, args: String?) {
+        val parsedArg = parseArgs(args)?.singleOrNull()
+        val chatId = message.chat.id
+
+        val res = when (parsedArg) {
+            "on" -> chatDao.setRude(chatId, true)
+            "off" -> chatDao.setRude(chatId, false)
+            else -> {
+                sendMessage(chatId, ON_RUDE_FAIL, "Markdown")
+                return
+            }
+        }
+
+        val curStatus = if (parsedArg == "on") """😈""" else """😇"""
+        sendCaseMessage(chatId, """Rude mode ${if (res) "is now" else "was already"} $parsedArg $curStatus!""")
+    }
+}
+
+class FeedbackCommand : AbstractCommand("feedback", "share your ideas and experience with developers", HELP_FEEDBACK) {
+
+    override fun Bot.action(message: Message, args: String?) {
+        val parsedArgs = args?.trim()
+        val developChatId = Configuration.DEVELOP_CHAT_ID
+        if (developChatId == 0L || parsedArgs.isNullOrBlank()) return
+
+        sendMessage(
+            developChatId,
+            "New #feedback from @${message.from?.username} in \"${message.chat.title}\":\n\n" + parsedArgs
+        )
+    }
 }
