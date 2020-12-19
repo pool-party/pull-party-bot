@@ -23,6 +23,7 @@ object Configuration {
     val APP_URL = configuration[Key("app.url", stringType)]
     val USER_NAME = configuration[Key("username", stringType)]
     val PORT = configuration[Key("port", intType)]
+    const val HOST = "0.0.0.0"
 
     val IS_LONGPOLL = configuration[Key("longpoll", booleanType)]
 
@@ -33,4 +34,6 @@ object Configuration {
     val DATABASE_PASSWORD = configuration[Key("jdbc.database.password", stringType)]
 
     val DEVELOP_CHAT_ID = configuration[Key("develop.chat.id", longType)]
+
+    val PROHIBITED_SYMBOLS = "!,.?:;()".toList()
 }
