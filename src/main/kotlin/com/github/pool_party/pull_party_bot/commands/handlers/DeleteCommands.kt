@@ -3,12 +3,12 @@ package com.github.pool_party.pull_party_bot.commands.handlers
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.commands.AdministratorCommand
-import com.github.pool_party.pull_party_bot.commands.HELP_CLEAR
-import com.github.pool_party.pull_party_bot.commands.HELP_DELETE
-import com.github.pool_party.pull_party_bot.commands.ON_CLEAR_SUCCESS
-import com.github.pool_party.pull_party_bot.commands.ON_DELETE_EMPTY
-import com.github.pool_party.pull_party_bot.database.ChatDao
-import com.github.pool_party.pull_party_bot.database.PartyDao
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_CLEAR
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_DELETE
+import com.github.pool_party.pull_party_bot.commands.messages.ON_CLEAR_SUCCESS
+import com.github.pool_party.pull_party_bot.commands.messages.ON_DELETE_EMPTY
+import com.github.pool_party.pull_party_bot.database.dao.ChatDao
+import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     AdministratorCommand("delete", "forget the parties as they have never happened", HELP_DELETE, chatDao) {

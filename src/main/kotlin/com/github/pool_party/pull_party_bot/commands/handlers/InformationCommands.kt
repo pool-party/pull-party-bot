@@ -5,19 +5,19 @@ import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
-import com.github.pool_party.pull_party_bot.commands.HELP_FEEDBACK
-import com.github.pool_party.pull_party_bot.commands.HELP_LIST
-import com.github.pool_party.pull_party_bot.commands.HELP_MSG
-import com.github.pool_party.pull_party_bot.commands.HELP_START
-import com.github.pool_party.pull_party_bot.commands.INIT_MSG
-import com.github.pool_party.pull_party_bot.commands.ON_ARGUMENT_LIST_EMPTY
-import com.github.pool_party.pull_party_bot.commands.ON_ARGUMENT_LIST_SUCCESS
-import com.github.pool_party.pull_party_bot.commands.ON_HELP_ERROR
-import com.github.pool_party.pull_party_bot.commands.ON_LIST_EMPTY
-import com.github.pool_party.pull_party_bot.commands.ON_LIST_SUCCESS
-import com.github.pool_party.pull_party_bot.database.ChatDao
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_FEEDBACK
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_LIST
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_MSG
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_START
+import com.github.pool_party.pull_party_bot.commands.messages.INIT_MSG
+import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
+import com.github.pool_party.pull_party_bot.commands.messages.ON_HELP_ERROR
+import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
+import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.Party
-import com.github.pool_party.pull_party_bot.database.PartyDao
+import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class StartCommand : AbstractCommand("start", "awake the bot", HELP_START) {
 

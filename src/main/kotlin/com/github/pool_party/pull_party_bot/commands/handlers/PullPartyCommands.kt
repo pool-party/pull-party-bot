@@ -4,12 +4,12 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
-import com.github.pool_party.pull_party_bot.commands.HELP_PARTY
-import com.github.pool_party.pull_party_bot.commands.ON_ADMINS_PARTY_FAIL
-import com.github.pool_party.pull_party_bot.commands.ON_PARTY_EMPTY
-import com.github.pool_party.pull_party_bot.commands.ON_PARTY_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.commands.ON_PARTY_REQUEST_FAILS
-import com.github.pool_party.pull_party_bot.database.PartyDao
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_PARTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
+import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class ImplicitPartyHandler(private val partyDao: PartyDao) {
 

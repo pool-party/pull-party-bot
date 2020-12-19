@@ -14,8 +14,8 @@ import com.github.pool_party.pull_party_bot.commands.handlers.PartyCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RemoveCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RudeCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.StartCommand
-import com.github.pool_party.pull_party_bot.database.ChatDaoImpl
-import com.github.pool_party.pull_party_bot.database.PartyDaoImpl
+import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
+import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 
 fun Bot.initHandlers() {
 

@@ -1,4 +1,8 @@
-package com.github.pool_party.pull_party_bot.database
+package com.github.pool_party.pull_party_bot.database.dao
+
+import com.github.pool_party.pull_party_bot.database.Chat
+import com.github.pool_party.pull_party_bot.database.Party
+import com.github.pool_party.pull_party_bot.database.loggingTransaction
 
 interface PartyDao {
 

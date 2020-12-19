@@ -4,42 +4,20 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
-import com.github.pool_party.pull_party_bot.commands.HELP_ADD
-import com.github.pool_party.pull_party_bot.commands.HELP_CHANGE
-import com.github.pool_party.pull_party_bot.commands.HELP_CREATE
-import com.github.pool_party.pull_party_bot.commands.HELP_REMOVE
-import com.github.pool_party.pull_party_bot.commands.HELP_RUDE
-import com.github.pool_party.pull_party_bot.commands.ON_CHANGE_EMPTY
-import com.github.pool_party.pull_party_bot.commands.ON_CHANGE_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.commands.ON_CREATE_EMPTY
-import com.github.pool_party.pull_party_bot.commands.ON_CREATE_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.commands.ON_PARTY_NAME_FAIL
-import com.github.pool_party.pull_party_bot.commands.ON_REMOVE_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.commands.ON_RUDE_FAIL
-import com.github.pool_party.pull_party_bot.commands.ON_SINGLETON_PARTY
-import com.github.pool_party.pull_party_bot.commands.ON_USERS_FAIL
-import com.github.pool_party.pull_party_bot.database.ChatDao
-import com.github.pool_party.pull_party_bot.database.PartyDao
-
-class RudeCommand(chatDao: ChatDao) : CaseCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE, chatDao) {
-
-    override fun Bot.action(message: Message, args: String?) {
-        val parsedArg = parseArgs(args)?.singleOrNull()
-        val chatId = message.chat.id
-
-        val res = when (parsedArg) {
-            "on" -> chatDao.setRude(chatId, true)
-            "off" -> chatDao.setRude(chatId, false)
-            else -> {
-                sendMessage(chatId, ON_RUDE_FAIL, "Markdown")
-                return
-            }
-        }
-
-        val curStatus = if (parsedArg == "on") """😈""" else """😇"""
-        sendCaseMessage(chatId, """Rude mode ${if (res) "is now" else "was already"} $parsedArg $curStatus!""")
-    }
-}
+import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_CREATE_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_CREATE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_NAME_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_REMOVE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_SINGLETON_PARTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_USERS_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_ADD
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_CHANGE
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_CREATE
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_REMOVE
+import com.github.pool_party.pull_party_bot.database.dao.ChatDao
+import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class CreateCommand(partyDao: PartyDao, chatDao: ChatDao) :
     AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao, chatDao)

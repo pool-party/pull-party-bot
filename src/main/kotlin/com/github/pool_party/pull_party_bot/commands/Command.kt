@@ -3,7 +3,10 @@ package com.github.pool_party.pull_party_bot.commands
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.BotCommand
 import com.elbekD.bot.types.Message
-import com.github.pool_party.pull_party_bot.database.ChatDao
+import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_CHANGE
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_SENDER_FAIL
+import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import mu.KotlinLogging
 import java.time.LocalDateTime
 
@@ -48,7 +51,7 @@ abstract class AbstractCommand(
     }
 
     protected fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
-        name.equals("admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
+        (name == "admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
 
     protected fun parseArgs(args: String?): List<String>? =
         args?.split(' ')?.map { it.trim().toLowerCase() }?.filter { it.isNotBlank() }
