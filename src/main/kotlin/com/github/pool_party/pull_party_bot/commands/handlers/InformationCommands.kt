@@ -19,7 +19,6 @@ import com.github.pool_party.pull_party_bot.database.ChatDao
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.PartyDao
 
-
 class StartCommand : AbstractCommand("start", "awake the bot", HELP_START) {
 
     override fun Bot.action(message: Message, args: String?) {
@@ -49,7 +48,6 @@ class HelpCommand(private val helpMessages: Map<String, String>) :
             "Markdown"
         )
     }
-
 }
 
 class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
