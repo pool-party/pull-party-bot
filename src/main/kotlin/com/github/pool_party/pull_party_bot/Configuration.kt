@@ -36,4 +36,6 @@ object Configuration {
     val DEVELOP_CHAT_ID = configuration[Key("develop.chat.id", longType)]
 
     val PROHIBITED_SYMBOLS = "!,.?:;()".toList()
+
+    const val JARO_WINKLER_SIMILARITY = 0.863
 }

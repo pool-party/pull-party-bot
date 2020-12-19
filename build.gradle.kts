@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.4.0"
+    id("org.jetbrains.kotlin.jvm") version "1.4.20"
 }
 
 group = "org.pool-party"
@@ -27,6 +27,8 @@ dependencies {
 
     implementation("org.slf4j:slf4j-simple:2.0.0-alpha1")
     implementation("io.github.microutils:kotlin-logging:2.0.3")
+
+    implementation("info.debatty:java-string-similarity:2.0.0")
 }
 
 tasks.withType<Jar> {

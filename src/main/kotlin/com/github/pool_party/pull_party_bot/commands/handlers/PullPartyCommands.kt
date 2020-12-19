@@ -10,6 +10,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import info.debatty.java.stringsimilarity.JaroWinkler
 
 class ImplicitPartyHandler(private val partyDao: PartyDao) {
 
@@ -68,7 +69,7 @@ private fun Bot.handleParty(
     onFailure: () -> Unit = {}
 ) {
     val chatId = message.chat.id
-    var failure = false
+    var failed = mutableListOf<String>()
 
     val res = partyNames
         .map { it.toLowerCase() }
@@ -79,7 +80,7 @@ private fun Bot.handleParty(
             } else {
                 val users = partyDao.getByIdAndName(chatId, it)
                 if (users.isNullOrBlank()) {
-                    failure = true
+                    failed.add(it)
                 }
                 users
             }
@@ -90,8 +91,25 @@ private fun Bot.handleParty(
 
     sendMessage(chatId, res, replyTo = message.message_id)
 
-    if (failure) {
+    if (failed.isNotEmpty()) {
         onFailure()
+    }
+
+    val parties = partyDao.getAll(chatId).map { it.name }
+    val similarityAlgorithm = JaroWinkler()
+
+    val suggestions = failed.asSequence()
+        .mapNotNull { fail ->
+            parties.asSequence()
+                .filter { similarityAlgorithm.similarity(it, fail) >= Configuration.JARO_WINKLER_SIMILARITY }
+                .firstOrNull()
+                ?.to(fail)
+        }
+        .map { (possible, fail) -> "Perhaps you meant `@$possible` instead of @$fail" }
+        .joinToString("\n")
+
+    if (suggestions.isNotEmpty()) {
+        sendMessage(chatId, suggestions, "Markdown")
     }
 }
 
