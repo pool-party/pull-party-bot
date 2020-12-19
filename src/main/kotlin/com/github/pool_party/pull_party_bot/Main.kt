@@ -3,7 +3,7 @@ package com.github.pool_party.pull_party_bot
 import com.elbekD.bot.Bot
 import com.elbekD.bot.server
 import com.elbekD.bot.util.AllowedUpdate
-import com.github.pool_party.pull_party_bot.commands.initPingCommandHandlers
+import com.github.pool_party.pull_party_bot.commands.initHandlers
 import com.github.pool_party.pull_party_bot.database.initDB
 
 fun main() {
@@ -18,7 +18,7 @@ fun main() {
             allowedUpdates = listOf(AllowedUpdate.Message)
 
             server {
-                host = "0.0.0.0"
+                host = Configuration.HOST
                 port = Configuration.PORT
             }
         }
@@ -30,6 +30,6 @@ fun main() {
         println(e.message)
         return
     }
-    bot.initPingCommandHandlers()
+    bot.initHandlers()
     bot.start()
 }

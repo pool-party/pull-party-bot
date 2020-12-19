@@ -1,5 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands
 
+import com.github.pool_party.pull_party_bot.Configuration
+
 // Comment template:
 // """
 // Interaction message
@@ -97,7 +99,7 @@ val HELP_CREATE =
     Party should consist of at least one user
     You can enter users with or without `@` symbol
     @admins is a reserved party and already exists
-    `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
+    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
     """.trimIndent()
 
 val HELP_CHANGE =
@@ -348,7 +350,7 @@ val ON_PARTY_NAME_FAIL =
     As you name the boat, so shall it float. ☝️
 
     Party name should consist of less than 50 non-blank symbols
-    `@`, ${PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
+    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
     Type `/help` for more information
     """.trimIndent()
