@@ -14,11 +14,21 @@ interface ChatDao {
 
 class ChatDaoImpl : ChatDao {
 
+    private val rudeCache = mutableMapOf<Long, Boolean>()
+
+    private fun invalidateCache(chatId: Long) {
+        rudeCache.remove(chatId)
+    }
+
     override fun getRude(chatId: Long): Boolean =
-        loggingTransaction("getRude($chatId)") { Chat.findById(chatId)?.isRude ?: false }
+        rudeCache.getOrPut(chatId) {
+            loggingTransaction("getRude($chatId)") { Chat.findById(chatId)?.isRude ?: false }
+        }
 
     override fun setRude(chatId: Long, newMode: Boolean): Boolean =
         loggingTransaction("setRude($chatId, $newMode)") {
+            invalidateCache(chatId)
+
             val chat = Chat.findById(chatId) ?: Chat.new(chatId) {}
             val oldMode = chat.isRude
 
