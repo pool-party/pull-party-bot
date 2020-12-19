@@ -91,25 +91,26 @@ private fun Bot.handleParty(
 
     sendMessage(chatId, res, replyTo = message.message_id)
 
-    if (failed.isNotEmpty()) {
-        onFailure()
-    }
-
     val parties = partyDao.getAll(chatId).map { it.name }
     val similarityAlgorithm = JaroWinkler()
 
     val suggestions = failed.asSequence()
         .mapNotNull { fail ->
             parties.asSequence()
-                .filter { similarityAlgorithm.similarity(it, fail) >= Configuration.JARO_WINKLER_SIMILARITY }
-                .firstOrNull()
-                ?.to(fail)
+                .map { it to similarityAlgorithm.similarity(it, fail) }
+                .filter { it.second >= Configuration.JARO_WINKLER_SIMILARITY }
+                .maxByOrNull { it.second }
+                ?.let { it.first to fail }
         }
         .map { (possible, fail) -> "Perhaps you meant `@$possible` instead of @$fail" }
-        .joinToString("\n")
+        .toList()
+
+    if (suggestions.size != failed.size) {
+        onFailure()
+    }
 
     if (suggestions.isNotEmpty()) {
-        sendMessage(chatId, suggestions, "Markdown")
+        sendMessage(chatId, suggestions.joinToString("\n"), "Markdown")
     }
 }
 
