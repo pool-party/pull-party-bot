@@ -77,10 +77,13 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         val requestedParties = parsedArgs.asSequence()
             .flatMap { arg ->
                 val party = partyMap[arg]
+
+                val userSequence = partyMap.values.asSequence().filter { arg in it.users }
+
                 if (party != null) {
-                    sequenceOf(party)
+                    userSequence + party
                 } else {
-                    partyMap.values.asSequence().filter { arg in it.users }
+                    userSequence
                 }
             }
             .distinct()

@@ -75,17 +75,18 @@ abstract class AbstractChangeCommand(
             return
         }
 
-        val users = parsedArgs.asSequence().drop(1)
+        var (users, failedUsers) = parsedArgs.asSequence().drop(1)
             .map { it.replace("@", "") }.distinct()
-            .filter { it.matches("([a-z0-9_]{5,32})".toRegex()) }
-            .map { "@$it" }.toList()
+            .partition { it.matches("([a-z0-9_]{5,32})".toRegex()) }
+
+        users = users.map { "@$it" }
 
         if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
             sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
             return
         }
 
-        if (users.size < parsedArgs.drop(1).distinct().size) {
+        if (failedUsers.isNotEmpty()) {
             if (users.isEmpty()) {
                 sendMessage(
                     chatId,
