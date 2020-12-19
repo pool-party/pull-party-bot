@@ -4,6 +4,10 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_ADD
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_CHANGE
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_CREATE
+import com.github.pool_party.pull_party_bot.commands.messages.HELP_REMOVE
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CREATE_EMPTY
@@ -12,10 +16,6 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_NAME_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_REMOVE_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_SINGLETON_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_USERS_FAIL
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_ADD
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_CHANGE
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_CREATE
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_REMOVE
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
