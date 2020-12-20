@@ -23,11 +23,19 @@ interface PartyDao {
 
 class PartyDaoImpl : PartyDao {
 
+    private val partyUsersCache = mutableMapOf<Pair<Long, String>, String?>()
+
+    private fun invalidateCache(chatId: Long, partyName: String) {
+        partyUsersCache.remove(chatId to partyName)
+    }
+
     override fun getAll(chatId: Long): List<Party> =
         loggingTransaction("getAll($chatId)") { Chat.findById(chatId)?.parties?.toList() } ?: emptyList()
 
     override fun getByIdAndName(chatId: Long, partyName: String): String? =
-        loggingTransaction("getByIdAndName($chatId, $partyName)") { Party.find(chatId, partyName)?.users }
+        partyUsersCache.getOrPut(chatId to partyName) {
+            loggingTransaction("getByIdAndName($chatId, $partyName)") { Party.find(chatId, partyName)?.users }
+        }
 
     override fun create(chatId: Long, partyName: String, userList: List<String>): Boolean =
         loggingTransaction("create($chatId, $partyName, $userList)") {
@@ -57,6 +65,8 @@ class PartyDaoImpl : PartyDao {
 
     override fun delete(chatId: Long, partyName: String): Boolean =
         loggingTransaction("delete($chatId, $partyName)") {
+            invalidateCache(chatId, partyName)
+
             val party = Party.find(chatId, partyName)
             party?.delete()
 
@@ -69,6 +79,8 @@ class PartyDaoImpl : PartyDao {
         transform: (MutableSet<String>) -> Collection<String>
     ): Boolean =
         loggingTransaction("changeUsers($chatId, $partyName)") {
+            invalidateCache(chatId, partyName)
+
             val party = Party.find(chatId, partyName) ?: return@loggingTransaction false
             val newUsers = transform(party.users.split(' ').toMutableSet())
             if (newUsers.isEmpty() || newUsers.singleOrNull() == "@${party.name}") {
