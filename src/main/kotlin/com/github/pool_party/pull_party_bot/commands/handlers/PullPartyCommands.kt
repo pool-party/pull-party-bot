@@ -69,7 +69,7 @@ private fun Bot.handleParty(
     onFailure: () -> Unit = {}
 ) {
     val chatId = message.chat.id
-    var failed = mutableListOf<String>()
+    val failed = mutableListOf<String>()
 
     val res = partyNames
         .map { it.toLowerCase() }
@@ -89,7 +89,9 @@ private fun Bot.handleParty(
         .distinct()
         .joinToString(" ")
 
-    sendMessage(chatId, res, replyTo = message.message_id)
+    if (res.isNotBlank()) sendMessage(chatId, res, replyTo = message.message_id)
+
+    if (failed.isEmpty()) return
 
     val parties = partyDao.getAll(chatId).map { it.name }
     val similarityAlgorithm = JaroWinkler()
