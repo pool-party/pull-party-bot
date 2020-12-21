@@ -20,20 +20,20 @@ object Configuration {
             else it
         }
 
-    val APP_URL = configuration[Key("app.url", stringType)]
-    val USER_NAME = configuration[Key("username", stringType)]
-    val PORT = configuration[Key("port", intType)]
+    val APP_URL by lazy { configuration[Key("app.url", stringType)] }
+    val USER_NAME by lazy { configuration[Key("username", stringType)] }
+    val PORT by lazy { configuration[Key("port", intType)] }
     const val HOST = "0.0.0.0"
 
-    val IS_LONGPOLL = configuration[Key("longpoll", booleanType)]
+    val IS_LONGPOLL by lazy { configuration[Key("longpoll", booleanType)] }
 
-    val TELEGRAM_TOKEN = configuration[Key("telegram.token", stringType)]
+    val TELEGRAM_TOKEN by lazy { configuration[Key("telegram.token", stringType)] }
 
-    val DATABASE_URL = configuration[Key("jdbc.database.url", stringType)]
-    val DATABASE_USERNAME = configuration[Key("jdbc.database.username", stringType)]
-    val DATABASE_PASSWORD = configuration[Key("jdbc.database.password", stringType)]
+    val DATABASE_URL by lazy { configuration[Key("jdbc.database.url", stringType)] }
+    val DATABASE_USERNAME by lazy { configuration[Key("jdbc.database.username", stringType)] }
+    val DATABASE_PASSWORD by lazy { configuration[Key("jdbc.database.password", stringType)] }
 
-    val DEVELOP_CHAT_ID = configuration[Key("develop.chat.id", longType)]
+    val DEVELOP_CHAT_ID by lazy { configuration[Key("develop.chat.id", longType)] }
 
     val PROHIBITED_SYMBOLS = "!,.?:;()".toList()
 
