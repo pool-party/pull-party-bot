@@ -31,7 +31,6 @@ dependencies {
     implementation("info.debatty:java-string-similarity:2.0.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.21")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.4.21")
     testImplementation("io.mockk:mockk:1.10.3")
 }
 
