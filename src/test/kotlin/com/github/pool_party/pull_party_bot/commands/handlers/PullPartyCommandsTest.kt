@@ -8,8 +8,8 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import io.mockk.MockKAnnotations
 import io.mockk.every
-import io.mockk.verify
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
