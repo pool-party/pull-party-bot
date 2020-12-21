@@ -37,7 +37,7 @@ internal class DeleteCommandTest : AbstractCommandTest() {
     }
 
     @Test
-    fun `deleting "admins" party`() {
+    fun `deleting 'admins' party`() {
         chatMembers(chatMember)
 
         onMessage(message, "admins")

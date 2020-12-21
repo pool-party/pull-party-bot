@@ -138,7 +138,7 @@ internal abstract class AbstractCommandTest {
     }
 
     protected fun onMessage(message: Message, args: String? = null) {
-        runBlocking { GlobalScope.launch { action(message, args) } }
+        runBlocking { GlobalScope.launch { action(message, args) }.join() }
     }
 
     protected fun verifyMessage(chatId: Long) {
