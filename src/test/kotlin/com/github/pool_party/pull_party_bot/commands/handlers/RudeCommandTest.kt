@@ -9,9 +9,9 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.CompletableFuture
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -135,13 +135,15 @@ internal class RudeCommandTest {
         }
     }
 
-    //TODO check messages for all tests.
+    // TODO check messages for all tests.
     @Test
     fun correctOnSameCall() {
         every { chatDao.getRude(message.chat.id) } returns true
-        every { chatDao.setRude(
-            message.chat.id,
-            true)
+        every {
+            chatDao.setRude(
+                message.chat.id,
+                true
+            )
         } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
         if (GlobalScope.launch { action(message, "on") }.isCompleted) {
@@ -158,9 +160,11 @@ internal class RudeCommandTest {
     @Test
     fun correctOnNewCall() {
         every { chatDao.getRude(message.chat.id) } returns false
-        every { chatDao.setRude(
-            message.chat.id,
-            true)
+        every {
+            chatDao.setRude(
+                message.chat.id,
+                true
+            )
         } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
         if (GlobalScope.launch { action(message, "on") }.isCompleted) {

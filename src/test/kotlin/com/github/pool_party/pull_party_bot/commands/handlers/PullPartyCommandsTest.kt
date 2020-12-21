@@ -10,9 +10,9 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.verify
 import io.mockk.impl.annotations.MockK
-import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.CompletableFuture
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
