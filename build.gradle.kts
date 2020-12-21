@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.4.20"
+    id("org.jetbrains.kotlin.jvm") version "1.4.21"
 }
 
 group = "org.pool-party"
@@ -33,7 +33,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.21")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.4.21")
     testImplementation("io.mockk:mockk:1.10.3")
-    testRuntimeOnly("com.natpryce:konfig:1.6.10.0")
 }
 
 tasks.withType<Jar> {
