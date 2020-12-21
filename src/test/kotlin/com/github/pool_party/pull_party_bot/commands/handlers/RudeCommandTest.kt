@@ -3,17 +3,15 @@ package com.github.pool_party.pull_party_bot.commands.handlers
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Chat
 import com.elbekD.bot.types.Message
-import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_RUDE_FAIL
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
-import com.natpryce.konfig.stringType
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.concurrent.CompletableFuture
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -109,8 +107,8 @@ internal class RudeCommandTest {
 
     @Test
     fun wrongArgCall() {
-        if (GlobalScope.launch { action(message, "party") }.isCompleted
-            && GlobalScope.launch { action(message, "rude") }.isCompleted
+        if (GlobalScope.launch { action(message, "party") }.isCompleted &&
+            GlobalScope.launch { action(message, "rude") }.isCompleted
         ) {
             verify(exactly = 2) {
                 bot.sendMessage(
@@ -124,8 +122,8 @@ internal class RudeCommandTest {
 
     @Test
     fun wrongAmountOfArgsCall() {
-        if (GlobalScope.launch { action(message, "") }.isCompleted
-            && GlobalScope.launch { action(message, "first second") }.isCompleted
+        if (GlobalScope.launch { action(message, "") }.isCompleted &&
+            GlobalScope.launch { action(message, "first second") }.isCompleted
         ) {
             verify(exactly = 2) {
                 bot.sendMessage(
@@ -141,7 +139,10 @@ internal class RudeCommandTest {
     @Test
     fun correctOnSameCall() {
         every { chatDao.getRude(message.chat.id) } returns true
-        every { chatDao.setRude(message.chat.id, true) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
+        every { chatDao.setRude(
+            message.chat.id,
+            true)
+        } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
         if (GlobalScope.launch { action(message, "on") }.isCompleted) {
             verify(exactly = 1) {
@@ -157,7 +158,10 @@ internal class RudeCommandTest {
     @Test
     fun correctOnNewCall() {
         every { chatDao.getRude(message.chat.id) } returns false
-        every { chatDao.setRude(message.chat.id, true) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
+        every { chatDao.setRude(
+            message.chat.id,
+            true)
+        } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
         if (GlobalScope.launch { action(message, "on") }.isCompleted) {
             verify(exactly = 1) {
@@ -173,7 +177,12 @@ internal class RudeCommandTest {
     @Test
     fun correctOffSameCall() {
         every { chatDao.getRude(message.chat.id) } returns false
-        every { chatDao.setRude(message.chat.id, false) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
+        every {
+            chatDao.setRude(
+                message.chat.id,
+                false
+            )
+        } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
         if (GlobalScope.launch { action(message, "off") }.isCompleted) {
             verify(exactly = 1) {
@@ -189,7 +198,12 @@ internal class RudeCommandTest {
     @Test
     fun correctOffNewCall() {
         every { chatDao.getRude(message.chat.id) } returns true
-        every { chatDao.setRude(message.chat.id, false) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
+        every {
+            chatDao.setRude(
+                message.chat.id,
+                false
+            )
+        } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
         if (GlobalScope.launch { action(message, "off") }.isCompleted) {
             verify(exactly = 1) {

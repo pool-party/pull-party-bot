@@ -10,12 +10,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.verify
 import io.mockk.impl.annotations.MockK
+import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.concurrent.CompletableFuture
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-
 
 internal class PullPartyCommandsTest {
     @MockK
@@ -111,11 +110,10 @@ internal class PullPartyCommandsTest {
         party.onMessage(bot)
     }
 
-
     @Test
     fun emptyPartyCall() {
-        if (GlobalScope.launch { action(groupMessage, "") }.isCompleted
-            && GlobalScope.launch { action(groupMessage, null) }.isCompleted
+        if (GlobalScope.launch { action(groupMessage, "") }.isCompleted &&
+            GlobalScope.launch { action(groupMessage, null) }.isCompleted
         ) {
             verify(exactly = 2) {
                 bot.sendMessage(
