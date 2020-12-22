@@ -2,7 +2,10 @@ package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.BotCommand
+import com.elbekD.bot.types.Chat
 import com.elbekD.bot.types.Message
+import com.elbekD.bot.types.ReplyKeyboard
+import com.elbekD.bot.types.User
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_CHANGE
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_SENDER_FAIL
@@ -12,7 +15,12 @@ import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
 
-interface Command {
+interface Interaction {
+
+    fun onMessage(bot: Bot)
+}
+
+interface Command : Interaction {
 
     /**
      * Command name starting with "/".
@@ -28,8 +36,6 @@ interface Command {
      * Command help message that will be displayed on command /help <command>
      */
     val helpMessage: String
-
-    fun onMessage(bot: Bot)
 
     fun toBotCommand() = BotCommand(command, description)
 }
@@ -64,13 +70,15 @@ abstract class CaseCommand(command: String, description: String, helpMessage: St
         chatId: Long,
         message: String,
         parseMode: String? = null,
-        replyTo: Int? = null
+        replyTo: Int? = null,
+        markup: ReplyKeyboard? = null
     ) =
         sendMessage(
             chatId,
             if (chatDao.getRude(chatId)) message.toUpperCase() else message,
             parseMode,
-            replyTo = replyTo
+            replyTo = replyTo,
+            markup = markup
         )
 }
 
@@ -80,21 +88,24 @@ abstract class AdministratorCommand(command: String, description: String, helpMe
     abstract fun Bot.mainAction(message: Message, args: String?)
 
     override fun Bot.action(message: Message, args: String?) {
-        val sender = message.from
-        val chatId = message.chat.id
-        if (sender == null) {
-            sendMessage(chatId, ON_SENDER_FAIL, "Markdown")
-            return
-        }
-
-        val chatType = message.chat.type
-        if ((chatType == "group" || chatType == "supergroup") &&
-            getChatAdministrators(chatId).join().all { it.user != sender }
-        ) {
-            sendMessage(chatId, ON_PERMISSION_DENY, "Markdown")
-            return
-        }
-
-        mainAction(message, args)
+        if (validateAdministrator(message.from, message.chat)) mainAction(message, args)
     }
+}
+
+fun Bot.validateAdministrator(user: User?, chat: Chat, sendMessage: Boolean = true): Boolean {
+    val chatId = chat.id
+
+    if (user == null) {
+        sendMessage(chatId, ON_SENDER_FAIL, "Markdown")
+        return false
+    }
+
+    val chatType = chat.type
+    if ((chatType == "group" || chatType == "supergroup") &&
+        getChatAdministrators(chatId).join().all { it.user != user }
+    ) {
+        if (sendMessage) sendMessage(chatId, ON_PERMISSION_DENY, "Markdown")
+        return false
+    }
+    return true
 }

@@ -3,11 +3,14 @@ package com.github.pool_party.pull_party_bot
 import com.natpryce.konfig.ConfigurationProperties
 import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
+import com.natpryce.konfig.PropertyLocation
 import com.natpryce.konfig.booleanType
+import com.natpryce.konfig.doubleType
 import com.natpryce.konfig.intType
 import com.natpryce.konfig.longType
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
+import kotlin.reflect.KProperty
 
 object Configuration {
 
@@ -20,22 +23,28 @@ object Configuration {
             else it
         }
 
-    val APP_URL by lazy { configuration[Key("app.url", stringType)] }
-    val USER_NAME by lazy { configuration[Key("username", stringType)] }
-    val PORT by lazy { configuration[Key("port", intType)] }
-    const val HOST = "0.0.0.0"
+    val APP_URL by Configured("app.url", stringType)
+    val USER_NAME by Configured("username", stringType)
+    val PORT by Configured("port", intType)
+    val HOST by Configured("host", stringType)
 
-    val IS_LONGPOLL by lazy { configuration[Key("longpoll", booleanType)] }
+    val IS_LONGPOLL by Configured("longpoll", booleanType)
 
-    val TELEGRAM_TOKEN by lazy { configuration[Key("telegram.token", stringType)] }
+    val TELEGRAM_TOKEN by Configured("telegram.token", stringType)
 
-    val DATABASE_URL by lazy { configuration[Key("jdbc.database.url", stringType)] }
-    val DATABASE_USERNAME by lazy { configuration[Key("jdbc.database.username", stringType)] }
-    val DATABASE_PASSWORD by lazy { configuration[Key("jdbc.database.password", stringType)] }
+    val DATABASE_URL by Configured("jdbc.database.url", stringType)
+    val DATABASE_USERNAME by Configured("jdbc.database.username", stringType)
+    val DATABASE_PASSWORD by Configured("jdbc.database.password", stringType)
 
-    val DEVELOP_CHAT_ID by lazy { configuration[Key("develop.chat.id", longType)] }
+    val DEVELOP_CHAT_ID by Configured("develop.chat.id", longType)
 
     val PROHIBITED_SYMBOLS = "!,.?:;()".toList()
 
-    const val JARO_WINKLER_SIMILARITY = 0.863
+    val STALE_PARTY_TIME_WEEKS by Configured("stalePartyTimeWeeks", intType)
+
+    val JARO_WINKLER_SIMILARITY by Configured("partySimilarity.coefficient", doubleType)
+
+    private class Configured<T>(private val name: String, private val parse: (PropertyLocation, String) -> T) {
+        operator fun getValue(thisRef: Configuration, property: KProperty<*>): T = configuration[Key(name, parse)]
+    }
 }

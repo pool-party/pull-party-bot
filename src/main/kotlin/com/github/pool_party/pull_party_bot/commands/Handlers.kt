@@ -12,6 +12,7 @@ import com.github.pool_party.pull_party_bot.commands.handlers.ImplicitPartyHandl
 import com.github.pool_party.pull_party_bot.commands.handlers.ListCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.PartyCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RemoveCommand
+import com.github.pool_party.pull_party_bot.commands.handlers.RemoveSuggestionCallback
 import com.github.pool_party.pull_party_bot.commands.handlers.RudeCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.StartCommand
 import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
@@ -24,7 +25,7 @@ fun Bot.initHandlers() {
     val chatDaoImpl = ChatDaoImpl()
 
     // TODO probably use some kind of injections
-    val commands = mutableListOf(
+    val interactions: MutableList<Interaction> = mutableListOf(
         StartCommand(),
         ListCommand(partyDaoImpl, chatDaoImpl),
         PartyCommand(partyDaoImpl),
@@ -35,15 +36,16 @@ fun Bot.initHandlers() {
         AddCommand(partyDaoImpl, chatDaoImpl),
         RemoveCommand(partyDaoImpl, chatDaoImpl),
         RudeCommand(chatDaoImpl),
-        FeedbackCommand()
+        FeedbackCommand(),
+        ImplicitPartyHandler(partyDaoImpl),
+        RemoveSuggestionCallback(partyDaoImpl)
     )
 
+    val commands = interactions.mapNotNull { it as? Command }
+
     val helpCommand = HelpCommand(commands.associate { it.command.removePrefix("/") to it.helpMessage })
-    commands.add(helpCommand)
+    interactions.add(helpCommand)
 
-    val implicitPartyHandler = ImplicitPartyHandler(partyDaoImpl)
-
-    implicitPartyHandler.onMessage(this)
-    commands.forEach { it.onMessage(this) }
+    interactions.forEach { it.onMessage(this) }
     setMyCommands(commands.map { it.toBotCommand() })
 }

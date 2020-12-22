@@ -1,6 +1,8 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.elbekD.bot.Bot
+import com.elbekD.bot.types.InlineKeyboardButton
+import com.elbekD.bot.types.InlineKeyboardMarkup
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
@@ -18,6 +20,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import org.joda.time.DateTime
 
 class StartCommand : AbstractCommand("start", "awake the bot", HELP_START) {
 
@@ -69,33 +72,42 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             } else {
                 sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
             }
+        } else {
+            val partyMap = list.associateBy { it.name }
+            val requestedParties = parsedArgs.asSequence()
+                .flatMap { arg ->
+                    val party = partyMap[arg]
 
-            return
-        }
+                    val userSequence = partyMap.values.asSequence().filter { arg in it.users }
 
-        val partyMap = list.associateBy { it.name }
-        val requestedParties = parsedArgs.asSequence()
-            .flatMap { arg ->
-                val party = partyMap[arg]
-
-                val userSequence = partyMap.values.asSequence().filter { arg in it.users }
-
-                if (party != null) {
-                    userSequence + party
-                } else {
-                    userSequence
+                    if (party != null) {
+                        userSequence + party
+                    } else {
+                        userSequence
+                    }
                 }
-            }
-            .distinct()
-            .map { it.format() }
-            .joinToString("\n")
+                .distinct()
+                .map { it.format() }
+                .joinToString("\n")
 
-        if (requestedParties.isNotBlank()) {
-            sendCaseMessage(chatId, ON_ARGUMENT_LIST_SUCCESS + requestedParties)
-            return
+            if (requestedParties.isNotBlank()) {
+                sendCaseMessage(chatId, ON_ARGUMENT_LIST_SUCCESS + requestedParties)
+            } else {
+                sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
+            }
         }
 
-        sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
+        val topLost = partyDao.getTopLost(chatId) ?: return
+
+        if (topLost.lastUse.plusWeeks(Configuration.STALE_PARTY_TIME_WEEKS) >= DateTime.now()) return
+
+        sendCaseMessage(
+            chatId,
+            "HEY, BITCHES, IT'S TIME TO KICK SOME MOTHERFUCKERS OUT",
+            markup = InlineKeyboardMarkup(
+                listOf(listOf(InlineKeyboardButton("Remove ${topLost.name}", callback_data = topLost.id.toString())))
+            )
+        )
     }
 }
 

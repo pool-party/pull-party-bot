@@ -3,10 +3,13 @@ package com.github.pool_party.pull_party_bot.database.dao
 import com.github.pool_party.pull_party_bot.database.Chat
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.loggingTransaction
+import org.joda.time.DateTime
 
 interface PartyDao {
 
     fun getAll(chatId: Long): List<Party>
+
+    fun getTopLost(chatId: Long): Party?
 
     fun getByIdAndName(chatId: Long, partyName: String): String?
 
@@ -19,6 +22,8 @@ interface PartyDao {
     fun changeUsers(chatId: Long, partyName: String, userList: List<String>): Boolean
 
     fun delete(chatId: Long, partyName: String): Boolean
+
+    fun delete(partyId: Int): String?
 }
 
 class PartyDaoImpl : PartyDao {
@@ -32,9 +37,18 @@ class PartyDaoImpl : PartyDao {
     override fun getAll(chatId: Long): List<Party> =
         loggingTransaction("getAll($chatId)") { Chat.findById(chatId)?.parties?.toList() } ?: emptyList()
 
+    override fun getTopLost(chatId: Long): Party? =
+        loggingTransaction("getTopLost($chatId)") { Party.topLost(chatId) }
+
     override fun getByIdAndName(chatId: Long, partyName: String): String? =
         partyUsersCache.getOrPut(chatId to partyName) {
             loggingTransaction("getByIdAndName($chatId, $partyName)") { Party.find(chatId, partyName)?.users }
+        }?.also { // TODO make it asynchronous
+            loggingTransaction("updateLastUse($chatId, $partyName)") {
+                Party.find(chatId, partyName)?.run {
+                    lastUse = DateTime.now()
+                }
+            }
         }
 
     override fun create(chatId: Long, partyName: String, userList: List<String>): Boolean =
@@ -71,6 +85,13 @@ class PartyDaoImpl : PartyDao {
             party?.delete()
 
             party != null
+        }
+
+    override fun delete(partyId: Int): String? =
+        loggingTransaction("delete($partyId)") {
+            val party = Party.findById(partyId)
+            party?.delete()
+            party?.name
         }
 
     private fun changeUsers(

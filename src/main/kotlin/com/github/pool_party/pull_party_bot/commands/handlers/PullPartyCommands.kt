@@ -4,6 +4,7 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
+import com.github.pool_party.pull_party_bot.commands.Interaction
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
@@ -12,12 +13,12 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_F
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import info.debatty.java.stringsimilarity.JaroWinkler
 
-class ImplicitPartyHandler(private val partyDao: PartyDao) {
+class ImplicitPartyHandler(private val partyDao: PartyDao) : Interaction {
 
     /**
      * Handle implicit `@party-name`-like calls
      */
-    fun onMessage(bot: Bot) = bot.onMessage { bot.action(it) }
+    override fun onMessage(bot: Bot) = bot.onMessage { bot.action(it) }
 
     private fun Bot.action(message: Message) {
         val text = message.text ?: message.caption
