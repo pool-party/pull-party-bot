@@ -2,16 +2,16 @@ package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
-import com.github.pool_party.pull_party_bot.commands.Interaction
+import com.github.pool_party.pull_party_bot.commands.Callback
+import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.validateAdministrator
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
-class RemoveSuggestionCallback(private val partyDao: PartyDao) : Interaction {
+class RemoveSuggestionCallback(private val partyDao: PartyDao) : Callback {
 
-    override fun onMessage(bot: Bot) = bot.onCallbackQuery { bot.process(it) }
+    override val callbackAction: CallbackAction = CallbackAction.DELETE
 
-    private suspend fun Bot.process(callbackQuery: CallbackQuery) {
-        val partyId = callbackQuery.data?.toIntOrNull() ?: return
+    override suspend fun Bot.process(callbackQuery: CallbackQuery, partyId: Int) {
         val message = callbackQuery.message ?: return
 
         if (!validateAdministrator(callbackQuery.from, message.chat, false)) {

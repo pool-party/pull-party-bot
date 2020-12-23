@@ -11,6 +11,7 @@ import com.github.pool_party.pull_party_bot.commands.handlers.HelpCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.ImplicitPartyHandler
 import com.github.pool_party.pull_party_bot.commands.handlers.ListCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.PartyCommand
+import com.github.pool_party.pull_party_bot.commands.handlers.PingCallback
 import com.github.pool_party.pull_party_bot.commands.handlers.RemoveCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RemoveSuggestionCallback
 import com.github.pool_party.pull_party_bot.commands.handlers.RudeCommand
@@ -23,6 +24,8 @@ fun Bot.initHandlers() {
     val partyDaoImpl = PartyDaoImpl()
 
     val chatDaoImpl = ChatDaoImpl()
+
+    val callbacks = listOf(RemoveSuggestionCallback(partyDaoImpl), PingCallback(partyDaoImpl))
 
     // TODO probably use some kind of injections
     val interactions: MutableList<Interaction> = mutableListOf(
@@ -38,7 +41,7 @@ fun Bot.initHandlers() {
         RudeCommand(chatDaoImpl),
         FeedbackCommand(),
         ImplicitPartyHandler(partyDaoImpl),
-        RemoveSuggestionCallback(partyDaoImpl)
+        CallbackDispatcher(callbacks.associateBy { it.callbackAction })
     )
 
     val commands = interactions.mapNotNull { it as? Command }

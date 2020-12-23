@@ -6,6 +6,8 @@ import com.elbekD.bot.types.InlineKeyboardMarkup
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
+import com.github.pool_party.pull_party_bot.commands.CallbackAction
+import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_FEEDBACK
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_LIST
@@ -20,6 +22,8 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.joda.time.DateTime
 
 class StartCommand : AbstractCommand("start", "awake the bot", HELP_START) {
@@ -105,7 +109,10 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             chatId,
             "HEY, BITCHES, IT'S TIME TO KICK SOME MOTHERFUCKERS OUT",
             markup = InlineKeyboardMarkup(
-                listOf(listOf(InlineKeyboardButton("Remove ${topLost.name}", callback_data = topLost.id.toString())))
+                listOf(listOf(InlineKeyboardButton(
+                    "Remove ${topLost.name}",
+                    callback_data = Json.encodeToString(CallbackData(CallbackAction.DELETE, topLost.id.value))
+                )))
             )
         )
     }

@@ -11,6 +11,8 @@ interface PartyDao {
 
     fun getTopLost(chatId: Long): Party?
 
+    fun getById(partyId: Int): Party?
+
     fun getByIdAndName(chatId: Long, partyName: String): String?
 
     fun create(chatId: Long, partyName: String, userList: List<String>): Boolean
@@ -39,6 +41,8 @@ class PartyDaoImpl : PartyDao {
 
     override fun getTopLost(chatId: Long): Party? =
         loggingTransaction("getTopLost($chatId)") { Party.topLost(chatId) }
+
+    override fun getById(partyId: Int) = loggingTransaction("getById($partyId)") { Party.findById(partyId) }
 
     override fun getByIdAndName(chatId: Long, partyName: String): String? =
         partyUsersCache.getOrPut(chatId to partyName) {
