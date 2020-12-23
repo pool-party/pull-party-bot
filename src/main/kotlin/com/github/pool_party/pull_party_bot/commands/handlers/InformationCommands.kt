@@ -109,10 +109,14 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             chatId,
             "HEY, BITCHES, IT'S TIME TO KICK SOME MOTHERFUCKERS OUT",
             markup = InlineKeyboardMarkup(
-                listOf(listOf(InlineKeyboardButton(
-                    "Remove ${topLost.name}",
-                    callback_data = Json.encodeToString(CallbackData(CallbackAction.DELETE, topLost.id.value))
-                )))
+                listOf(
+                    listOf(
+                        InlineKeyboardButton(
+                            "Remove ${topLost.name}",
+                            callback_data = Json.encodeToString(CallbackData(CallbackAction.DELETE, topLost.id.value))
+                        )
+                    )
+                )
             )
         )
     }
