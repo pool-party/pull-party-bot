@@ -3,6 +3,8 @@ package com.github.pool_party.pull_party_bot.database.dao
 import com.github.pool_party.pull_party_bot.database.Chat
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.loggingTransaction
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
 interface PartyDao {
@@ -44,16 +46,19 @@ class PartyDaoImpl : PartyDao {
 
     override fun getById(partyId: Int) = loggingTransaction("getById($partyId)") { Party.findById(partyId) }
 
-    override fun getByIdAndName(chatId: Long, partyName: String): String? =
-        partyUsersCache.getOrPut(chatId to partyName) {
+    override fun getByIdAndName(chatId: Long, partyName: String): String? {
+        val users = partyUsersCache.getOrPut(chatId to partyName) {
             loggingTransaction("getByIdAndName($chatId, $partyName)") { Party.find(chatId, partyName)?.users }
-        }?.also { // TODO make it asynchronous
+        }
+        GlobalScope.launch {
             loggingTransaction("updateLastUse($chatId, $partyName)") {
                 Party.find(chatId, partyName)?.run {
                     lastUse = DateTime.now()
                 }
             }
         }
+        return users
+    }
 
     override fun create(chatId: Long, partyName: String, userList: List<String>): Boolean =
         loggingTransaction("create($chatId, $partyName, $userList)") {
