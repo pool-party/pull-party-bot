@@ -12,6 +12,7 @@ import com.github.pool_party.pull_party_bot.commands.Interaction
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_MISSPELL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
@@ -121,9 +122,7 @@ private fun Bot.handleParty(
     if (suggestions.isNotEmpty()) {
         sendMessage(
             chatId,
-            suggestions.asSequence()
-                .map { (possible, failed) -> "Perhaps you meant @${possible.name} instead of @$failed" }
-                .joinToString("\n"),
+            ON_PARTY_MISSPELL,
             "Markdown",
             markup = InlineKeyboardMarkup(
                 suggestions.map { (it, _) ->

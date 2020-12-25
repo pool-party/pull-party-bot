@@ -187,3 +187,8 @@ val ON_STALE_PARTY_REMOVE =
     """
     Some of the parties are more dead than alive, you might get rid of a few:
     """.trimIndent()
+
+val ON_PARTY_MISSPELL =
+    """
+    Hmm, sounds familiar... Perhaps you meant:
+    """.trimIndent()
