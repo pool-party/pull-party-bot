@@ -1,23 +1,31 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.elbekD.bot.Bot
+import com.elbekD.bot.types.InlineKeyboardButton
+import com.elbekD.bot.types.InlineKeyboardMarkup
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
+import com.github.pool_party.pull_party_bot.commands.CallbackAction
+import com.github.pool_party.pull_party_bot.commands.CallbackData
+import com.github.pool_party.pull_party_bot.commands.Interaction
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_MISSPELL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import info.debatty.java.stringsimilarity.JaroWinkler
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
-class ImplicitPartyHandler(private val partyDao: PartyDao) {
+class ImplicitPartyHandler(private val partyDao: PartyDao) : Interaction {
 
     /**
      * Handle implicit `@party-name`-like calls
      */
-    fun onMessage(bot: Bot) = bot.onMessage { bot.action(it) }
+    override fun onMessage(bot: Bot) = bot.onMessage { bot.action(it) }
 
     private fun Bot.action(message: Message) {
         val text = message.text ?: message.caption
@@ -93,18 +101,18 @@ private fun Bot.handleParty(
 
     if (failed.isEmpty()) return
 
-    val parties = partyDao.getAll(chatId).map { it.name }
+    val parties = partyDao.getAll(chatId)
     val similarityAlgorithm = JaroWinkler()
 
     val suggestions = failed.asSequence()
         .mapNotNull { fail ->
             parties.asSequence()
-                .map { it to similarityAlgorithm.similarity(it, fail) }
+                .map { it to similarityAlgorithm.similarity(it.name, fail) }
                 .filter { it.second >= Configuration.JARO_WINKLER_SIMILARITY }
                 .maxByOrNull { it.second }
                 ?.let { it.first to fail }
         }
-        .map { (possible, fail) -> "Perhaps you meant `@$possible` instead of @$fail" }
+        .take(10)
         .toList()
 
     if (suggestions.size != failed.size) {
@@ -112,7 +120,21 @@ private fun Bot.handleParty(
     }
 
     if (suggestions.isNotEmpty()) {
-        sendMessage(chatId, suggestions.joinToString("\n"), "Markdown")
+        sendMessage(
+            chatId,
+            ON_PARTY_MISSPELL,
+            "Markdown",
+            markup = InlineKeyboardMarkup(
+                suggestions.map { (it, _) ->
+                    listOf(
+                        InlineKeyboardButton(
+                            "@${it.name}",
+                            callback_data = Json.encodeToString(CallbackData(CallbackAction.PING, it.id.value))
+                        )
+                    )
+                }
+            )
+        )
     }
 }
 

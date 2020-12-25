@@ -42,6 +42,11 @@ val ON_PERMISSION_DENY =
     Type `/help delete` or `/help clear` for more information
     """.trimIndent()
 
+val ON_PERMISSION_DENY_CALLBACK =
+    """
+    Action is available for admins only. 🙅‍
+    """.trimIndent()
+
 val ON_ADMINS_PARTY_CHANGE =
     """
     I would be careful disturbing these ladies and gentlemen. 🤫
