@@ -11,6 +11,7 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
     override val callbackAction = CallbackAction.PING
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyId: Int) {
+        answerCallbackQuery(callbackQuery.id)
         val message = callbackQuery.message ?: return
         val party = partyDao.getById(partyId) ?: return
         sendMessage(message.chat.id, party.users)

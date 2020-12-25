@@ -29,7 +29,6 @@ class CallbackDispatcher(val callbacks: Map<CallbackAction, Callback>) : Interac
 
     override fun onMessage(bot: Bot) = bot.onCallbackQuery {
         logger.info { "callback ${it.from.username}@${it.message?.chat?.title}: ${it.data}" }
-        bot.answerCallbackQuery(it.id)
 
         val callbackData = it.data?.let { Json.decodeFromString<CallbackData>(it) } ?: return@onCallbackQuery
         val callback = callbacks[callbackData.callbackAction] ?: return@onCallbackQuery
