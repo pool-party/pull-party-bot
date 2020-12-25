@@ -182,3 +182,8 @@ val ON_ARGUMENT_LIST_EMPTY =
 
     Type `/help list` for more information
     """.trimIndent()
+
+val ON_STALE_PARTY_REMOVE =
+    """
+    Some of the parties are more dead than alive, you might get rid of a few:
+    """.trimIndent()

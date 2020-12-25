@@ -5,6 +5,7 @@ import com.elbekD.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY_CALLBACK
 import com.github.pool_party.pull_party_bot.commands.validateAdministrator
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -22,7 +23,7 @@ class RemoveSuggestionCallback(private val partyDao: PartyDao) : Callback {
         if (!validateAdministrator(callbackQuery.from, message.chat, false)) {
             answerCallbackQuery(
                 callbackQuery.id,
-                ON_PERMISSION_DENY
+                ON_PERMISSION_DENY_CALLBACK
             )
             return
         }

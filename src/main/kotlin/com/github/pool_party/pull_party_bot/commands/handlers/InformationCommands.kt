@@ -9,16 +9,7 @@ import com.github.pool_party.pull_party_bot.commands.AbstractCommand
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_FEEDBACK
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_LIST
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_MSG
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_START
-import com.github.pool_party.pull_party_bot.commands.messages.INIT_MSG
-import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_EMPTY
-import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
-import com.github.pool_party.pull_party_bot.commands.messages.ON_HELP_ERROR
-import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
-import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
+import com.github.pool_party.pull_party_bot.commands.messages.*
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
@@ -107,7 +98,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
         sendCaseMessage(
             chatId,
-            "HEY, BITCHES, IT'S TIME TO KICK SOME MOTHERFUCKERS OUT",
+            ON_STALE_PARTY_REMOVE,
             markup = InlineKeyboardMarkup(
                 listOf(
                     listOf(
