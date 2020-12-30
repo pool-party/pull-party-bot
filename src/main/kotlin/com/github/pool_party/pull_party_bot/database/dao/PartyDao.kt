@@ -98,9 +98,12 @@ class PartyDaoImpl : PartyDao {
 
     override fun delete(partyId: Int): String? =
         loggingTransaction("delete($partyId)") {
-            val party = Party.findById(partyId)
-            party?.delete()
-            party?.name
+            val party = Party.findById(partyId) ?: return@loggingTransaction null
+
+            invalidateCache(party.chat.id.value, party.name)
+
+            party.delete()
+            party.name
         }
 
     private fun changeUsers(
