@@ -7,7 +7,7 @@ import io.mockk.mockk
 
 class PartyInMemoryDao : PartyDao {
 
-    private var partyId = 0;
+    private var partyId = 0
     private val parties = mutableMapOf<Long, MutableMap<String, Party>>()
 
     private fun party(partyName: String, userList: List<String>): Party {
