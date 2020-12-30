@@ -22,7 +22,7 @@ class PartyInMemoryDao : PartyDao {
     override fun getAll(chatId: Long): List<Party> = parties[chatId]?.values?.toList() ?: emptyList()
 
     override fun getTopLost(chatId: Long): Party? =
-        parties[chatId]?.values?.sortedByDescending { Parties.lastUse }?.take(1)?.singleOrNull()
+        parties[chatId]?.values?.minByOrNull { Parties.lastUse }
 
     override fun getById(partyId: Int): Party? =
         parties.values.map { it.values.find { party -> party.id.value == partyId } }.singleOrNull()
