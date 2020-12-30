@@ -1,21 +1,31 @@
 package com.github.pool_party.pull_party_bot.database.dao
 
+import com.github.pool_party.pull_party_bot.database.Parties
 import com.github.pool_party.pull_party_bot.database.Party
 import io.mockk.every
 import io.mockk.mockk
 
 class PartyInMemoryDao : PartyDao {
 
+    private var partyId = 0;
     private val parties = mutableMapOf<Long, MutableMap<String, Party>>()
 
     private fun party(partyName: String, userList: List<String>): Party {
         val party = mockk<Party>()
+        val newPartyId = partyId++
+        every { party.id.value } returns newPartyId
         every { party.name } returns partyName
         every { party.users } returns userList.joinToString(" ")
         return party
     }
 
     override fun getAll(chatId: Long): List<Party> = parties[chatId]?.values?.toList() ?: emptyList()
+
+    override fun getTopLost(chatId: Long): Party? =
+        parties[chatId]?.values?.sortedByDescending { Parties.lastUse }?.take(1)?.singleOrNull()
+
+    override fun getById(partyId: Int): Party? =
+        parties.values.map { it.values.find { party -> party.id.value == partyId } }.singleOrNull()
 
     override fun getByIdAndName(chatId: Long, partyName: String): String? = parties[chatId]?.get(partyName)?.users
 
@@ -49,5 +59,11 @@ class PartyInMemoryDao : PartyDao {
         if (chatId !in parties || partyName !in parties[chatId]!!) return false
         parties[chatId]!!.remove(partyName)
         return true
+    }
+
+    override fun delete(partyId: Int): String? {
+        val party = getById(partyId) ?: return null
+        parties.values.map { it.values.remove(party) }
+        return party.name
     }
 }
