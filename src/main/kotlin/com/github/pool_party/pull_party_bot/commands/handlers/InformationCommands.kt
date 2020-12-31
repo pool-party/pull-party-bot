@@ -20,6 +20,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_HELP_ERROR
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_STALE_PARTY_REMOVE
+import com.github.pool_party.pull_party_bot.commands.messages.onFeedback
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
@@ -132,7 +133,7 @@ class FeedbackCommand : AbstractCommand("feedback", "share your ideas and experi
 
         sendMessage(
             developChatId,
-            "New #feedback from @${message.from?.username} in \"${message.chat.title}\":\n\n" + parsedArgs
+            onFeedback(message.from?.username, message.chat.title) + parsedArgs
         )
     }
 }

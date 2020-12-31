@@ -1,9 +1,12 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.github.pool_party.pull_party_bot.commands.Command
+import com.github.pool_party.pull_party_bot.commands.messages.INIT_MSG
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import kotlin.test.Test
+
+// TODO we could test help command then too)
 
 internal class StartCommandTest : AbstractCommandTest() {
 
@@ -12,6 +15,6 @@ internal class StartCommandTest : AbstractCommandTest() {
     @Test
     fun `start sends message`() {
         onMessage(message)
-        verifyMessage(message.chat.id)
+        verifyMessages(message.chat.id, INIT_MSG)
     }
 }

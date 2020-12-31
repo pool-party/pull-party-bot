@@ -2,6 +2,7 @@ package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.github.pool_party.pull_party_bot.commands.Command
 import com.github.pool_party.pull_party_bot.commands.messages.ON_RUDE_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.onRudeSuccess
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import io.mockk.every
@@ -11,46 +12,56 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
     override fun initializeCommand(partyDao: PartyDao, chatDao: ChatDao): Command = RudeCommand(chatDao)
 
-    @Test
-    fun `wrong argument call`() {
-        onMessage(message, "party")
-        onMessage(message, "rude")
-
-        verifyMessages(message.chat.id, ON_RUDE_FAIL, 2)
-    }
+    private fun parseSingleArg(args: String): String? =
+        args.split(' ').map { it.trim().toLowerCase() }
+            .singleOrNull { it.isNotBlank() } // TODO implement through AbstractCommand.parseArgs.
 
     @Test
-    fun `wrong amount of args call`() {
+    fun `wrong arguments call`() {
         onMessage(message, "")
+        onMessage(message, "rude")
+        onMessage(message, "party")
         onMessage(message, "first second")
 
-        verifyMessages(message.chat.id, ON_RUDE_FAIL, 2)
+        verifyMessages(message.chat.id, ON_RUDE_FAIL, 4)
     }
 
-    // TODO check messages for all tests.
     @Test
     fun `correct on same call`() {
+        val args = "on"
+
         every { chatDao.getRude(message.chat.id) } returns true
         every { chatDao.setRude(message.chat.id, true) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
-        onMessage(message, "on")
+        onMessage(message, args)
 
-        verifyMessage(message.chat.id)
+        verifyMessages(
+            message.chat.id,
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!).toUpperCase()
+        )
     }
 
     @Test
     fun `correct on new call`() {
-        every { chatDao.getRude(message.chat.id) } returns false
+        val args = "on"
+
+        every { chatDao.getRude(message.chat.id) } returns false andThen true andThen false
         every { chatDao.setRude(message.chat.id, true) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
-        onMessage(message, "on")
+        onMessage(message, args)
 
-        verifyMessage(message.chat.id)
+        verifyMessages(
+            message.chat.id,
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!).toUpperCase()
+        )
     }
 
     @Test
     fun `correct off same call`() {
-        every { chatDao.getRude(message.chat.id) } returns false
+        val args = "off"
+
+        every { chatDao.getRude(message.chat.id) } returns false andThen false andThen true
+        every { chatDao.setRude(message.chat.id, true) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
         every {
             chatDao.setRude(
                 message.chat.id,
@@ -58,13 +69,20 @@ internal class RudeCommandTest : AbstractCommandTest() {
             )
         } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
-        onMessage(message, "off")
-        verifyMessage(message.chat.id)
+        onMessage(message, args)
+
+        verifyMessages(
+            message.chat.id,
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!)
+        )
     }
 
     @Test
     fun `correct off new call`() {
-        every { chatDao.getRude(message.chat.id) } returns true
+        val args = "off"
+
+        every { chatDao.getRude(message.chat.id) } returns true andThen false
+        every { chatDao.setRude(message.chat.id, true) } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
         every {
             chatDao.setRude(
                 message.chat.id,
@@ -72,7 +90,11 @@ internal class RudeCommandTest : AbstractCommandTest() {
             )
         } answers { secondArg<Boolean>() != chatDao.getRude(firstArg()) }
 
-        onMessage(message, "off")
-        verifyMessage(message.chat.id)
+        onMessage(message, args)
+
+        verifyMessages(
+            message.chat.id,
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!)
+        )
     }
 }

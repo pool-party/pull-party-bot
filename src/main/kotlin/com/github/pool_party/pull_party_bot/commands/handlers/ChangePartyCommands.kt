@@ -16,6 +16,10 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_NAME_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_REMOVE_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_SINGLETON_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_USERS_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.onAddSuccess
+import com.github.pool_party.pull_party_bot.commands.messages.onChangeSuccess
+import com.github.pool_party.pull_party_bot.commands.messages.onCreateSuccess
+import com.github.pool_party.pull_party_bot.commands.messages.onDeleteSuccess
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -115,19 +119,19 @@ enum class PartyChangeStatus(
     val onFailure: String
 ) {
     CREATE(true, PartyDao::create, ON_CREATE_REQUEST_FAIL) {
-        override fun onSuccess(partyName: String) = "Party $partyName successfully created!"
+        override fun onSuccess(partyName: String) = onCreateSuccess(partyName)
     },
 
     CHANGE(true, PartyDao::changeUsers, ON_CHANGE_REQUEST_FAIL) {
-        override fun onSuccess(partyName: String) = "Party $partyName changed beyond recognition!"
+        override fun onSuccess(partyName: String) = onChangeSuccess(partyName)
     },
 
     ADD(false, PartyDao::addUsers, ON_CHANGE_REQUEST_FAIL) {
-        override fun onSuccess(partyName: String) = "Party $partyName is getting bigger and bigger!"
+        override fun onSuccess(partyName: String) = onAddSuccess(partyName)
     },
 
     REMOVE(false, PartyDao::removeUsers, ON_REMOVE_REQUEST_FAIL) {
-        override fun onSuccess(partyName: String) = "Party $partyName lost somebody, but not the vibe!"
+        override fun onSuccess(partyName: String) = onDeleteSuccess(partyName)
     };
 
     abstract fun onSuccess(partyName: String): String

@@ -7,6 +7,8 @@ import com.github.pool_party.pull_party_bot.commands.messages.HELP_CLEAR
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_DELETE
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CLEAR_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_DELETE_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteSuccess
+import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteUnchanged
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -26,9 +28,8 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             if (modifyCommandAssertion(chatId, it)) {
                 sendCaseMessage(
                     chatId,
-                    if (partyDao.delete(chatId, it))
-                        """Party $it is just a history now 👍"""
-                    else """Not like I knew the $it party, but now I don't know it at all 👍"""
+                    if (partyDao.delete(chatId, it)) onPartyDeleteSuccess(it)
+                    else onPartyDeleteUnchanged(it)
                 )
             }
         }
