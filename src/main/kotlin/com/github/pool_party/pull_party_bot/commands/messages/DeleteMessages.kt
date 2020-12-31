@@ -11,6 +11,11 @@ val ON_CLEAR_SUCCESS =
     Type `/help create` for more information
     """.trimIndent()
 
+fun onPartyDeleteSuccess(partyName: String) = """Party $partyName is just a history now 👍"""
+
+fun onPartyDeleteUnchanged(partyName: String) =
+    """Not like I knew the $partyName party, but now I don't know it at all 👍"""
+
 val ON_DELETE_EMPTY =
     """
     I'm not the police, but can stop the party. Which one though? 🚨

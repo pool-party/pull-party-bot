@@ -9,3 +9,6 @@ val ON_RUDE_FAIL =
 
     Type `/help rude` for more information
     """.trimIndent()
+
+fun onRudeSuccess(isChanged: Boolean, status: String, statusEmoji: String) =
+    """Rude mode ${if (isChanged) "is now" else "was already"} $status $statusEmoji!"""
