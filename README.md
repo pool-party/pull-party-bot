@@ -80,15 +80,26 @@ Use these commands to mention members of needed parties, see the information and
 
 + [Telegram Bot Api kotlin library](https://github.com/elbekD/kt-telegram-bot)
 
++ [String Similarity Library](https://github.com/tdebatty/java-string-similarity)
+
++ [Type Safe Configuration API Library](https://github.com/npryce/konfig)
+
++ [Lightweight logging framework](https://github.com/MicroUtils/kotlin-logging)
+
++ [MockK mocking library](https://github.com/mockk/mockk)
+
 + [Heroku deployment service](https://www.heroku.com)
 
 + [JetBrains Exposed SQL DSL](https://github.com/JetBrains/Exposed)
 
 + [PostgreSQL database](https://www.postgresql.org)
 
++ [Emoji commit messages guide](https://gitmoji.dev/)
+
 ## Launching
 
-In order to be able to launch the bot server locally you have to compile sources with gradle and set the following environment variables:
+In order to be able to launch the bot server locally you have to compile sources with gradle and set the following environment variables
+or provide corresponding values in [`defaults.properties`](src/main/resources/defaults.properties):
 
 + `TELEGRAM_TOKEN` - the one you get from [`BotFather`](https://t.me/BotFather)
 
