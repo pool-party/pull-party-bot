@@ -35,7 +35,8 @@ internal class ListCommandTest : AbstractCommandTest() {
         verify {
             bot.sendMessage(
                 message.chat.id,
-                match { it.contains(ON_LIST_SUCCESS) && it.contains(name) && it.contains(users) })
+                match { it.contains(ON_LIST_SUCCESS) && it.contains(name) && it.contains(users) }
+            )
         }
     }
 
@@ -79,7 +80,8 @@ internal class ListCommandTest : AbstractCommandTest() {
         verify {
             bot.sendMessage(
                 message.chat.id,
-                match { it.contains(ON_ARGUMENT_LIST_SUCCESS) && it.contains(name) && it.contains(users) })
+                match { it.contains(ON_ARGUMENT_LIST_SUCCESS) && it.contains(name) && it.contains(users) }
+            )
         }
     }
 }
