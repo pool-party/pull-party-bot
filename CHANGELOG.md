@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.1.0] - 31.12.2020
+
+### Added
+
+- `/list` command extension:
+  - shows all the parties with given user
+  - checks users within the group without tagging them
+- `/add` and `/remove` commands for more convenient party changing
+- `/feedback` command
+- Smart party suggestions:
+  - misspelled parties to pull via Jaro Winkler algorithm
+  - smart suggestions to remove stale abandoned parties
+- Subtle developing improvements
+  - Adequate configuration
+  - Databases indices
+  - Caching parties and chats
+  - Logging support
+  - Commands refactoring
+  - Miscellaneous tests
+
+### Fixed
+
+- Stop tagging itself while pulling up `admins` party
+- Face control rejection on space sequence
+- Database insertion failures
+
 ## [1.0.2.1] - 17.10.2020
 
 ### Fixed
@@ -41,6 +67,7 @@
 - Implicit party pulling
 - Rude mode
 
+[1.1.0]: https://github.com/pool-party/pull-party-bot/compare/v1.0.2.1...v1.1.0
 [1.0.2.1]: https://github.com/pool-party/pull-party-bot/compare/v1.0.2...v1.0.2.1
 [1.0.2]: https://github.com/pool-party/pull-party-bot/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/pool-party/pull-party-bot/compare/v1.0.0...v1.0.1

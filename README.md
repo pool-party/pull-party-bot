@@ -24,8 +24,10 @@ usernames are char sequences of letters, digits and underscores of 5-32 length
     `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
 
 + `/change partyName user1 user2...` - change an existing party
++ `/add partyName user1 user2...` - extend party with provided users
++ `/remove partyName user1 user2...` - delete mentioned users from the given party
 
-    > Follows all `/create` method's rules \
+    > Follow all `/create` method's rules \
     You can't change `@admins` party
 
 
@@ -70,6 +72,8 @@ Use these commands to mention members of needed parties, see the information and
     Takes only `on` and `off` as correct arguments \
     Doesn't affect error messages
 
++ `/feedback message` - leave a feedback for developers in a free-form
+
 ## Tools and libraries
 
 + [Kotlin](https://kotlinlang.org) programming language
@@ -78,17 +82,28 @@ Use these commands to mention members of needed parties, see the information and
 
     > To set up required version of gradle and dependencies run `gradlew` script (according to your system) with `build` target.
 
-+ [Telegram Bot Api kotlin library](https://github.com/elbekD/kt-telegram-bot)
-
 + [Heroku deployment service](https://www.heroku.com)
 
 + [JetBrains Exposed SQL DSL](https://github.com/JetBrains/Exposed)
 
 + [PostgreSQL database](https://www.postgresql.org)
 
++ [Emoji commit messages guide](https://gitmoji.dev/)
+
++ [Telegram Bot Api kotlin library](https://github.com/elbekD/kt-telegram-bot)
+
++ [String Similarity Library](https://github.com/tdebatty/java-string-similarity)
+
++ [Type Safe Configuration API Library](https://github.com/npryce/konfig)
+
++ [Lightweight logging framework](https://github.com/MicroUtils/kotlin-logging)
+
++ [MockK mocking library](https://github.com/mockk/mockk)
+
 ## Launching
 
-In order to be able to launch the bot server locally you have to compile sources with gradle and set the following environment variables:
+In order to be able to launch the bot server locally you have to compile sources with gradle and set the following environment variables
+or provide corresponding values in [`defaults.properties`](src/main/resources/defaults.properties):
 
 + `TELEGRAM_TOKEN` - the one you get from [`BotFather`](https://t.me/BotFather)
 
