@@ -21,11 +21,13 @@ usernames are char sequences of letters, digits and underscores of 5-32 length
     You can enter users with or without `@` symbol \
     `@admins` is a reserved party and already exists \
     Party name should be no longer than 50 characters \
-    `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
+    `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name 
 
 + `/change partyName user1 user2...` - change an existing party
++ `/add partyName user1 user2...` - extend party with provided users
++ `/remove partyName user1 user2...` - delete mentioned users from the given party
 
-    > Follows all `/create` method's rules \
+    > Follow all `/create` method's rules \
     You can't change `@admins` party
 
 
@@ -69,6 +71,8 @@ Use these commands to mention members of needed parties, see the information and
     > Set `off` by default \
     Takes only `on` and `off` as correct arguments \
     Doesn't affect error messages
+  
++ `/feedback message` - leave a feedback for developers in a free-form
 
 ## Tools and libraries
 
