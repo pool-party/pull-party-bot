@@ -21,7 +21,7 @@ usernames are char sequences of letters, digits and underscores of 5-32 length
     You can enter users with or without `@` symbol \
     `@admins` is a reserved party and already exists \
     Party name should be no longer than 50 characters \
-    `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name 
+    `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
 
 + `/change partyName user1 user2...` - change an existing party
 + `/add partyName user1 user2...` - extend party with provided users
@@ -71,7 +71,7 @@ Use these commands to mention members of needed parties, see the information and
     > Set `off` by default \
     Takes only `on` and `off` as correct arguments \
     Doesn't affect error messages
-  
+
 + `/feedback message` - leave a feedback for developers in a free-form
 
 ## Tools and libraries
@@ -82,6 +82,14 @@ Use these commands to mention members of needed parties, see the information and
 
     > To set up required version of gradle and dependencies run `gradlew` script (according to your system) with `build` target.
 
++ [Heroku deployment service](https://www.heroku.com)
+
++ [JetBrains Exposed SQL DSL](https://github.com/JetBrains/Exposed)
+
++ [PostgreSQL database](https://www.postgresql.org)
+
++ [Emoji commit messages guide](https://gitmoji.dev/)
+
 + [Telegram Bot Api kotlin library](https://github.com/elbekD/kt-telegram-bot)
 
 + [String Similarity Library](https://github.com/tdebatty/java-string-similarity)
@@ -91,14 +99,6 @@ Use these commands to mention members of needed parties, see the information and
 + [Lightweight logging framework](https://github.com/MicroUtils/kotlin-logging)
 
 + [MockK mocking library](https://github.com/mockk/mockk)
-
-+ [Heroku deployment service](https://www.heroku.com)
-
-+ [JetBrains Exposed SQL DSL](https://github.com/JetBrains/Exposed)
-
-+ [PostgreSQL database](https://www.postgresql.org)
-
-+ [Emoji commit messages guide](https://gitmoji.dev/)
 
 ## Launching
 
