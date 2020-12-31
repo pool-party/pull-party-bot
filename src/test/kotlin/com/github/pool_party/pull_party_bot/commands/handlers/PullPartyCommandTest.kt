@@ -3,10 +3,16 @@ package com.github.pool_party.pull_party_bot.commands.handlers
 import com.github.pool_party.pull_party_bot.commands.Command
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
+import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import io.mockk.every
+import io.mockk.mockk
 import kotlin.test.Test
+
+// TODO test implicit tag?
 
 internal class PullPartyCommandTest : AbstractCommandTest() {
 
@@ -43,6 +49,26 @@ internal class PullPartyCommandTest : AbstractCommandTest() {
     }
 
     @Test
+    fun `incorrect single party call`() {
+        val party = mockk<Party>()
+        val name = "name"
+        val users = "users"
+
+        every { party.name } returns name
+        every { party.users } returns users
+        every { partyDao.getAll(message.chat.id) } returns listOf(party)
+
+        val response = "@albertshady @komour"
+
+        every { partyDao.getByIdAndName(message.chat.id, "gym") } returns response
+        every { partyDao.getByIdAndName(message.chat.id, "gammy") } returns null
+
+        onMessage(message, "gammy")
+
+        verifyMessages(message.chat.id, ON_PARTY_REQUEST_FAIL)
+    }
+
+    @Test
     fun `correct multiple party calls`() {
         val responseGym = "@albertshady @komour"
         val responseSamara = "@g4nkedbymom @albertshady"
@@ -55,5 +81,28 @@ internal class PullPartyCommandTest : AbstractCommandTest() {
         onMessage(message, "gym Samara")
 
         verifyMessages(message.chat.id, expectedResponse, replyTo = message.message_id)
+    }
+
+    @Test
+    fun `incorrect multiple party calls`() {
+        val party = mockk<Party>()
+        val name = "name"
+        val users = "users"
+
+        every { party.name } returns name
+        every { party.users } returns users
+        every { partyDao.getAll(message.chat.id) } returns listOf(party)
+
+        val responseGym = "@albertshady @komour"
+        val responseSamara = "@g4nkedbymom @albertshady"
+
+        every { partyDao.getByIdAndName(message.chat.id, "gym") } returns responseGym
+        every { partyDao.getByIdAndName(message.chat.id, "samara") } returns responseSamara
+        every { partyDao.getByIdAndName(message.chat.id, "gammy") } returns null
+        every { partyDao.getByIdAndName(message.chat.id, "saratov") } returns null
+
+        onMessage(message, "gammy Saratov")
+
+        verifyMessages(message.chat.id, ON_PARTY_REQUEST_FAILS)
     }
 }

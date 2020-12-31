@@ -2,7 +2,9 @@ package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.github.pool_party.pull_party_bot.commands.Command
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
+import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
@@ -25,16 +27,22 @@ internal class ListCommandTest : AbstractCommandTest() {
         every { party.users } returns users
 
         every { partyDao.getAll(message.chat.id) } returns listOf(party)
+        every { partyDao.getTopLost(message.chat.id) } returns null
         every { chatDao.getRude(message.chat.id) } returns false
 
         onMessage(message)
 
-        verify { bot.sendMessage(message.chat.id, match { it.contains(name) && it.contains(users) }) }
+        verify {
+            bot.sendMessage(
+                message.chat.id,
+                match { it.contains(ON_LIST_SUCCESS) && it.contains(name) && it.contains(users) })
+        }
     }
 
     @Test
     fun `no party in a group`() {
         every { partyDao.getAll(message.chat.id) } returns listOf()
+        every { partyDao.getTopLost(message.chat.id) } returns null
         every { chatDao.getRude(message.chat.id) } returns false
 
         onMessage(message)
@@ -45,6 +53,7 @@ internal class ListCommandTest : AbstractCommandTest() {
     @Test
     fun `no party matched in an argument list`() {
         every { partyDao.getAll(message.chat.id) } returns listOf()
+        every { partyDao.getTopLost(message.chat.id) } returns null
         every { chatDao.getRude(message.chat.id) } returns false
 
         onMessage(message, "somePartyName")
@@ -62,10 +71,15 @@ internal class ListCommandTest : AbstractCommandTest() {
         every { party.users } returns users
 
         every { partyDao.getAll(message.chat.id) } returns listOf(party)
+        every { partyDao.getTopLost(message.chat.id) } returns null
         every { chatDao.getRude(message.chat.id) } returns false
 
         onMessage(message, name)
 
-        verify { bot.sendMessage(message.chat.id, match { it.contains(name) && it.contains(users) }) }
+        verify {
+            bot.sendMessage(
+                message.chat.id,
+                match { it.contains(ON_ARGUMENT_LIST_SUCCESS) && it.contains(name) && it.contains(users) })
+        }
     }
 }

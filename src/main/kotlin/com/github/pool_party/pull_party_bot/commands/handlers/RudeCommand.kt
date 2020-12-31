@@ -23,7 +23,6 @@ class RudeCommand(chatDao: ChatDao) : CaseCommand("rude", "switch RUDE(CAPS LOCK
             }
         }
 
-        val curStatus = if (parsedArg == "on") """😈""" else """😇"""
-        sendCaseMessage(chatId, onRudeSuccess(res, parsedArg, curStatus))
+        sendCaseMessage(chatId, onRudeSuccess(res, parsedArg))
     }
 }
