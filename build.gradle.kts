@@ -6,6 +6,7 @@ plugins {
 
 group = "org.pool-party"
 version = "1.1.0"
+sourceCompatibility = 11.0
 
 repositories {
     maven(url = "https://jitpack.io")
