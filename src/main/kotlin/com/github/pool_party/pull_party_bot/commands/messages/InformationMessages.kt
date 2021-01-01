@@ -193,4 +193,4 @@ val ON_PARTY_MISSPELL =
     Hmm, sounds familiar... Perhaps you meant:
     """.trimIndent()
 
-fun onFeedback(username: String?, title: String?) = """"New #feedback from @$username in \"$title\":\n\n"""
+fun onFeedback(username: String?, title: String?) = "New #feedback from @$username in \"$title\":\n\n"
