@@ -39,7 +39,7 @@ val ON_CHANGE_EMPTY =
     At least name and a single valid user should be provided
     You can change the party with /change, /add and /remove commands
 
-    Type `/help` for more information
+    Type /help for more information
     """.trimIndent()
 
 val ON_CHANGE_REQUEST_FAIL =
@@ -49,7 +49,7 @@ val ON_CHANGE_REQUEST_FAIL =
     Perhaps you wanted to create a new party with /create
     Follow /add or /change command with the name of existing party and new users
 
-    Type `/help` for more information
+    Type /help for more information
     """.trimIndent()
 
 val ON_REMOVE_REQUEST_FAIL =
@@ -69,7 +69,7 @@ val ON_PARTY_NAME_FAIL =
     Party name should consist of less than 50 non-blank symbols
     `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
-    Type `/help` for more information
+    Type help for more information
     """.trimIndent()
 
 val ON_USERS_FAIL =
@@ -79,7 +79,7 @@ val ON_USERS_FAIL =
     Usernames should consist of latin letters, digits and underscores only
     Allowed length of telegram username is from 5 to 32 characters
 
-    Type `/help` for more information
+    Type /help for more information
     """.trimIndent()
 
 fun onCreateSuccess(partyName: String) =
