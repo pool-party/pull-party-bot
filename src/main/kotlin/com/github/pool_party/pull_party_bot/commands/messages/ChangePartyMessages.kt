@@ -82,10 +82,14 @@ val ON_USERS_FAIL =
     Type `/help` for more information
     """.trimIndent()
 
-fun onCreateSuccess(partyName: String) = """"Party $partyName successfully created!"""
+fun onCreateSuccess(partyName: String) =
+    """Party $partyName successfully created!"""
 
-fun onChangeSuccess(partyName: String) = """"Party $partyName changed beyond recognition!"""
+fun onChangeSuccess(partyName: String) =
+    """Party $partyName changed beyond recognition!"""
 
-fun onAddSuccess(partyName: String) = """"Party $partyName is getting bigger and bigger!"""
+fun onAddSuccess(partyName: String) =
+    """Party $partyName is getting bigger and bigger!"""
 
-fun onDeleteSuccess(partyName: String) = """"Party $partyName lost somebody, but not the vibe!"""
+fun onDeleteSuccess(partyName: String) =
+    """Party $partyName lost somebody, but not the vibe!"""
