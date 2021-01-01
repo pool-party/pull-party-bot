@@ -6,7 +6,6 @@ plugins {
 
 group = "org.pool-party"
 version = "1.1.0"
-sourceCompatibility = 11.0
 
 repositories {
     maven(url = "https://jitpack.io")
@@ -29,7 +28,7 @@ dependencies {
 
     implementation("com.natpryce:konfig:1.6.10.0")
 
-    implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("org.slf4j:slf4j-simple:2.0.0-alpha1")
     implementation("io.github.microutils:kotlin-logging:2.0.4")
 
     implementation("info.debatty:java-string-similarity:2.0.0")
