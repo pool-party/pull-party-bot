@@ -57,7 +57,7 @@ abstract class AbstractCommand(
     }
 
     protected fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
-        (name == "admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE, "Markdown") }
+        (name == "admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE) }
 
     protected fun parseArgs(args: String?): List<String>? =
         args?.split(' ')?.map { it.trim().toLowerCase() }?.filter { it.isNotBlank() }

@@ -44,9 +44,10 @@ fun Bot.initHandlers() {
         CallbackDispatcher(callbacks.associateBy { it.callbackAction })
     )
 
-    val commands = interactions.mapNotNull { it as? Command }
+    var commands = interactions.mapNotNull { it as? Command }
 
     val helpCommand = HelpCommand(commands.associate { it.command.removePrefix("/") to it.helpMessage })
+    commands = commands + helpCommand
     interactions.add(helpCommand)
 
     interactions.forEach { it.onMessage(this) }

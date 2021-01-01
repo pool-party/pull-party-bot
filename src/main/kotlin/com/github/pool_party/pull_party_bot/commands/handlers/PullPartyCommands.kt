@@ -143,7 +143,7 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
     val chatType = msg.chat.type
 
     if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, ON_ADMINS_PARTY_FAIL, "Markdown")
+        sendMessage(chatId, ON_ADMINS_PARTY_FAIL)
         return null
     }
 

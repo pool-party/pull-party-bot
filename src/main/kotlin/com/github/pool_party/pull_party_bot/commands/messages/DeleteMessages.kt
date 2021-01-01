@@ -59,7 +59,7 @@ val ON_ADMINS_PARTY_CHANGE =
     @admins is a reserved group, you can't create, change or delete it
     Try to make a new party instead with /create command
 
-    Type `/help` for more information
+    Type /help for more information
     """.trimIndent()
 
 val ON_ADMINS_PARTY_FAIL =
@@ -69,5 +69,5 @@ val ON_ADMINS_PARTY_FAIL =
     There is no admins in private chats or channels
     @admins is a reserved group, you can't change or delete it
 
-    Type `/help` for more information
+    Type /help for more information
     """.trimIndent()
