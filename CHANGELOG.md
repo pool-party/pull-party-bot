@@ -7,6 +7,7 @@
 -   Empty party creation is prohibited
 -   Attach a reply message to a feedback command
 -   Fix `null` chat name with providing a feedback in a developers' chat
+-   Moving from Travis CI to the GitHub Actions
 
 ## [1.1.0.1] - 01.01.2021
 

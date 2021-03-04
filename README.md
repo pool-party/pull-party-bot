@@ -1,9 +1,9 @@
 # Pull party bot
 
-[![Travis CI](https://img.shields.io/travis/com/pool-party/pull-party-bot?logo=travis)](https://travis-ci.com/pool-party/pull-party-bot)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/pool-party/pull-party-bot?logo=codefactor)](https://www.codefactor.io/repository/github/pool-party/pull-party-bot)
 [![Kotlin Lang](https://img.shields.io/github/languages/top/pool-party/pull-party-bot?logo=kotlin)](https://kotlinlang.org)
 [![Donations](https://img.shields.io/badge/buy_me_a-coffee-orange?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/poolparty)
+[![Pull Party Bot](https://img.shields.io/badge/telegram-Pull_Party_Bot-blue?logo=Telegram)](https://t.me/PullPartyBot/)
 
 **Pull Party Telegram Bot** helps you pulling people up for a party!
 
