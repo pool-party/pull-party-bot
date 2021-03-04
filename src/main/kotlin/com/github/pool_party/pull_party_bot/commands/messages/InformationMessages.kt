@@ -200,4 +200,5 @@ val ON_FEEDBACK_SUCCESS =
     Thanks for helping us to improve your user experience!
     """.trimIndent()
 
-fun onFeedback(username: String?, title: String?) = "New #feedback from @$username in \"$title\":\n\n"
+fun onFeedback(username: String?, title: String?) =
+    "New #feedback from @$username in ${if (title != null) "\"$title\"" else "private chat"}:\n\n"

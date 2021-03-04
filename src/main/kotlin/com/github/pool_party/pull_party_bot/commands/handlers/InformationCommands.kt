@@ -137,6 +137,6 @@ class FeedbackCommand : AbstractCommand("feedback", "share your ideas and experi
             onFeedback(message.from?.username, message.chat.title) + parsedArgs
         )
 
-        sendMessage(message.chat.id, ON_FEEDBACK_SUCCESS)
+        sendMessage(message.chat.id, ON_FEEDBACK_SUCCESS, replyTo = message.message_id)
     }
 }
