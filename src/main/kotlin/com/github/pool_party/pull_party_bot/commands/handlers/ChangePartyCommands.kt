@@ -70,7 +70,7 @@ abstract class AbstractChangeCommand(
         val partyName = parsedArgs[0].removePrefix("@")
 
         val regex = Regex("(.*[@${Configuration.PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*-)")
-        if (partyName.length > 50 || partyName.matches(regex)) {
+        if (partyName.isBlank() || partyName.length > 50 || partyName.matches(regex)) {
             sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
             return
         }

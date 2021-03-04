@@ -16,6 +16,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.HELP_START
 import com.github.pool_party.pull_party_bot.commands.messages.INIT_MSG
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
+import com.github.pool_party.pull_party_bot.commands.messages.ON_FEEDBACK_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_HELP_ERROR
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
@@ -135,5 +136,7 @@ class FeedbackCommand : AbstractCommand("feedback", "share your ideas and experi
             developChatId,
             onFeedback(message.from?.username, message.chat.title) + parsedArgs
         )
+
+        sendMessage(message.chat.id, ON_FEEDBACK_SUCCESS, replyTo = message.message_id)
     }
 }
