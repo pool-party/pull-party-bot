@@ -193,4 +193,11 @@ val ON_PARTY_MISSPELL =
     Hmm, sounds familiar... Perhaps you meant:
     """.trimIndent()
 
+val ON_FEEDBACK_SUCCESS =
+    """
+    Your feedback has been sent to the maintainers 👨‍💻
+
+    Thanks for helping us to improve your user experience!
+    """.trimIndent()
+
 fun onFeedback(username: String?, title: String?) = "New #feedback from @$username in \"$title\":\n\n"
