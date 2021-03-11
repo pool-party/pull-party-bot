@@ -2,12 +2,13 @@ package com.github.pool_party.pull_party_bot.database
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
 import org.jetbrains.exposed.sql.jodatime.datetime
 
 object Parties : IntIdTable() {
     val name = varchar("name", 50)
-    val chatId = reference("chat_id", Chats)
+    val chatId = reference("chat_id", Chats, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val users = text("users")
     val lastUse = datetime("last_use").defaultExpression(CurrentDateTime())
 

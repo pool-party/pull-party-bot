@@ -8,7 +8,7 @@ import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
-import com.github.pool_party.pull_party_bot.commands.Interaction
+import com.github.pool_party.pull_party_bot.commands.EveryMessageInteraction
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
@@ -20,14 +20,12 @@ import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class ImplicitPartyHandler(private val partyDao: PartyDao) : Interaction {
+class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInteraction {
 
     /**
      * Handle implicit `@party-name`-like calls
      */
-    override fun onMessage(bot: Bot) = bot.onMessage { bot.action(it) }
-
-    private fun Bot.action(message: Message) {
+    override fun onMessage(bot: Bot, message: Message) {
         val text = message.text ?: message.caption
 
         if (message.forward_from != null || text == null) {
@@ -43,7 +41,7 @@ class ImplicitPartyHandler(private val partyDao: PartyDao) : Interaction {
             .map { it.removePrefix("@") }
             .mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }
 
-        handleParty(partyNames, message, partyDao)
+        bot.handleParty(partyNames, message, partyDao)
     }
 }
 
