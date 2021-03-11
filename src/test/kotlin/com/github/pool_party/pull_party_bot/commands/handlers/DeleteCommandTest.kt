@@ -50,7 +50,7 @@ internal class DeleteCommandTest : AbstractCommandTest() {
         chatMembers(chatMember)
 
         val chatId = message.chat.id
-        every { partyDao.delete(chatId, any()) } answers { true } andThen { false }
+        every { partyDao.delete(chatId, any()) } answers { true } andThenAnswer { false }
         every { chatDao.getRude(chatId) } returns false
 
         onMessage(message, "realParty admins NotParty")

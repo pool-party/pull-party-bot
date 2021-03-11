@@ -13,4 +13,10 @@ class ChatInMemoryDao(private val partyDao: PartyDao) : ChatDao {
     }
 
     override fun clear(chatId: Long) = partyDao.getAll(chatId).forEach { partyDao.delete(chatId, it.name) }
+
+    override fun migrate(oldChatId: Long, newChatId: Long) {
+        val previous = chats[oldChatId] ?: return
+        chats[newChatId] = previous
+        chats.remove(oldChatId)
+    }
 }
