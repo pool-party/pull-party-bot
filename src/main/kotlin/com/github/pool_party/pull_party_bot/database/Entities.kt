@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class Party(id: EntityID<Int>) : IntEntity(id) {
 
@@ -24,8 +25,8 @@ class Alias(id: EntityID<Int>) : IntEntity(id) {
 
     var party by Party referencedOn Aliases.partyId
     var users
-        get() = party.users
-        set(value) { party.users = value }
+        get() = transaction { party.users }
+        set(value) = transaction { party.users = value }
 
     companion object : IntEntityClass<Alias>(Aliases) {
         fun find(chatId: Long, partyName: String): Alias? =

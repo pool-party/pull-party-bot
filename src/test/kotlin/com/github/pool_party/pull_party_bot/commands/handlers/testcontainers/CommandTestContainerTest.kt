@@ -1,38 +1,42 @@
 package com.github.pool_party.pull_party_bot.commands.handlers.testcontainers
 
+import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
 import kotlin.test.Test
 
 internal class CommandTestContainerTest : AbstractTestContainerTest() {
 
+    private val partyName = "partyName"
+    private val aliasName = "aliasName"
+    private val members = "@firstMember @secondMember @thirdMember"
+    private val taggingMembers = members.toLowerCase()
+
     @Test
     fun `explicit tagging test`() {
-        val partyName = "partyName"
-        val members = "@firstMember @secondMember @thirdMember"
-
         -"/create $partyName $members"
         -"/party $partyName"
-        +members.toLowerCase()
+        +taggingMembers
     }
 
     @Test
     fun `implicit tagging test`() {
-        val partyName = "partyName"
-        val members = "@firstMember @secondMember @thirdMember"
-
         -"/create $partyName $members"
         -"some prefix text @$partyName some postfix text"
-        +members.toLowerCase()
+        +taggingMembers
     }
 
     @Test
     fun `alias tagging test`() {
-        val partyName = "partyName"
-        val aliasName = "aliasName"
-        val members = "@firstMember @secondMember @thirdMember"
-
         -"/create $partyName $members"
         -"/alias $aliasName $partyName"
         -"/party $aliasName"
-        +members.toLowerCase()
+        +taggingMembers
+    }
+
+    @Test
+    fun `list command test`() {
+        -"/create $partyName $members"
+        -"/alias $aliasName $partyName"
+        -"/list $aliasName"
+        +"$ON_ARGUMENT_LIST_SUCCESS- ${taggingMembers.filter { it != '@' }}"
     }
 }
