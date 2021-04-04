@@ -70,6 +70,4 @@ internal class AbstractChangeCommandTest : AbstractCommandTest() {
         verifyMessages(message.chat.id, ON_USERS_FAIL, 2)
         verifyMessages(message.chat.id, ON_CHANGE_REQUEST_FAIL, 2)
     }
-
-    // TODO test specific commands transactions?
 }

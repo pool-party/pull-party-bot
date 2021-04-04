@@ -30,10 +30,12 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
 @Testcontainers
@@ -79,6 +81,15 @@ internal abstract class AbstractTestContainerTest : AbstractBotTest() {
 
         commands.forEach { it.onMessage(bot) }
         everyMessageProcessor.onMessage(bot)
+    }
+
+    @AfterTest
+    fun clearDatabases() {
+        transaction {
+            Aliases.deleteAll()
+            Parties.deleteAll()
+            Chats.deleteAll()
+        }
     }
 
     // bot interaction test DSL

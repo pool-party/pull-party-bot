@@ -105,6 +105,8 @@ internal abstract class AbstractBotTest {
         every {
             bot.sendMessage(any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns CompletableFuture()
+
+        every { bot.getChatAdministrators(chat.id) } returns CompletableFuture.completedFuture(arrayListOf(chatMember))
     }
 
     protected fun verifyMessage(chatId: Long) {

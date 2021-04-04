@@ -4,6 +4,7 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_ALIAS
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_NAME_FAIL
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -23,7 +24,10 @@ class AliasCommand(
 
         val (aliasName, partyName) = parsedArgs
 
-        // TODO validate name
+        if (!validatePartyName(partyName)) {
+            sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
+            return
+        }
 
         sendMessage(
             chatId,
