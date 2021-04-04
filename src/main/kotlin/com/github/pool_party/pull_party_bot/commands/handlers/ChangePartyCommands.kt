@@ -49,8 +49,7 @@ abstract class AbstractChangeCommand(
     private val status: PartyChangeStatus,
     private val partyDao: PartyDao,
     chatDao: ChatDao
-) :
-    CaseCommand(command, description, helpMessage, chatDao) {
+) : CaseCommand(command, description, helpMessage, chatDao) {
 
     override fun Bot.action(message: Message, args: String?) {
 

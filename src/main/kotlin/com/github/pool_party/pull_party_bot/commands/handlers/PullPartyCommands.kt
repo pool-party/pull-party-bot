@@ -84,7 +84,7 @@ private fun Bot.handleParty(
             if (it == "admins") {
                 handleAdminsParty(message)
             } else {
-                val users = partyDao.getByIdAndName(chatId, it)
+                val users = partyDao.getByChatIdAndName(chatId, it)
                 if (users.isNullOrBlank()) {
                     failed.add(it)
                 }
@@ -127,7 +127,7 @@ private fun Bot.handleParty(
                     listOf(
                         InlineKeyboardButton(
                             "@${it.name}",
-                            callback_data = Json.encodeToString(CallbackData(CallbackAction.PING, it.id.value))
+                            callback_data = Json.encodeToString(CallbackData(CallbackAction.PING, it.party.id.value))
                         )
                     )
                 }

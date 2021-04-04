@@ -1,5 +1,6 @@
 package com.github.pool_party.pull_party_bot.database.dao
 
+import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.Chat
 import com.github.pool_party.pull_party_bot.database.Party
 import com.github.pool_party.pull_party_bot.database.loggingTransaction
@@ -9,16 +10,31 @@ import org.joda.time.DateTime
 
 interface PartyDao {
 
-    fun getAll(chatId: Long): List<Party>
+    fun getAll(chatId: Long): List<Alias>
 
-    fun getTopLost(chatId: Long): Party?
+    /**
+     * Returns the party alias that is being used most rarely,
+     * if there is some and it hasn't been used for time set in configuration.
+     */
+    fun getTopLost(chatId: Long): Alias?
 
-    fun getById(partyId: Int): Party?
+    fun getByPartyId(partyId: Int): Party?
 
-    fun getByIdAndName(chatId: Long, partyName: String): String?
+    fun getByChatIdAndName(chatId: Long, partyName: String): String?
 
+    /**
+     * @return true on success, false if partyName is already taken.
+     */
     fun create(chatId: Long, partyName: String, userList: List<String>): Boolean
 
+    /**
+     * @return true on success, false if partyName is already taken or an alias with aliasName doesn't exist.
+     */
+    fun createAlias(chatId: Long, aliasName: String, partyName: String): Boolean
+
+    /**
+     * @return true on success, false if party with partyName wasn't found.
+     */
     fun addUsers(chatId: Long, partyName: String, userList: List<String>): Boolean
 
     fun removeUsers(chatId: Long, partyName: String, userList: List<String>): Boolean
@@ -27,32 +43,38 @@ interface PartyDao {
 
     fun delete(chatId: Long, partyName: String): Boolean
 
-    fun delete(partyId: Int): String?
+    fun delete(aliasId: Int): String?
+
+    // TODO deleteParty
 }
 
 class PartyDaoImpl : PartyDao {
 
-    private val partyUsersCache = mutableMapOf<Pair<Long, String>, String?>()
+    private val cache = mutableMapOf<Pair<Long, String>, String?>()
 
     private fun invalidateCache(chatId: Long, partyName: String) {
-        partyUsersCache.remove(chatId to partyName)
+        cache.remove(chatId to partyName)
     }
 
-    override fun getAll(chatId: Long): List<Party> =
-        loggingTransaction("getAll($chatId)") { Chat.findById(chatId)?.parties?.toList() } ?: emptyList()
+    override fun getAll(chatId: Long): List<Alias> = loggingTransaction("getAll($chatId)") {
+        Chat.findById(chatId)?.aliases?.toList() ?: emptyList()
+    }
 
-    override fun getTopLost(chatId: Long): Party? =
-        loggingTransaction("getTopLost($chatId)") { Party.topLost(chatId) }
+    override fun getTopLost(chatId: Long) = loggingTransaction("getTopLost($chatId)") {
+        Alias.topLost(chatId)
+    }
 
-    override fun getById(partyId: Int) = loggingTransaction("getById($partyId)") { Party.findById(partyId) }
+    override fun getByPartyId(partyId: Int) = loggingTransaction("getById($partyId)") { Party.findById(partyId) }
 
-    override fun getByIdAndName(chatId: Long, partyName: String): String? {
-        val users = partyUsersCache.getOrPut(chatId to partyName) {
-            loggingTransaction("getByIdAndName($chatId, $partyName)") { Party.find(chatId, partyName)?.users }
+    override fun getByChatIdAndName(chatId: Long, partyName: String): String? {
+        val users = cache.getOrPut(chatId to partyName) {
+            loggingTransaction("getByIdAndName($chatId, $partyName)") {
+                Alias.find(chatId, partyName)?.users
+            }
         }
         GlobalScope.launch {
             loggingTransaction("updateLastUse($chatId, $partyName)") {
-                Party.find(chatId, partyName)?.run {
+                Alias.find(chatId, partyName)?.run {
                     lastUse = DateTime.now()
                 }
             }
@@ -60,18 +82,42 @@ class PartyDaoImpl : PartyDao {
         return users
     }
 
-    override fun create(chatId: Long, partyName: String, userList: List<String>): Boolean =
-        loggingTransaction("create($chatId, $partyName, $userList)") {
-            val curChat = Chat.findById(chatId) ?: Chat.new(chatId) {}
+    override fun create(chatId: Long, partyName: String, userList: List<String>): Boolean {
+        val newParty = loggingTransaction("createParty($chatId, $partyName, $userList)") {
+            if (Alias.find(chatId, partyName) != null) {
+                return@loggingTransaction null
+            }
 
-            if (Party.find(chatId, partyName) != null) {
+            Party.new { users = userList.joinToString(" ") }
+        } ?: return false
+
+        return loggingTransaction("createParty($chatId, $partyName, $userList)") {
+            if (Alias.find(chatId, partyName) != null) {
                 return@loggingTransaction false
             }
 
-            Party.new {
+            Alias.new {
+                chat = getChat(chatId)
+                party = newParty
                 name = partyName
-                chat = curChat
-                users = userList.joinToString(" ")
+            }
+
+            true
+        }
+    }
+
+    override fun createAlias(chatId: Long, aliasName: String, partyName: String): Boolean =
+        loggingTransaction("createAlias($chatId, $aliasName, $partyName)") {
+            if (Alias.find(chatId, aliasName) != null) {
+                return@loggingTransaction false
+            }
+
+            val oldAlias = Alias.find(chatId, partyName) ?: return@loggingTransaction false
+
+            Alias.new {
+                party = oldAlias.party
+                chat = oldAlias.chat
+                name = aliasName
             }
 
             true
@@ -90,38 +136,44 @@ class PartyDaoImpl : PartyDao {
         loggingTransaction("delete($chatId, $partyName)") {
             invalidateCache(chatId, partyName)
 
-            val party = Party.find(chatId, partyName)
-            party?.delete()
+            val alias = Alias.find(chatId, partyName) ?: return@loggingTransaction false
+            val count = alias.party.aliases.count()
 
-            party != null
+            alias.delete()
+
+            if (count == 1L) {
+                alias.party.delete()
+            }
+
+            true
         }
 
-    override fun delete(partyId: Int): String? =
-        loggingTransaction("delete($partyId)") {
-            val party = Party.findById(partyId) ?: return@loggingTransaction null
+    override fun delete(aliasId: Int): String? = loggingTransaction("delete($aliasId)") {
+        val alias = Alias.findById(aliasId) ?: return@loggingTransaction null
 
-            invalidateCache(party.chat.id.value, party.name)
+        invalidateCache(alias.chat.id.value, alias.name)
 
-            party.delete()
-            party.name
-        }
+        alias.delete()
+        alias.name
+    }
 
     private fun changeUsers(
         chatId: Long,
         partyName: String,
         transform: (MutableSet<String>) -> Collection<String>
-    ): Boolean =
-        loggingTransaction("changeUsers($chatId, $partyName)") {
-            invalidateCache(chatId, partyName)
+    ): Boolean = loggingTransaction("changeUsers($chatId, $partyName)") {
+        invalidateCache(chatId, partyName)
 
-            val party = Party.find(chatId, partyName) ?: return@loggingTransaction false
-            val newUsers = transform(party.users.split(' ').toMutableSet())
-            if (newUsers.isEmpty() || newUsers.singleOrNull() == "@${party.name}") {
-                return@loggingTransaction false
-            }
-
-            party.users = newUsers.joinToString(" ")
-
-            true
+        val party = Alias.find(chatId, partyName) ?: return@loggingTransaction false
+        val newUsers = transform(party.users.split(' ').toMutableSet())
+        if (newUsers.isEmpty() || newUsers.singleOrNull() == "@${party.name}") {
+            return@loggingTransaction false
         }
+
+        party.users = newUsers.joinToString(" ")
+
+        true
+    }
+
+    private fun getChat(chatId: Long) = Chat.findById(chatId) ?: Chat.new(chatId) {}
 }

@@ -42,14 +42,14 @@ class ChatDaoImpl : ChatDao {
         }
 
     override fun clear(chatId: Long): Unit =
-        loggingTransaction("clear($chatId)") { Chat.findById(chatId)?.run { parties.forEach { it.delete() } } }
+        loggingTransaction("clear($chatId)") { Chat.findById(chatId)?.run { aliases.forEach { it.delete() } } }
 
     override fun migrate(oldChatId: Long, newChatId: Long): Unit =
         loggingTransaction("migrate($oldChatId, $newChatId)") {
             invalidateCache(oldChatId)
 
             Chats.update({ Chats.id eq oldChatId }) {
-                it[Chats.id] = newChatId
+                it[id] = newChatId
             }
         }
 }

@@ -146,6 +146,8 @@ val HELP_FEEDBACK =
     We are always willing to get better for the comfort of our users!
     """.trimIndent()
 
+val HELP_ALIAS = "TODO"
+
 val ON_HELP_ERROR =
     """
     The Lord helps those who help themselves 👼

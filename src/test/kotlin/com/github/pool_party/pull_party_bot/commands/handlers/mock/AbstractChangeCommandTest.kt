@@ -1,6 +1,7 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.mock
 
 import com.github.pool_party.pull_party_bot.commands.Command
+import com.github.pool_party.pull_party_bot.commands.handlers.AddCommand
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_CHANGE
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_REQUEST_FAIL
@@ -10,9 +11,10 @@ import com.github.pool_party.pull_party_bot.commands.messages.onAddSuccess
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import io.mockk.every
-import org.junit.Test
+import kotlin.test.Test
 
 internal class AbstractChangeCommandTest : AbstractCommandTest() {
+
     override fun initializeCommand(partyDao: PartyDao, chatDao: ChatDao): Command = AddCommand(partyDao, chatDao)
 
     @Test

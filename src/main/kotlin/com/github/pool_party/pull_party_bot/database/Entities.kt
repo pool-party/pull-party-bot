@@ -10,18 +10,30 @@ import org.jetbrains.exposed.sql.and
 
 class Party(id: EntityID<Int>) : IntEntity(id) {
 
-    var name by Parties.name
-    var chat by Chat referencedOn Parties.chatId
     var users by Parties.users
-    var lastUse by Parties.lastUse
+    val aliases by Alias referrersOn Aliases.partyId
 
-    companion object : IntEntityClass<Party>(Parties) {
-        fun find(chatId: Long, partyName: String): Party? =
-            find { Parties.chatId.eq(chatId) and Parties.name.eq(partyName) }.firstOrNull()
+    companion object : IntEntityClass<Party>(Parties)
+}
 
-        fun topLost(chatId: Long): Party? =
-            find { Parties.chatId.eq(chatId) }
-                .orderBy(Parties.lastUse to SortOrder.ASC)
+class Alias(id: EntityID<Int>) : IntEntity(id) {
+
+    var chat by Chat referencedOn Aliases.chatId
+    var name by Aliases.name
+    var lastUse by Aliases.lastUse
+
+    var party by Party referencedOn Aliases.partyId
+    var users
+        get() = party.users
+        set(value) { party.users = value }
+
+    companion object : IntEntityClass<Alias>(Aliases) {
+        fun find(chatId: Long, partyName: String): Alias? =
+            find { Aliases.chatId.eq(chatId) and Aliases.name.eq(partyName) }.firstOrNull()
+
+        fun topLost(chatId: Long): Alias? =
+            find { Aliases.chatId.eq(chatId) }
+                .orderBy(Aliases.lastUse to SortOrder.ASC)
                 .limit(1)
                 .toList()
                 .singleOrNull()
@@ -31,7 +43,7 @@ class Party(id: EntityID<Int>) : IntEntity(id) {
 class Chat(id: EntityID<Long>) : LongEntity(id) {
 
     var isRude by Chats.isRude
-    val parties by Party referrersOn Parties.chatId
+    val aliases by Alias referrersOn Aliases.chatId
 
     companion object : LongEntityClass<Chat>(Chats)
 }

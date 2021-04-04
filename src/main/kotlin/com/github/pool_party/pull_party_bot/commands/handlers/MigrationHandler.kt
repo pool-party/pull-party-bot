@@ -10,10 +10,6 @@ class MigrationHandler(private val chatDao: ChatDao) : EveryMessageInteraction {
 
     private val logger = KotlinLogging.logger {}
 
-    private val straightMap = hashMapOf<Long, Long>()
-
-    private val reverseMap = hashMapOf<Long, Long>()
-
     override fun onMessage(bot: Bot, message: Message) {
 
         val fromChatId = message.chat.id

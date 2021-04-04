@@ -22,7 +22,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.commands.messages.onFeedback
-import com.github.pool_party.pull_party_bot.database.Party
+import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import kotlinx.serialization.encodeToString
@@ -65,7 +65,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
     override fun Bot.action(message: Message, args: String?) {
 
-        fun Party.format() = "$name: ${users.replace("@", "")}"
+        fun Alias.format() = "- ${users.replace("@", "")}" // TODO better list with │ , ├── and └── symbols
 
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
@@ -80,7 +80,9 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                 sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
             }
         } else {
+            // TODO
             val partyMap = list.associateBy { it.name }
+
             val requestedParties = parsedArgs.asSequence()
                 .flatMap { arg ->
                     val party = partyMap[arg]

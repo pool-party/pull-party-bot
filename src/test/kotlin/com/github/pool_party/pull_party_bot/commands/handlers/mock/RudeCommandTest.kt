@@ -1,6 +1,7 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.mock
 
 import com.github.pool_party.pull_party_bot.commands.Command
+import com.github.pool_party.pull_party_bot.commands.handlers.RudeCommand
 import com.github.pool_party.pull_party_bot.commands.messages.ON_RUDE_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.onRudeSuccess
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
@@ -13,8 +14,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
     override fun initializeCommand(partyDao: PartyDao, chatDao: ChatDao): Command = RudeCommand(chatDao)
 
     private fun parseSingleArg(args: String): String? =
-        args.split(' ').map { it.trim().toLowerCase() }
-            .singleOrNull { it.isNotBlank() } // TODO implement through AbstractCommand.parseArgs.
+        args.split(' ').map { it.trim().toLowerCase() }.singleOrNull { it.isNotBlank() }
 
     @Test
     fun `wrong arguments call`() {
