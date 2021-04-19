@@ -44,6 +44,8 @@ object Configuration {
 
     val JARO_WINKLER_SIMILARITY by Configured("partySimilarity.coefficient", doubleType)
 
+    val MESSAGE_LENGTH = 4096
+
     private class Configured<T>(private val name: String, private val parse: (PropertyLocation, String) -> T) {
         operator fun getValue(thisRef: Configuration, property: KProperty<*>): T = configuration[Key(name, parse)]
     }

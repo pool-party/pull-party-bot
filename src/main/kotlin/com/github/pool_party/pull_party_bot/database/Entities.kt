@@ -23,7 +23,12 @@ class Alias(id: EntityID<Int>) : IntEntity(id) {
     var name by Aliases.name
     var lastUse by Aliases.lastUse
 
-    var party by Party referencedOn Aliases.partyId
+    private var privateParty by Party referencedOn Aliases.partyId
+
+    var party
+        get() = transaction { privateParty }
+        set(value) = transaction { privateParty = value }
+
     var users
         get() = transaction { party.users }
         set(value) = transaction { party.users = value }

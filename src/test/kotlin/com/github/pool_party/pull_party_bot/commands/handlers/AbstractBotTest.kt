@@ -102,9 +102,15 @@ internal abstract class AbstractBotTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
+
         every {
             bot.sendMessage(any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns CompletableFuture()
+
+        // mock
+        every {
+            bot.sendMessage(any(), any(), any(), any(), any(), any(), any(), any(), any()).join()
+        } returns message
 
         every { bot.getChatAdministrators(chat.id) } returns CompletableFuture.completedFuture(arrayListOf(chatMember))
     }

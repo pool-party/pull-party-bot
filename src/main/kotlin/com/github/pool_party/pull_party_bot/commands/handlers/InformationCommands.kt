@@ -22,7 +22,6 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.commands.messages.onFeedback
-import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import kotlinx.serialization.encodeToString
@@ -65,22 +64,47 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
     override fun Bot.action(message: Message, args: String?) {
 
-        fun Alias.format() = "- ${users.replace("@", "")}" // TODO better list with │ , ├── and └── symbols
+        fun sendMessages(chatId: Long, prefix: String, lines: List<String>) {
+            val messages = mutableListOf<String>()
+            var currentString = StringBuilder("```$prefix")
+
+            for (line in lines) {
+                if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
+                    currentString.append("\n").append(line)
+                } else {
+                    messages += currentString.append("```").toString()
+                    currentString = StringBuilder("```$line")
+                }
+            }
+
+            messages += currentString.append("```").toString()
+
+            for (messageText in messages) {
+                sendCaseMessage(chatId, messageText, "Markdown").join()
+            }
+        }
 
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
         val list = partyDao.getAll(chatId)
 
         if (parsedArgs.isNullOrEmpty()) {
-            val partyList = list.asSequence().map { it.format() }.joinToString("\n")
+            val partyLists = list.asSequence()
+                .sortedBy { it.name }
+                .groupBy { it.party.id }
+                .values
+                .flatMap {
+                    listOf("- ${it.first().users.replace("@", "")}") +
+                        it.dropLast(1).map { "  ├── ${it.name}" } +
+                        "  └── ${it.last().name}"
+                }
 
-            if (partyList.isNotBlank()) {
-                sendCaseMessage(chatId, ON_LIST_SUCCESS + partyList)
+            if (partyLists.isNotEmpty()) {
+                sendMessages(chatId, ON_LIST_SUCCESS, partyLists)
             } else {
                 sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
             }
         } else {
-            // TODO
             val partyMap = list.associateBy { it.name }
 
             val requestedParties = parsedArgs.asSequence()
@@ -96,11 +120,11 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                     }
                 }
                 .distinct()
-                .map { it.format() }
-                .joinToString("\n")
+                .map { "- ${it.name}: ${it.users.replace("@", "")}" }
+                .toList()
 
-            if (requestedParties.isNotBlank()) {
-                sendCaseMessage(chatId, ON_ARGUMENT_LIST_SUCCESS + requestedParties)
+            if (requestedParties.isNotEmpty()) {
+                sendMessages(chatId, ON_ARGUMENT_LIST_SUCCESS, requestedParties)
             } else {
                 sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
             }

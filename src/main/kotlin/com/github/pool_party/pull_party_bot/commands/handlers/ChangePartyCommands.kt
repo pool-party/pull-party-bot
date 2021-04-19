@@ -56,6 +56,8 @@ abstract class AbstractChangeCommand(
         val parsedArgs = parseArgs(args)
         val chatId = message.chat.id
 
+        // TODO suggest alias instead of party, if possible
+
         if (parsedArgs.isNullOrEmpty() || parsedArgs.size < 2) {
             sendMessage(
                 chatId,
