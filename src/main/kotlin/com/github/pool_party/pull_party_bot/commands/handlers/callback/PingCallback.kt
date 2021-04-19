@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
@@ -13,7 +13,7 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyId: Int) {
         answerCallbackQuery(callbackQuery.id)
         val message = callbackQuery.message ?: return
-        val party = partyDao.getById(partyId) ?: return
+        val party = partyDao.getByPartyId(partyId) ?: return
         sendMessage(message.chat.id, party.users)
     }
 }

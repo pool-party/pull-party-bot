@@ -7,9 +7,16 @@ import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
 import org.jetbrains.exposed.sql.jodatime.datetime
 
 object Parties : IntIdTable() {
-    val name = varchar("name", 50)
-    val chatId = reference("chat_id", Chats, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val users = text("users")
+}
+
+object Aliases : IntIdTable() {
+    val partyId = reference("party_id", Parties, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
+
+    // performance boosting denormalization
+    val chatId = reference("chat_id", Chats, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
+
+    val name = varchar("name", 50)
     val lastUse = datetime("last_use").defaultExpression(CurrentDateTime())
 
     init {

@@ -8,33 +8,42 @@ group = "org.pool-party"
 version = "1.1.0"
 
 repositories {
-    maven(url = "https://jitpack.io")
+    maven("https://jitpack.io")
     mavenCentral()
     jcenter()
 }
 
+val exposedVersion = "0.29.1"
+val testContainersVersion = "1.15.1"
+val jupyterVersion = "5.6.0"
+
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.30")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
-    implementation("com.github.elbekD:kt-telegram-bot:1.3.8")
+    implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.4.30")
+    implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.1.0")
+    implementation("com.github.elbekD", "kt-telegram-bot", "1.3.8")
 
-    implementation("org.jetbrains.exposed:exposed-core:0.29.1")
-    implementation("org.jetbrains.exposed:exposed-dao:0.29.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.29.1")
-    implementation("org.jetbrains.exposed:exposed-jodatime:0.29.1")
+    implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+    implementation("org.jetbrains.exposed", "exposed-jodatime", exposedVersion)
 
-    implementation("org.postgresql:postgresql:42.2.19")
+    implementation("com.natpryce", "konfig", "1.6.10.0")
 
-    implementation("com.natpryce:konfig:1.6.10.0")
+    implementation("org.slf4j", "slf4j-simple", "2.0.0-alpha1")
+    implementation("io.github.microutils", "kotlin-logging", "2.0.4")
 
-    implementation("org.slf4j:slf4j-simple:2.0.0-alpha1")
-    implementation("io.github.microutils:kotlin-logging:2.0.4")
+    implementation("info.debatty", "java-string-similarity", "2.0.0")
 
-    implementation("info.debatty:java-string-similarity:2.0.0")
+    runtimeOnly("org.postgresql", "postgresql", "42.2.19")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.30")
-    testImplementation("io.mockk:mockk:1.10.6")
+    testImplementation("org.jetbrains.kotlin", "kotlin-test-junit5", "1.4.30")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", jupyterVersion)
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", jupyterVersion)
+
+    testImplementation("io.mockk", "mockk", "1.10.6")
+    testImplementation("org.testcontainers", "postgresql", testContainersVersion)
+    testImplementation("org.testcontainers", "junit-jupiter", testContainersVersion)
 }
 
 tasks.withType<Jar> {
@@ -53,7 +62,7 @@ tasks.withType<Jar> {
 }
 
 tasks.test {
-    useJUnit()
+    useJUnitPlatform()
 }
 
 tasks.compileKotlin {

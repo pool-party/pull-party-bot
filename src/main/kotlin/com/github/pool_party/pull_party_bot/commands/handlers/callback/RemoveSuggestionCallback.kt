@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery

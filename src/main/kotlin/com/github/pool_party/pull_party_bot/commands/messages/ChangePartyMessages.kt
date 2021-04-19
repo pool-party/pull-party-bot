@@ -27,9 +27,9 @@ val ON_CREATE_REQUEST_FAIL =
     Someone is already rocking this party. 🥳
 
     Perhaps you wanted to change existing group with /change
-    Follow the /create command with the new party name and members of a new group
+    Follow the /create or /alias command only with a new party name
 
-    Type `/help create` or `/help change` for more information
+    Type `/help create`, `/help alias` or `/help change` for more information
     """.trimIndent()
 
 val ON_CHANGE_EMPTY =
@@ -66,7 +66,7 @@ val ON_PARTY_NAME_FAIL =
     """
     As you name the boat, so shall it float. ☝️
 
-    Party name should consist of less than 50 non-blank symbols
+    Party or alias name should consist of less than 50 non-blank symbols
     `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
     Type help for more information

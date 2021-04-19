@@ -49,8 +49,7 @@ abstract class AbstractChangeCommand(
     private val status: PartyChangeStatus,
     private val partyDao: PartyDao,
     chatDao: ChatDao
-) :
-    CaseCommand(command, description, helpMessage, chatDao) {
+) : CaseCommand(command, description, helpMessage, chatDao) {
 
     override fun Bot.action(message: Message, args: String?) {
 
@@ -69,8 +68,7 @@ abstract class AbstractChangeCommand(
 
         val partyName = parsedArgs[0].removePrefix("@")
 
-        val regex = Regex("(.*[@${Configuration.PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*-)")
-        if (partyName.isBlank() || partyName.length > 50 || partyName.matches(regex)) {
+        if (!validatePartyName(partyName)) {
             sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
             return
         }
@@ -111,6 +109,11 @@ abstract class AbstractChangeCommand(
 
         sendMessage(chatId, status.onFailure, "Markdown")
     }
+}
+
+fun validatePartyName(partyName: String): Boolean {
+    val regex = Regex("(.*[@${Configuration.PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*-)")
+    return partyName.isNotBlank() && partyName.length <= 50 && !partyName.matches(regex)
 }
 
 enum class PartyChangeStatus(

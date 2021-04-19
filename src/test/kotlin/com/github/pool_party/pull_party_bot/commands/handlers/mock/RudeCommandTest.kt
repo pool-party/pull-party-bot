@@ -1,6 +1,7 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.mock
 
 import com.github.pool_party.pull_party_bot.commands.Command
+import com.github.pool_party.pull_party_bot.commands.handlers.RudeCommand
 import com.github.pool_party.pull_party_bot.commands.messages.ON_RUDE_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.onRudeSuccess
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
@@ -12,9 +13,8 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
     override fun initializeCommand(partyDao: PartyDao, chatDao: ChatDao): Command = RudeCommand(chatDao)
 
-    private fun parseSingleArg(args: String): String? =
-        args.split(' ').map { it.trim().toLowerCase() }
-            .singleOrNull { it.isNotBlank() } // TODO implement through AbstractCommand.parseArgs.
+    private fun parseSingleArg(args: String): String =
+        args.split(' ').map { it.trim().toLowerCase() }.single { it.isNotBlank() }
 
     @Test
     fun `wrong arguments call`() {
@@ -37,7 +37,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
         verifyMessages(
             message.chat.id,
-            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!).toUpperCase()
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)).toUpperCase()
         )
     }
 
@@ -52,7 +52,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
         verifyMessages(
             message.chat.id,
-            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!).toUpperCase()
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)).toUpperCase()
         )
     }
 
@@ -73,7 +73,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
         verifyMessages(
             message.chat.id,
-            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!)
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args))
         )
     }
 
@@ -94,7 +94,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
         verifyMessages(
             message.chat.id,
-            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)!!)
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args))
         )
     }
 }

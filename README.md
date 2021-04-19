@@ -7,6 +7,11 @@
 [![Donations](https://img.shields.io/badge/buy_me_a-coffee-orange?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/poolparty)
 [![Pull Party Bot](https://img.shields.io/badge/telegram-Pull_Party_Bot-blue?logo=Telegram)](https://t.me/PullPartyBot/)
 
+<div align="center">
+    <img src="assets/logo-white-no_boarders.png" width=50% alt="logo">
+</div>
+<p align="center">© 2020 Pool Party Corp. All rights reserved.</p>
+
 **Pull Party Telegram Bot** helps you pulling people up for a party!
 
 ## Usage guide
@@ -25,6 +30,7 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
     >  Party name should be no longer than 50 characters \
     >  `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
 
+-   `/alias  <alias-name party-name>` - create a new party with the same users
 -   `/change partyName user1 user2...` - change an existing party
 -   `/add partyName user1 user2...` - extend party with provided users
 -   `/remove partyName user1 user2...` - delete mentioned users from the given party
@@ -103,6 +109,8 @@ Use these commands to mention members of needed parties, see the information and
 
 -   [MockK mocking library](https://github.com/mockk/mockk)
 
+-   [Test Containers](https://testcontainers.org/)
+
 ## Launching
 
 In order to be able to launch the bot server locally you have to compile sources with gradle and set the following environment variables
@@ -113,8 +121,3 @@ or provide corresponding values in [`defaults.properties`](src/main/resources/de
 -   `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME`, `JDBC_DATABASE_PASSWORD` - all provided by heroku on database deployment
 
 -   `LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
-
-<div align="center">
-    <img src="assets/logo-white-no_boarders.png" width=50% alt="logo">
-</div>
-<p align="center">© 2020 Pool Party Corp. All rights reserved.</p>

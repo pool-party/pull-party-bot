@@ -1,7 +1,8 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.mock
 
 import com.elbekD.bot.types.ChatMember
 import com.github.pool_party.pull_party_bot.commands.Command
+import com.github.pool_party.pull_party_bot.commands.handlers.ClearCommand
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CLEAR_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao

@@ -1,7 +1,8 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.mock
 
 import com.elbekD.bot.types.ChatMember
 import com.github.pool_party.pull_party_bot.commands.Command
+import com.github.pool_party.pull_party_bot.commands.handlers.DeleteCommand
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_CHANGE
 import com.github.pool_party.pull_party_bot.commands.messages.ON_DELETE_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY

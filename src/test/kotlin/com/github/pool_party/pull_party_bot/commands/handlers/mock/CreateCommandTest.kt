@@ -1,13 +1,15 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.commands.handlers.mock
 
 import com.github.pool_party.pull_party_bot.commands.Command
+import com.github.pool_party.pull_party_bot.commands.handlers.CreateCommand
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CREATE_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_SINGLETON_PARTY
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
-import org.junit.Test
+import kotlin.test.Test
 
 internal class CreateCommandTest : AbstractCommandTest() {
+
     override fun initializeCommand(partyDao: PartyDao, chatDao: ChatDao): Command = CreateCommand(partyDao, chatDao)
 
     @Test
