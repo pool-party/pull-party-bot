@@ -27,9 +27,9 @@ val ON_CREATE_REQUEST_FAIL =
     Someone is already rocking this party. 🥳
 
     Perhaps you wanted to change existing group with /change
-    Follow the /create command with the new party name and members of a new group
+    Follow the /create or /alias command only with a new party name
 
-    Type `/help create` or `/help change` for more information
+    Type `/help create`, `/help alias` or `/help change` for more information
     """.trimIndent()
 
 val ON_CHANGE_EMPTY =

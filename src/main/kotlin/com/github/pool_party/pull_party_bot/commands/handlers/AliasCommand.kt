@@ -4,9 +4,10 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_ALIAS
+import com.github.pool_party.pull_party_bot.commands.messages.ON_ALIAS_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ALIAS_PARSE_FAIL
+import com.github.pool_party.pull_party_bot.commands.messages.ON_CREATE_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_NAME_FAIL
-import com.github.pool_party.pull_party_bot.commands.messages.onAliasFail
 import com.github.pool_party.pull_party_bot.commands.messages.onAliasSuccess
 import com.github.pool_party.pull_party_bot.database.dao.AliasCreationResult
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
@@ -37,7 +38,8 @@ class AliasCommand(
             chatId,
             when (partyDao.createAlias(chatId, aliasName, partyName)) {
                 AliasCreationResult.SUCCESS -> onAliasSuccess(aliasName)
-                AliasCreationResult.NAME_TAKEN, AliasCreationResult.NO_PARTY -> onAliasFail(aliasName)
+                AliasCreationResult.NAME_TAKEN -> ON_CREATE_REQUEST_FAIL
+                AliasCreationResult.NO_PARTY -> ON_ALIAS_FAIL
             },
             "Markdown"
         )
