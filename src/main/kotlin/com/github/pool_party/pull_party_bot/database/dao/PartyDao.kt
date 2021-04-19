@@ -28,7 +28,7 @@ interface PartyDao {
     fun create(chatId: Long, partyName: String, userList: List<String>): Boolean
 
     /**
-     * @return true on success, false if partyName is already taken or an alias with aliasName doesn't exist.
+     * @return true on success, false if aliasName is already taken or party with partyName doesn't exist.
      */
     fun createAlias(chatId: Long, aliasName: String, partyName: String): Boolean
 

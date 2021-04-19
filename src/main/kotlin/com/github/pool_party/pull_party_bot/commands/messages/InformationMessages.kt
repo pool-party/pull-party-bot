@@ -42,6 +42,7 @@ val HELP_MSG =
         /delete <party-names> - delete the parties you provided
 
         /create <party-name users-list> - create new party with mentioned users
+        /alias  <alias-name party-name> - create a new party with the same users
         /change <party-name users-list> - change an existing party
         /add    <party-name users-list> - add new users to the given party
         /remove <party-name users-list> - remove given users from the provided party
@@ -146,7 +147,13 @@ val HELP_FEEDBACK =
     We are always willing to get better for the comfort of our users!
     """.trimIndent()
 
-val HELP_ALIAS = "TODO"
+val HELP_ALIAS =
+    """
+    /alias  <alias-name party-name> - create a new party with the same users
+
+    Party party-name should exist
+    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the alias name
+    """.trimIndent()
 
 val ON_HELP_ERROR =
     """

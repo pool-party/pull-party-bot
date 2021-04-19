@@ -117,7 +117,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                 listOf(
                     listOf(
                         InlineKeyboardButton(
-                            "Remove ${topLost.name}",
+                            "Delete ${topLost.name}",
                             callback_data = Json.encodeToString(CallbackData(CallbackAction.DELETE, topLost.id.value))
                         )
                     )

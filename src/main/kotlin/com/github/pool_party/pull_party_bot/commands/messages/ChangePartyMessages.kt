@@ -66,7 +66,7 @@ val ON_PARTY_NAME_FAIL =
     """
     As you name the boat, so shall it float. ☝️
 
-    Party name should consist of less than 50 non-blank symbols
+    Party  or alias name should consist of less than 50 non-blank symbols
     `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
 
     Type help for more information

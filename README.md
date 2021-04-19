@@ -30,6 +30,7 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
     >  Party name should be no longer than 50 characters \
     >  `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
 
+-   `/alias  <alias-name party-name>` - create a new party with the same users
 -   `/change partyName user1 user2...` - change an existing party
 -   `/add partyName user1 user2...` - extend party with provided users
 -   `/remove partyName user1 user2...` - delete mentioned users from the given party
