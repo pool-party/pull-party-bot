@@ -15,4 +15,4 @@ fun onAliasSuccess(aliasName: String) =
 fun onAliasFail(aliasName: String) =
     """
 
-    """.trimIndent() //TODO wait for partyDao.createAlias update
+    """.trimIndent() // TODO wait for partyDao.createAlias update.
