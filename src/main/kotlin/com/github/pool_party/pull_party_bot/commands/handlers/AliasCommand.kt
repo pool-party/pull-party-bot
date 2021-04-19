@@ -8,6 +8,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_ALIAS_PARSE_FAI
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_NAME_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.onAliasFail
 import com.github.pool_party.pull_party_bot.commands.messages.onAliasSuccess
+import com.github.pool_party.pull_party_bot.database.dao.AliasCreationResult
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -34,8 +35,10 @@ class AliasCommand(
 
         sendMessage(
             chatId,
-            if (partyDao.createAlias(chatId, aliasName, partyName)) onAliasSuccess(aliasName)
-            else onAliasFail(aliasName),
+            when (partyDao.createAlias(chatId, aliasName, partyName)) {
+                AliasCreationResult.SUCCESS -> onAliasSuccess(aliasName)
+                AliasCreationResult.NAME_TAKEN, AliasCreationResult.NO_PARTY -> onAliasFail(aliasName)
+            },
             "Markdown"
         )
     }

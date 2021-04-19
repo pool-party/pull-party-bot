@@ -8,6 +8,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
+enum class AliasCreationResult {
+    SUCCESS, NAME_TAKEN, NO_PARTY
+}
+
 interface PartyDao {
 
     fun getAll(chatId: Long): List<Alias>
@@ -27,10 +31,7 @@ interface PartyDao {
      */
     fun create(chatId: Long, partyName: String, userList: List<String>): Boolean
 
-    /**
-     * @return true on success, false if aliasName is already taken or party with partyName doesn't exist.
-     */
-    fun createAlias(chatId: Long, aliasName: String, partyName: String): Boolean
+    fun createAlias(chatId: Long, aliasName: String, partyName: String): AliasCreationResult
 
     /**
      * @return true on success, false if party with partyName wasn't found.
@@ -106,13 +107,13 @@ class PartyDaoImpl : PartyDao {
         }
     }
 
-    override fun createAlias(chatId: Long, aliasName: String, partyName: String): Boolean =
+    override fun createAlias(chatId: Long, aliasName: String, partyName: String): AliasCreationResult =
         loggingTransaction("createAlias($chatId, $aliasName, $partyName)") {
             if (Alias.find(chatId, aliasName) != null) {
-                return@loggingTransaction false
+                return@loggingTransaction AliasCreationResult.NAME_TAKEN
             }
 
-            val oldAlias = Alias.find(chatId, partyName) ?: return@loggingTransaction false
+            val oldAlias = Alias.find(chatId, partyName) ?: return@loggingTransaction AliasCreationResult.NO_PARTY
 
             Alias.new {
                 party = oldAlias.party
@@ -120,7 +121,7 @@ class PartyDaoImpl : PartyDao {
                 name = aliasName
             }
 
-            true
+            AliasCreationResult.SUCCESS
         }
 
     override fun addUsers(chatId: Long, partyName: String, userList: List<String>): Boolean =
