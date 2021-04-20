@@ -1,7 +1,6 @@
 package com.github.pool_party.pull_party_bot.commands.handlers.testcontainers
 
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
-import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import kotlin.test.Test
 
@@ -12,6 +11,7 @@ internal class ListingTest : AbstractTestContainerTest() {
     private val members = "@first_member @second_member @third_member"
     private val listMembers = members.filter { it != '@' }
     private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n- $listMembers\n  └── `$aliasName`"
+    private val admins = "- admin\n  └── _admins_ \\[reserved]"
 
     @Test
     fun `list command test`() {
@@ -37,7 +37,7 @@ internal class ListingTest : AbstractTestContainerTest() {
         -"/delete $aliasName"
         -"/delete $partyName"
         -"/list"
-        +ON_LIST_EMPTY
+        +"$ON_LIST_SUCCESS\n$admins"
     }
 
     @Test
@@ -63,14 +63,16 @@ internal class ListingTest : AbstractTestContainerTest() {
         -"/alias $aliasName $partyName"
         -"/create $secondPartyName $secondPartyMembers"
         -"/list"
-        +"""
-            $ON_LIST_SUCCESS
-            - $secondPartyMembers
-              └── `$secondPartyName`
-            - $listMembers
-              ├── `${aliasName.toLowerCase()}`
-              └── `${partyName.toLowerCase()}`
-        """.trimIndent()
+        +(
+            "$ON_LIST_SUCCESS\n$admins\n" +
+                """
+                    - $secondPartyMembers
+                      └── `$secondPartyName`
+                    - $listMembers
+                      ├── `${aliasName.toLowerCase()}`
+                      └── `${partyName.toLowerCase()}`
+                """.trimIndent()
+            )
     }
 
     @Test
@@ -90,15 +92,7 @@ internal class ListingTest : AbstractTestContainerTest() {
 
         val sortedPatyNames = partyNames.reversed().map { "  ├── `$it`" }
 
-        +(
-            """
-                $ON_LIST_SUCCESS
-                - $listMembers
-            """.trimIndent() +
-                "\n${sortedPatyNames.take(74).joinToString("\n")}"
-            )
-        +(
-            "${sortedPatyNames.drop(74).joinToString("\n")}\n" + "  └── `$partyName`"
-            )
+        +"$ON_LIST_SUCCESS\n$admins\n- $listMembers\n${sortedPatyNames.take(74).joinToString("\n")}"
+        +("${sortedPatyNames.drop(74).joinToString("\n")}\n" + "  └── `$partyName`")
     }
 }

@@ -136,14 +136,11 @@ private fun Bot.handleParty(
     }
 }
 
-private fun Bot.handleAdminsParty(msg: Message): String? {
-    val chatId = msg.chat.id
-    val chatType = msg.chat.type
+fun Bot.getAdminsParty(message: Message): String? {
+    val chatId = message.chat.id
+    val chatType = message.chat.type
 
-    if (chatType != "group" && chatType != "supergroup") {
-        sendMessage(chatId, ON_ADMINS_PARTY_FAIL)
-        return null
-    }
+    if (chatType != "group" && chatType != "supergroup") return null
 
     return getChatAdministrators(chatId)
         .join()
@@ -152,4 +149,10 @@ private fun Bot.handleAdminsParty(msg: Message): String? {
         .filter { it.substring(it.length - 3).toLowerCase() != "bot" }
         .map { "@$it" }
         .joinToString(" ")
+}
+
+fun Bot.handleAdminsParty(message: Message): String? {
+    val adminsParty = getAdminsParty(message)
+    if (adminsParty == null) sendMessage(message.chat.id, ON_ADMINS_PARTY_FAIL)
+    return adminsParty
 }
