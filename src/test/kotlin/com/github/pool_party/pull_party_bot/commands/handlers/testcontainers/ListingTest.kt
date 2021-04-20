@@ -65,11 +65,11 @@ internal class ListingTest : AbstractTestContainerTest() {
         -"/list"
         +"""
             $ON_LIST_SUCCESS
+            - $secondPartyMembers
+              └── `$secondPartyName`
             - $listMembers
               ├── `${aliasName.toLowerCase()}`
               └── `${partyName.toLowerCase()}`
-            - $secondPartyMembers
-              └── `$secondPartyName`
         """.trimIndent()
     }
 
@@ -88,16 +88,17 @@ internal class ListingTest : AbstractTestContainerTest() {
 
         -"/list"
 
+        val sortedPatyNames = partyNames.reversed().map { "  ├── `$it`" }
+
         +(
             """
                 $ON_LIST_SUCCESS
                 - $listMembers
             """.trimIndent() +
-                "\n${partyNames.asSequence().sorted().map { "  ├── `$it`" }.take(74).joinToString("\n")}"
+                "\n${sortedPatyNames.take(74).joinToString("\n")}"
             )
         +(
-            "${partyNames.asSequence().sorted().map { "  ├── `$it`" }.drop(74).joinToString("\n")}\n" +
-                "  └── `$partyName`"
+            "${sortedPatyNames.drop(74).joinToString("\n")}\n" + "  └── `$partyName`"
             )
     }
 }

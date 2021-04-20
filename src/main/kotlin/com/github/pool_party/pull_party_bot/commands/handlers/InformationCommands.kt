@@ -81,7 +81,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             messages += currentString.toString()
 
             for (messageText in messages) {
-                sendCaseMessage(chatId, messageText, "Markdown")
+                sendCaseMessage(chatId, messageText, "Markdown").join()
             }
         }
 
@@ -93,15 +93,10 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
         val list = partyDao.getAll(chatId)
-        val partyLists = list.asSequence()
-            .sortedBy { it.name }
-            .groupBy { it.party.id }
-            .values
+        val partyLists = list.asSequence().sortedByDescending { it.lastUse }.groupBy { it.party.id }.values
 
         if (parsedArgs.isNullOrEmpty()) {
-            val formattedPartyLists = partyLists.asSequence()
-                .flatMap { formatIntoStrings(it) }
-                .toList()
+            val formattedPartyLists = partyLists.asSequence().flatMap { formatIntoStrings(it) }.toList()
 
             if (partyLists.isNotEmpty()) {
                 sendMessages(chatId, ON_LIST_SUCCESS, formattedPartyLists)
