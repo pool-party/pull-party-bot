@@ -66,18 +66,18 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
         fun sendMessages(chatId: Long, prefix: String, lines: List<String>) {
             val messages = mutableListOf<String>()
-            var currentString = StringBuilder("```$prefix")
+            var currentString = StringBuilder(prefix)
 
             for (line in lines) {
                 if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
                     currentString.append("\n").append(line)
                 } else {
-                    messages += currentString.append("```").toString()
-                    currentString = StringBuilder("```$line")
+                    messages += currentString.toString()
+                    currentString = StringBuilder(line)
                 }
             }
 
-            messages += currentString.append("```").toString()
+            messages += currentString.toString()
 
             for (messageText in messages) {
                 sendCaseMessage(chatId, messageText, "Markdown").join()
@@ -95,8 +95,8 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                 .values
                 .flatMap {
                     listOf("- ${it.first().users.replace("@", "")}") +
-                        it.dropLast(1).map { "  ├── ${it.name}" } +
-                        "  └── ${it.last().name}"
+                        it.dropLast(1).map { "  ├── `${it.name}`" } +
+                        "  └── `${it.last().name}`"
                 }
 
             if (partyLists.isNotEmpty()) {
@@ -105,22 +105,35 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                 sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
             }
         } else {
+            val partyLists = list.asSequence().sortedBy { it.name }.groupBy { it.party.id }.values
             val partyMap = list.associateBy { it.name }
 
             val requestedParties = parsedArgs.asSequence()
                 .flatMap { arg ->
                     val party = partyMap[arg]
 
-                    val userSequence = partyMap.values.asSequence().filter { arg in it.users }
+                    val userSequence = partyLists.asSequence()
+                        .map { it.first() }
+                        .filter { arg in it.users }
+                        .map { it to true }
 
                     if (party != null) {
-                        userSequence + party
+                        userSequence + (party to false)
                     } else {
                         userSequence
                     }
                 }
-                .distinct()
-                .map { "- ${it.name}: ${it.users.replace("@", "")}" }
+                .distinctBy { it.first }
+                .flatMap { (it, flag) ->
+                    if (flag) {
+                        val aliases = it.party.aliases
+                        sequenceOf("- ${it.users.replace("@", "")}") +
+                            aliases.dropLast(1).map { "  ├── `${it.name}`" } +
+                            "  └── `${aliases.last().name}`"
+                    } else {
+                        sequenceOf("- `${it.name}`: ${it.users.replace("@", "")}")
+                    }
+                }
                 .toList()
 
             if (requestedParties.isNotEmpty()) {

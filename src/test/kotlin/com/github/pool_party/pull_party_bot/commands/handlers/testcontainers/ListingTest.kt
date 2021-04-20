@@ -11,7 +11,7 @@ internal class ListingTest : AbstractTestContainerTest() {
     private val aliasName = "alias_name"
     private val members = "@first_member @second_member @third_member"
     private val listMembers = members.filter { it != '@' }
-    private val listOutput = "```$ON_ARGUMENT_LIST_SUCCESS\n- $aliasName: $listMembers```"
+    private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n- `$aliasName`: $listMembers"
 
     @Test
     fun `list command test`() {
@@ -41,6 +41,19 @@ internal class ListingTest : AbstractTestContainerTest() {
     }
 
     @Test
+    fun `different output formats test`() {
+        -"/create $partyName first_member"
+        -"/create first_member another_member"
+        -"/list first_member"
+        +"""
+            $ON_ARGUMENT_LIST_SUCCESS
+            - first_member
+              └── `$partyName`
+            - `first_member`: another_member
+        """.trimIndent()
+    }
+
+    @Test
     fun `multiple parties list test`() {
         val secondPartyName = "second_party"
         val secondPartyMembers = "members"
@@ -50,12 +63,12 @@ internal class ListingTest : AbstractTestContainerTest() {
         -"/create $secondPartyName $secondPartyMembers"
         -"/list"
         +"""
-            ```$ON_LIST_SUCCESS
+            $ON_LIST_SUCCESS
             - $listMembers
-              ├── ${aliasName.toLowerCase()}
-              └── ${partyName.toLowerCase()}
+              ├── `${aliasName.toLowerCase()}`
+              └── `${partyName.toLowerCase()}`
             - $secondPartyMembers
-              └── $secondPartyName```
+              └── `$secondPartyName`
         """.trimIndent()
     }
 
@@ -76,14 +89,14 @@ internal class ListingTest : AbstractTestContainerTest() {
 
         +(
             """
-                ```$ON_LIST_SUCCESS
+                $ON_LIST_SUCCESS
                 - $listMembers
             """.trimIndent() +
-                "\n${partyNames.asSequence().sorted().map { "  ├── $it" }.take(77).joinToString("\n")}```"
+                "\n${partyNames.asSequence().sorted().map { "  ├── `$it`" }.take(74).joinToString("\n")}"
             )
         +(
-            "```${partyNames.asSequence().sorted().map { "  ├── $it" }.drop(77).joinToString("\n")}\n" +
-                "  └── $partyName```"
+            "${partyNames.asSequence().sorted().map { "  ├── `$it`" }.drop(74).joinToString("\n")}\n" +
+                "  └── `$partyName`"
             )
     }
 }
