@@ -123,14 +123,14 @@ private fun Bot.handleParty(
             ON_PARTY_MISSPELL,
             "Markdown",
             markup = InlineKeyboardMarkup(
-                suggestions.map { (it, _) ->
-                    listOf(
-                        InlineKeyboardButton(
-                            "@${it.name}",
-                            callback_data = Json.encodeToString(CallbackData(CallbackAction.PING, it.party.id.value))
-                        )
-                    )
-                }
+                suggestions.asSequence()
+                    .map { it.first }
+                    .distinctBy { it.name }
+                    .map {
+                        val json = Json.encodeToString(CallbackData(CallbackAction.PING, it.party.id.value))
+                        listOf(InlineKeyboardButton("@${it.name}", callback_data = json))
+                    }
+                    .toList()
             )
         )
     }
