@@ -65,42 +65,68 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
     override fun Bot.action(message: Message, args: String?) {
 
-        fun Alias.format() = "- ${users.replace("@", "")}" // TODO better list with │ , ├── and └── symbols
+        fun sendMessages(chatId: Long, prefix: String, lines: List<String>) {
+            val messages = mutableListOf<String>()
+            var currentString = StringBuilder(prefix)
+
+            for (line in lines) {
+                if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
+                    currentString.append("\n").append(line)
+                } else {
+                    messages += currentString.toString()
+                    currentString = StringBuilder(line)
+                }
+            }
+
+            messages += currentString.toString()
+
+            for (messageText in messages) {
+                sendCaseMessage(chatId, messageText, "Markdown").join()
+            }
+        }
+
+        fun formatIntoStrings(aliases: List<Alias>): Sequence<String> =
+            sequenceOf("- ${aliases.first().users.replace("@", "")}") +
+                aliases.dropLast(1).map { "  ├── `${it.name}`" } +
+                "  └── `${aliases.last().name}`"
 
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
         val list = partyDao.getAll(chatId)
+        val partyLists = list.asSequence().sortedByDescending { it.lastUse }.groupBy { it.party.id }.values
 
         if (parsedArgs.isNullOrEmpty()) {
-            val partyList = list.asSequence().map { it.format() }.joinToString("\n")
+            val formattedPartyLists = partyLists.asSequence().flatMap { formatIntoStrings(it) }.toList()
 
-            if (partyList.isNotBlank()) {
-                sendCaseMessage(chatId, ON_LIST_SUCCESS + partyList)
+            if (partyLists.isNotEmpty()) {
+                sendMessages(chatId, ON_LIST_SUCCESS, formattedPartyLists)
             } else {
                 sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
             }
         } else {
-            // TODO
             val partyMap = list.associateBy { it.name }
 
             val requestedParties = parsedArgs.asSequence()
                 .flatMap { arg ->
                     val party = partyMap[arg]
 
-                    val userSequence = partyMap.values.asSequence().filter { arg in it.users }
+                    val userSequence = partyLists.asSequence()
+                        .map { it.first() }
+                        .filter { arg in it.users }
+                        .map { it to true }
 
                     if (party != null) {
-                        userSequence + party
+                        userSequence + (party to false)
                     } else {
                         userSequence
                     }
                 }
-                .distinct()
-                .map { it.format() }
-                .joinToString("\n")
+                .distinctBy { it.first }
+                .flatMap { (it, flag) -> formatIntoStrings(if (flag) it.party.aliases else listOf(it)) }
+                .toList()
 
-            if (requestedParties.isNotBlank()) {
-                sendCaseMessage(chatId, ON_ARGUMENT_LIST_SUCCESS + requestedParties)
+            if (requestedParties.isNotEmpty()) {
+                sendMessages(chatId, ON_ARGUMENT_LIST_SUCCESS, requestedParties)
             } else {
                 sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
             }

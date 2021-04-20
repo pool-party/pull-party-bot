@@ -142,7 +142,7 @@ class PartyDaoImpl : PartyDao {
 
             alias.delete()
 
-            if (count == 1L) {
+            if (count == 1) {
                 alias.party.delete()
             }
 
