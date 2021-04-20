@@ -11,7 +11,7 @@ internal class ListingTest : AbstractTestContainerTest() {
     private val aliasName = "alias_name"
     private val members = "@first_member @second_member @third_member"
     private val listMembers = members.filter { it != '@' }
-    private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n- `$aliasName`: $listMembers"
+    private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n- $listMembers\n  └── `$aliasName`"
 
     @Test
     fun `list command test`() {
@@ -49,7 +49,8 @@ internal class ListingTest : AbstractTestContainerTest() {
             $ON_ARGUMENT_LIST_SUCCESS
             - first_member
               └── `$partyName`
-            - `first_member`: another_member
+            - another_member
+              └── `first_member`
         """.trimIndent()
     }
 

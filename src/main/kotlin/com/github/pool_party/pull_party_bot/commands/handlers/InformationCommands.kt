@@ -22,6 +22,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.commands.messages.onFeedback
+import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import kotlinx.serialization.encodeToString
@@ -84,6 +85,11 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             }
         }
 
+        fun formatIntoStrings(aliases: List<Alias>): Sequence<String> =
+            sequenceOf("- ${aliases.first().users.replace("@", "")}") +
+                aliases.dropLast(1).map { "  ├── `${it.name}`" } +
+                "  └── `${aliases.last().name}`"
+
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
         val list = partyDao.getAll(chatId)
@@ -93,11 +99,9 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                 .sortedBy { it.name }
                 .groupBy { it.party.id }
                 .values
-                .flatMap {
-                    listOf("- ${it.first().users.replace("@", "")}") +
-                        it.dropLast(1).map { "  ├── `${it.name}`" } +
-                        "  └── `${it.last().name}`"
-                }
+                .asSequence()
+                .flatMap { formatIntoStrings(it) }
+                .toList()
 
             if (partyLists.isNotEmpty()) {
                 sendMessages(chatId, ON_LIST_SUCCESS, partyLists)
@@ -124,16 +128,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                     }
                 }
                 .distinctBy { it.first }
-                .flatMap { (it, flag) ->
-                    if (flag) {
-                        val aliases = it.party.aliases
-                        sequenceOf("- ${it.users.replace("@", "")}") +
-                            aliases.dropLast(1).map { "  ├── `${it.name}`" } +
-                            "  └── `${aliases.last().name}`"
-                    } else {
-                        sequenceOf("- `${it.name}`: ${it.users.replace("@", "")}")
-                    }
-                }
+                .flatMap { (it, flag) -> formatIntoStrings(if (flag) it.party.aliases else listOf(it)) }
                 .toList()
 
             if (requestedParties.isNotEmpty()) {
