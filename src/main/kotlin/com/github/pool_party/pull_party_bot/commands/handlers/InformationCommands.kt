@@ -18,6 +18,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_E
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_FEEDBACK_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_HELP_ERROR
+import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.commands.messages.onFeedback
@@ -69,7 +70,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         val list = partyDao.getAll(chatId)
         val partyLists = list.asSequence().sortedByDescending { it.lastUse }.groupBy { it.party.id }.values
         val adminsParty = getAdminsParty(message)
-        val adminsPartySequence = adminsParty?.let { formatParty(it, listOf("_admins_ \\[reserved]")) }.orEmpty()
+        val adminsPartySequence = adminsParty?.let { formatParty(it, listOf("`admins` _(reserved)_")) }.orEmpty()
 
         if (parsedArgs.isNullOrEmpty()) {
             listAll(chatId, partyLists, adminsPartySequence)
@@ -82,7 +83,12 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
     private fun Bot.listAll(chatId: Long, partyLists: Collection<List<Alias>>, adminsPartySequence: Sequence<String>) {
         val formattedPartySequence = adminsPartySequence + partyLists.asSequence().flatMap { formatIntoStrings(it) }
-        sendMessages(chatId, ON_LIST_SUCCESS, formattedPartySequence.toList())
+        val formattedPartyList = formattedPartySequence.toList()
+        if (formattedPartyList.isNotEmpty()) {
+            sendMessages(chatId, ON_LIST_SUCCESS, formattedPartySequence.toList())
+        } else {
+            sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
+        }
     }
 
     private fun Bot.listFind(

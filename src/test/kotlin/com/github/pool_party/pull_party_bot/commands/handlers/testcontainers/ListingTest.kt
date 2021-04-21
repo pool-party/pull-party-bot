@@ -11,7 +11,7 @@ internal class ListingTest : AbstractTestContainerTest() {
     private val members = "@first_member @second_member @third_member"
     private val listMembers = members.filter { it != '@' }
     private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n- $listMembers\n  └── `$aliasName`"
-    private val admins = "- admin\n  └── _admins_ \\[reserved]"
+    private val admins = "- admin\n  └── `admins` _(reserved)_"
 
     @Test
     fun `list command test`() {
@@ -92,7 +92,7 @@ internal class ListingTest : AbstractTestContainerTest() {
 
         val sortedPatyNames = partyNames.reversed().map { "  ├── `$it`" }
 
-        +"$ON_LIST_SUCCESS\n$admins\n- $listMembers\n${sortedPatyNames.take(74).joinToString("\n")}"
-        +("${sortedPatyNames.drop(74).joinToString("\n")}\n" + "  └── `$partyName`")
+        +"$ON_LIST_SUCCESS\n$admins\n- $listMembers\n${sortedPatyNames.take(73).joinToString("\n")}"
+        +("${sortedPatyNames.drop(73).joinToString("\n")}\n" + "  └── `$partyName`")
     }
 }
