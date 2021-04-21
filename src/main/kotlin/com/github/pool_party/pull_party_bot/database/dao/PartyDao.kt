@@ -24,6 +24,8 @@ interface PartyDao {
 
     fun getByPartyId(partyId: Int): Party?
 
+    fun getAliasByChatIdAndName(chatId: Long, partyName: String): Alias?
+
     fun getByChatIdAndName(chatId: Long, partyName: String): String?
 
     /**
@@ -46,12 +48,12 @@ interface PartyDao {
 
     fun delete(aliasId: Int): String?
 
-    // TODO deleteParty
+    fun deleteNode(partyId: Int): Boolean
 }
 
 class PartyDaoImpl : PartyDao {
 
-    private val cache = mutableMapOf<Pair<Long, String>, String?>()
+    private val cache = mutableMapOf<Pair<Long, String>, Alias?>()
 
     private fun invalidateCache(chatId: Long, partyName: String) {
         cache.remove(chatId to partyName)
@@ -67,21 +69,22 @@ class PartyDaoImpl : PartyDao {
 
     override fun getByPartyId(partyId: Int) = loggingTransaction("getById($partyId)") { Party.findById(partyId) }
 
-    override fun getByChatIdAndName(chatId: Long, partyName: String): String? {
-        val users = cache.getOrPut(chatId to partyName) {
+    override fun getAliasByChatIdAndName(chatId: Long, partyName: String): Alias? {
+        val alias = cache.getOrPut(chatId to partyName) {
             loggingTransaction("getByIdAndName($chatId, $partyName)") {
-                Alias.find(chatId, partyName)?.users
+                Alias.find(chatId, partyName)
             }
         }
         GlobalScope.launch {
             loggingTransaction("updateLastUse($chatId, $partyName)") {
-                Alias.find(chatId, partyName)?.run {
-                    lastUse = DateTime.now()
-                }
+                Alias.find(chatId, partyName)?.run { lastUse = DateTime.now() }
             }
         }
-        return users
+        return alias
     }
+
+    override fun getByChatIdAndName(chatId: Long, partyName: String): String? =
+        getAliasByChatIdAndName(chatId, partyName)?.users
 
     override fun create(chatId: Long, partyName: String, userList: List<String>): Boolean {
         val newParty = loggingTransaction("createParty($chatId, $partyName, $userList)") {
@@ -156,6 +159,15 @@ class PartyDaoImpl : PartyDao {
 
         alias.delete()
         alias.name
+    }
+
+    override fun deleteNode(partyId: Int) = loggingTransaction("deleteNode($partyId)") {
+        val party = Party.findById(partyId) ?: return@loggingTransaction false
+
+        party.aliases.forEach { invalidateCache(it.chat.id.value, it.name) }
+
+        party.delete()
+        true
     }
 
     private fun changeUsers(

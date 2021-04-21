@@ -9,9 +9,9 @@ import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteSucce
 import com.github.pool_party.pull_party_bot.commands.validateAdministrator
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
-class RemoveSuggestionCallback(private val partyDao: PartyDao) : Callback {
+class DeleteSuggestionCallback(private val partyDao: PartyDao) : Callback {
 
-    override val callbackAction: CallbackAction = CallbackAction.DELETE
+    override val callbackAction = CallbackAction.DELETE
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyId: Int) {
         val message = callbackQuery.message

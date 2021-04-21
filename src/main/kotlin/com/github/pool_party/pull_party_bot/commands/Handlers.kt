@@ -16,8 +16,8 @@ import com.github.pool_party.pull_party_bot.commands.handlers.PartyCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RemoveCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RudeCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.StartCommand
+import com.github.pool_party.pull_party_bot.commands.handlers.callback.DeleteSuggestionCallback
 import com.github.pool_party.pull_party_bot.commands.handlers.callback.PingCallback
-import com.github.pool_party.pull_party_bot.commands.handlers.callback.RemoveSuggestionCallback
 import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 
@@ -27,7 +27,7 @@ fun Bot.initHandlers() {
 
     val chatDaoImpl = ChatDaoImpl()
 
-    val callbacks = listOf(RemoveSuggestionCallback(partyDaoImpl), PingCallback(partyDaoImpl))
+    val callbacks = listOf(DeleteSuggestionCallback(partyDaoImpl), PingCallback(partyDaoImpl))
 
     val everyMessageInteractions = listOf(MigrationHandler(chatDaoImpl), ImplicitPartyHandler(partyDaoImpl))
 
