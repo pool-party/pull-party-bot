@@ -97,6 +97,8 @@ Use these commands to mention members of needed parties, see the information and
 
 -   [PostgreSQL database](https://www.postgresql.org)
 
+-   [Flyway](https://flywaydb.org/) migration tool
+
 -   [Emoji commit messages guide](https://gitmoji.dev/)
 
 -   [Telegram Bot Api kotlin library](https://github.com/elbekD/kt-telegram-bot)
@@ -121,3 +123,13 @@ or provide corresponding values in [`defaults.properties`](src/main/resources/de
 -   `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME`, `JDBC_DATABASE_PASSWORD` - all provided by heroku on database deployment
 
 -   `LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
+
+### Database migrations
+
+You can simply apply all the migrations to your database via flyway tool, in particular flyway gradle plugin:
+
+```sh
+./gradlew -Pflyway.url=<jdbc-url> -Pflyway.user=<username> -Pflyway.password=<password> flywayMigrate 
+```
+
+If you have initialized your database before, you can add `-Pflyway.baselineOnMigrate=true` key to process this case.

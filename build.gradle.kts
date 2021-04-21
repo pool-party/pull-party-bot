@@ -2,6 +2,8 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.4.30"
     kotlin("plugin.serialization") version "1.4.30"
+
+    id("org.flywaydb.flyway") version "7.8.1"
 }
 
 group = "org.pool-party"
@@ -27,6 +29,8 @@ dependencies {
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jodatime", exposedVersion)
+
+    implementation("org.flywaydb", "flyway-core", "7.8.1")
 
     implementation("com.natpryce", "konfig", "1.6.10.0")
 
