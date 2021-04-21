@@ -47,6 +47,7 @@ internal class DeleteCommandTest : AbstractCommandTest() {
     }
 
     @Test
+    @Ignore
     fun `consequent delete calls`() {
         chatMembers(chatMember)
 

@@ -32,6 +32,8 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
         parsedArgs.asSequence()
             .mapNotNull {
+                if (!modifyCommandAssertion(chatId, it)) return@mapNotNull null
+
                 val alias = partyDao.getAliasByChatIdAndName(chatId, it)
                 if (alias == null) {
                     sendCaseMessage(chatId, onPartyDeleteUnchanged(it))
@@ -45,7 +47,6 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                 val allSucceeded = aliasList.asSequence()
                     .map {
                         val name = it.name
-                        if (!modifyCommandAssertion(chatId, it.name)) return@map name to false
                         name to partyDao.delete(chatId, name)
                     }
                     .onEach { (name, success) ->
