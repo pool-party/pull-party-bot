@@ -9,6 +9,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import io.mockk.every
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 internal class DeleteCommandTest : AbstractCommandTest() {
