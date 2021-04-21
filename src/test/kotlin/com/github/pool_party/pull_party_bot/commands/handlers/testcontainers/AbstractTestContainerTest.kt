@@ -26,10 +26,8 @@ import io.mockk.every
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.containers.PostgreSQLContainer
@@ -71,10 +69,7 @@ internal abstract class AbstractTestContainerTest : AbstractBotTest() {
     fun setupMock() {
         Database.connect(container.jdbcUrl, user = container.username, password = container.password)
 
-        transaction {
-            addLogger(StdOutSqlLogger)
-            SchemaUtils.create(Aliases, Chats, Parties)
-        }
+        Flyway.configure().dataSource(container.jdbcUrl, container.username, container.password).load().migrate()
 
         every { bot.onCommand(any(), any()) } answers { commandActions[firstArg()] = secondArg() }
         every { bot.onMessage(any()) } answers { everyMessageAction = firstArg() }
