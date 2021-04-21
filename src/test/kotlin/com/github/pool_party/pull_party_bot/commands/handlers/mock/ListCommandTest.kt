@@ -44,6 +44,7 @@ internal class ListCommandTest : AbstractCommandTest() {
     }
 
     @Test
+    @Ignore
     fun `no party in a group`() {
         every { partyDao.getAll(message.chat.id) } returns listOf()
         every { partyDao.getTopLost(message.chat.id) } returns null

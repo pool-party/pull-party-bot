@@ -65,73 +65,78 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
     override fun Bot.action(message: Message, args: String?) {
 
-        fun sendMessages(chatId: Long, prefix: String, lines: List<String>) {
-            val messages = mutableListOf<String>()
-            var currentString = StringBuilder(prefix)
-
-            for (line in lines) {
-                if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
-                    currentString.append("\n").append(line)
-                } else {
-                    messages += currentString.toString()
-                    currentString = StringBuilder(line)
-                }
-            }
-
-            messages += currentString.toString()
-
-            for (messageText in messages) {
-                sendCaseMessage(chatId, messageText, "Markdown").join()
-            }
-        }
-
-        fun formatIntoStrings(aliases: List<Alias>): Sequence<String> =
-            sequenceOf("- ${aliases.first().users.replace("@", "")}") +
-                aliases.dropLast(1).map { "  ├── `${it.name}`" } +
-                "  └── `${aliases.last().name}`"
-
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
         val list = partyDao.getAll(chatId)
         val partyLists = list.asSequence().sortedByDescending { it.lastUse }.groupBy { it.party.id }.values
+        val adminsParty = getAdminsParty(message)
+        val adminsPartySequence = adminsParty?.let { formatParty(it, listOf("`admins` _(reserved)_")) }.orEmpty()
 
         if (parsedArgs.isNullOrEmpty()) {
-            val formattedPartyLists = partyLists.asSequence().flatMap { formatIntoStrings(it) }.toList()
-
-            if (partyLists.isNotEmpty()) {
-                sendMessages(chatId, ON_LIST_SUCCESS, formattedPartyLists)
-            } else {
-                sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
-            }
+            listAll(chatId, partyLists, adminsPartySequence)
         } else {
-            val partyMap = list.associateBy { it.name }
+            listFind(chatId, list, parsedArgs, partyLists, adminsParty, adminsPartySequence)
+        }
 
-            val requestedParties = parsedArgs.asSequence()
-                .flatMap { arg ->
-                    val party = partyMap[arg]
+        suggestDeleting(chatId)
+    }
 
-                    val userSequence = partyLists.asSequence()
-                        .map { it.first() }
-                        .filter { arg in it.users }
-                        .map { it to true }
+    private fun Bot.listAll(chatId: Long, partyLists: Collection<List<Alias>>, adminsPartySequence: Sequence<String>) {
+        val formattedPartySequence = adminsPartySequence + partyLists.asSequence().flatMap { formatIntoStrings(it) }
+        val formattedPartyList = formattedPartySequence.toList()
+        if (formattedPartyList.isNotEmpty()) {
+            sendMessages(chatId, ON_LIST_SUCCESS, formattedPartySequence.toList())
+        } else {
+            sendMessage(chatId, ON_LIST_EMPTY, "Markdown")
+        }
+    }
 
-                    if (party != null) {
-                        userSequence + (party to false)
-                    } else {
-                        userSequence
-                    }
+    private fun Bot.listFind(
+        chatId: Long,
+        list: List<Alias>,
+        parsedArgs: List<String>,
+        partyLists: Collection<List<Alias>>,
+        adminsParty: String?,
+        adminsPartySequence: Sequence<String>,
+    ) {
+        val partyMap = list.associateBy { it.name }
+
+        var requestedPartiesSequence = parsedArgs.asSequence()
+            .flatMap { arg ->
+                val party = partyMap[arg]
+
+                val userSequence = partyLists.asSequence()
+                    .map { it.first() }
+                    .filter { arg in it.users }
+                    .map { it to true }
+
+                if (party != null) {
+                    userSequence + (party to false)
+                } else {
+                    userSequence
                 }
-                .distinctBy { it.first }
-                .flatMap { (it, flag) -> formatIntoStrings(if (flag) it.party.aliases else listOf(it)) }
-                .toList()
+            }
+            .distinctBy { it.first }
+            .flatMap { (it, flag) -> formatIntoStrings(if (flag) it.party.aliases else listOf(it)) }
 
-            if (requestedParties.isNotEmpty()) {
-                sendMessages(chatId, ON_ARGUMENT_LIST_SUCCESS, requestedParties)
-            } else {
-                sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
+        if (adminsParty != null) {
+            val admins = adminsParty.splitToSequence(" ").map { it.replace("@", "").toLowerCase() }
+
+            if ("admins" in parsedArgs || parsedArgs.any { it in admins }) {
+                requestedPartiesSequence = adminsPartySequence + requestedPartiesSequence
             }
         }
 
+        val requestedParties = requestedPartiesSequence.toList()
+
+        if (requestedParties.isNotEmpty()) {
+            sendMessages(chatId, ON_ARGUMENT_LIST_SUCCESS, requestedParties)
+        } else {
+            sendMessage(chatId, ON_ARGUMENT_LIST_EMPTY, "Markdown")
+        }
+    }
+
+    private fun Bot.suggestDeleting(chatId: Long) {
         val topLost = partyDao.getTopLost(chatId) ?: return
 
         if (topLost.lastUse.plusWeeks(Configuration.STALE_PARTY_TIME_WEEKS) >= DateTime.now()) return
@@ -151,6 +156,34 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             )
         )
     }
+
+    private fun Bot.sendMessages(chatId: Long, prefix: String, lines: List<String>) {
+        val messages = mutableListOf<String>()
+        var currentString = StringBuilder(prefix)
+
+        for (line in lines) {
+            if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
+                currentString.append("\n").append(line)
+            } else {
+                messages += currentString.toString()
+                currentString = StringBuilder(line)
+            }
+        }
+
+        messages += currentString.toString()
+
+        for (messageText in messages) {
+            sendCaseMessage(chatId, messageText, "Markdown").join()
+        }
+    }
+
+    private fun formatParty(users: String, aliasNames: List<String>) =
+        sequenceOf("- ${users.replace("@", "")}") +
+            aliasNames.dropLast(1).map { "  ├── $it" } +
+            "  └── ${aliasNames.last()}"
+
+    private fun formatIntoStrings(aliases: List<Alias>) =
+        formatParty(aliases.first().users, aliases.map { "`${it.name}`" })
 }
 
 class FeedbackCommand : AbstractCommand("feedback", "share your ideas and experience with developers", HELP_FEEDBACK) {

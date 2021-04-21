@@ -20,7 +20,7 @@ internal abstract class AbstractBotTest {
     protected val chat =
         Chat(1, "group", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
 
-    private val user = User(-1, false, "first name", null, null, null, null, null, null)
+    private val user = User(-1, false, "first name", null, "admin", null, null, null, null)
 
     protected val chatMember = ChatMember(
         user,
