@@ -15,6 +15,7 @@ class DeleteNodeSuggestionCallback(private val partyDao: PartyDao) : Callback {
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyId: Int) {
         val message = callbackQuery.message
+
         if (message == null) {
             answerCallbackQuery(callbackQuery.id)
             return

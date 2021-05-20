@@ -11,7 +11,8 @@ import com.github.pool_party.pull_party_bot.commands.messages.HELP_CLEAR
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_DELETE
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CLEAR_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_DELETE_EMPTY
-import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteSuccess
+import com.github.pool_party.pull_party_bot.commands.messages.onAliasDeleteSuccess
+import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteSuggest
 import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteUnchanged
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
@@ -51,19 +52,19 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                     .onEach { (name, success) ->
                         sendCaseMessage(
                             chatId,
-                            if (success) onPartyDeleteSuccess(name)
+                            if (success) onAliasDeleteSuccess(name)
                             else onPartyDeleteUnchanged(name)
                         )
                     }
                     .all { it.second }
 
                 if (allSucceeded && aliasList.size < partySize) {
-                    val list = aliasList.asSequence().map { it.name }.joinToString(", ")
+                    val partyList = aliasList.asSequence().map { it.name }.toList()
                     val json = Json.encodeToString(CallbackData(CallbackAction.DELETE_NODE, partyId))
 
                     sendCaseMessage(
                         chatId,
-                        "Ain't u wanna delete full node of: $list",
+                        onPartyDeleteSuggest(partyList),
                         markup = InlineKeyboardMarkup(
                             listOf(listOf(InlineKeyboardButton("Delete", callback_data = json)))
                         )
