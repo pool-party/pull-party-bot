@@ -20,7 +20,7 @@ fun onPartyDeleteSuggest(partyList: List<String>): String {
 
     val format =
         when (partyList.size) {
-            0 -> """"""// TODO check if case is possible.
+            0 -> """""" // TODO check if case is possible.
             1 -> """ ${partyList.last()}"""
             2 -> """ ${partyList[0]} and ${partyList[1]}"""
             else -> """: ${partyList.joinToString(", ")}"""
