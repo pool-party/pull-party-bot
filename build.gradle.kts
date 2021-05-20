@@ -1,7 +1,7 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.4.30"
-    kotlin("plugin.serialization") version "1.4.30"
+    id("org.jetbrains.kotlin.jvm") version "1.5.0"
+    kotlin("plugin.serialization") version "1.5.0"
 
     id("org.flywaydb.flyway") version "7.8.1"
 }
@@ -21,7 +21,7 @@ val jupyterVersion = "5.6.0"
 
 dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.4.30")
+    implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.5.0")
     implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.1.0")
     implementation("com.github.elbekD", "kt-telegram-bot", "1.3.8")
 
@@ -41,7 +41,7 @@ dependencies {
 
     runtimeOnly("org.postgresql", "postgresql", "42.2.19")
 
-    testImplementation("org.jetbrains.kotlin", "kotlin-test-junit5", "1.4.30")
+    testImplementation("org.jetbrains.kotlin", "kotlin-test-junit5", "1.5.0")
     testImplementation("org.junit.jupiter", "junit-jupiter-api", jupyterVersion)
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", jupyterVersion)
 
