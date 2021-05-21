@@ -14,6 +14,7 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
         answerCallbackQuery(callbackQuery.id)
         val message = callbackQuery.message ?: return
         val party = partyDao.getByPartyId(partyId) ?: return
+        deleteMessage(message.chat.id, message.message_id)
         sendMessage(message.chat.id, party.users)
     }
 }

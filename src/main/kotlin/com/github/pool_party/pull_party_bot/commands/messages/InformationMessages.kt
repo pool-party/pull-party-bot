@@ -194,7 +194,7 @@ val ON_ARGUMENT_LIST_EMPTY =
 
 val ON_STALE_PARTY_REMOVE =
     """
-    Some of the parties are more dead than alive, you might get rid of a few:
+    Some of the parties are more dead than alive, you might get rid of the least recently used:
     """.trimIndent()
 
 val ON_PARTY_MISSPELL =

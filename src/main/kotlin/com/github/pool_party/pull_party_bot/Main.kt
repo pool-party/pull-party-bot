@@ -2,7 +2,6 @@ package com.github.pool_party.pull_party_bot
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.server
-import com.elbekD.bot.util.AllowedUpdate
 import com.github.pool_party.pull_party_bot.commands.initHandlers
 import com.github.pool_party.pull_party_bot.database.initDB
 
@@ -15,7 +14,6 @@ fun main() {
     } else {
         Bot.createWebhook(userName, token) {
             url = "${Configuration.APP_URL}/$token"
-            allowedUpdates = listOf(AllowedUpdate.Message)
 
             server {
                 host = Configuration.HOST

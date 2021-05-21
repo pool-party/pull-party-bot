@@ -91,6 +91,8 @@ abstract class AbstractChangeCommand(
         }
 
         if (failedUsers.isNotEmpty()) {
+            sendMessage(chatId, ON_USERS_FAIL)
+
             if (users.isEmpty()) {
                 sendMessage(
                     chatId,
@@ -100,8 +102,6 @@ abstract class AbstractChangeCommand(
                 )
                 return
             }
-
-            sendMessage(chatId, ON_USERS_FAIL)
         }
 
         if (status.transaction.invoke(partyDao, chatId, partyName, users)) {

@@ -10,7 +10,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger {}
 
 enum class CallbackAction {
-    DELETE, PING
+    DELETE, DELETE_NODE, PING
 }
 
 @Serializable

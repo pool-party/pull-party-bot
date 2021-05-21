@@ -1,20 +1,36 @@
 package com.github.pool_party.pull_party_bot.commands.messages
 
+fun onAliasDeleteSuccess(partyName: String) = """Alias $partyName is no longer exists 👍"""
+
+fun onPartyDeleteSuggest(partyList: List<String>): String {
+    val message = "Perhaps you want to delete all aliases of"
+
+    val format =
+        when (partyList.size) {
+            1 -> " ${partyList.last()}"
+            2 -> " ${partyList[0]} and ${partyList[1]}"
+            else -> ": ${partyList.joinToString(", ")}"
+        }
+
+    return message + format
+}
+
+fun onPartyDeleteUnchanged(partyName: String) = """I am not familiar with $partyName 🤨"""
+
+const val ON_PARTY_DELETE_SUCCESS = """All aliases of deleted party are also vanished 💨"""
+
+const val ON_CALLBACK_SUCCESS = """Successfully deleted 😉"""
+
 val ON_CLEAR_SUCCESS =
     """
     Life is a party. Chat is dead then. 😭
 
-    All parties are over. Hope you did it only to rock even bigger ones
-    Let's rest just a little and I'll be waiting for your new entries
+    All parties are over. Hoping you did it only to rock even bigger ones!
+    Have a break and I'll be waiting for your new entries
     Use /create command to start all over again
 
     Type `/help create` for more information
     """.trimIndent()
-
-fun onPartyDeleteSuccess(partyName: String) = """Party $partyName is just a history now 👍"""
-
-fun onPartyDeleteUnchanged(partyName: String) =
-    """Not like I knew the $partyName party, but now I don't know it at all 👍"""
 
 val ON_DELETE_EMPTY =
     """
@@ -40,7 +56,7 @@ val ON_PERMISSION_DENY =
     """
     Parties are all I have. You can't just do this. 🤬
 
-    Sad enough for me, parties can be lost and forgotten, but only by admins
+    Sad enough for me, parties can be deleted, but only by admins
     Only group administrators can perform /delete and /clear commands
     You can pull @admins party to ask them to perform this command
 

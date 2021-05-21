@@ -120,7 +120,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             .flatMap { (it, flag) -> formatIntoStrings(if (flag) it.party.aliases else listOf(it)) }
 
         if (adminsParty != null) {
-            val admins = adminsParty.splitToSequence(" ").map { it.replace("@", "").toLowerCase() }
+            val admins = adminsParty.splitToSequence(" ").map { it.replace("@", "").lowercase() }
 
             if ("admins" in parsedArgs || parsedArgs.any { it in admins }) {
                 requestedPartiesSequence = adminsPartySequence + requestedPartiesSequence

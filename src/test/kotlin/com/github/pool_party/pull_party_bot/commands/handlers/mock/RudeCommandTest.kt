@@ -14,7 +14,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
     override fun initializeCommand(partyDao: PartyDao, chatDao: ChatDao): Command = RudeCommand(chatDao)
 
     private fun parseSingleArg(args: String): String =
-        args.split(' ').map { it.trim().toLowerCase() }.single { it.isNotBlank() }
+        args.split(' ').map { it.trim().lowercase() }.single { it.isNotBlank() }
 
     @Test
     fun `wrong arguments call`() {
@@ -37,7 +37,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
         verifyMessages(
             message.chat.id,
-            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)).toUpperCase()
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)).uppercase()
         )
     }
 
@@ -52,7 +52,7 @@ internal class RudeCommandTest : AbstractCommandTest() {
 
         verifyMessages(
             message.chat.id,
-            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)).toUpperCase()
+            onRudeSuccess(chatDao.setRude(message.chat.id, true), parseSingleArg(args)).uppercase()
         )
     }
 

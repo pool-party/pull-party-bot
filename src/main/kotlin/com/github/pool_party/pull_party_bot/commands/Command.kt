@@ -60,7 +60,7 @@ abstract class AbstractCommand(
         (name == "admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE) }
 
     protected fun parseArgs(args: String?): List<String>? =
-        args?.split(' ')?.map { it.trim().toLowerCase() }?.filter { it.isNotBlank() }
+        args?.split(' ')?.map { it.trim().lowercase() }?.filter { it.isNotBlank() }
 }
 
 abstract class CaseCommand(command: String, description: String, helpMessage: String, protected val chatDao: ChatDao) :
@@ -75,7 +75,7 @@ abstract class CaseCommand(command: String, description: String, helpMessage: St
     ) =
         sendMessage(
             chatId,
-            if (chatDao.getRude(chatId)) message.toUpperCase() else message,
+            if (chatDao.getRude(chatId)) message.uppercase() else message,
             parseMode,
             replyTo = replyTo,
             markup = markup

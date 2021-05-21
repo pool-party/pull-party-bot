@@ -11,4 +11,4 @@ val ON_RUDE_FAIL =
     """.trimIndent()
 
 fun onRudeSuccess(isChanged: Boolean, status: String) =
-    """Rude mode ${if (isChanged) "is now" else "was already"} $status ${if (status == "on") """😈""" else """😇"""}!"""
+    "Rude mode ${if (isChanged) "is now" else "was already"} $status ${if (status == "on") """😈""" else """😇"""}!"

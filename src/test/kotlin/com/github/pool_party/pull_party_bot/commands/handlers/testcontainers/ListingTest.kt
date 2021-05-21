@@ -69,8 +69,8 @@ internal class ListingTest : AbstractTestContainerTest() {
                     - $secondPartyMembers
                       └── `$secondPartyName`
                     - $listMembers
-                      ├── `${aliasName.toLowerCase()}`
-                      └── `${partyName.toLowerCase()}`
+                      ├── `${aliasName.lowercase()}`
+                      └── `${partyName.lowercase()}`
                 """.trimIndent()
             )
     }
