@@ -78,7 +78,7 @@ private fun Bot.handleParty(
     val failed = mutableListOf<String>()
 
     val res = partyNames
-        .map { it.toLowerCase() }
+        .map { it.lowercase() }
         .distinct()
         .mapNotNull {
             if (it == "admins") {
@@ -146,7 +146,7 @@ fun Bot.getAdminsParty(message: Message): String? {
         .join()
         .asSequence()
         .mapNotNull { it.user.username }
-        .filter { it.substring(it.length - 3).toLowerCase() != "bot" }
+        .filter { it.substring(it.length - 3).lowercase() != "bot" }
         .map { "@$it" }
         .joinToString(" ")
 }
