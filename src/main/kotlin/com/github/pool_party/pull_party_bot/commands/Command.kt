@@ -12,6 +12,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_SENDER_FAIL
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import mu.KotlinLogging
 import java.time.LocalDateTime
+import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
@@ -60,7 +61,7 @@ abstract class AbstractCommand(
         (name == "admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE) }
 
     protected fun parseArgs(args: String?): List<String>? =
-        args?.split(' ')?.map { it.trim().toLowerCase() }?.filter { it.isNotBlank() }
+        args?.split(' ')?.map { it.trim().lowercase(Locale.getDefault()) }?.filter { it.isNotBlank() }
 }
 
 abstract class CaseCommand(command: String, description: String, helpMessage: String, protected val chatDao: ChatDao) :

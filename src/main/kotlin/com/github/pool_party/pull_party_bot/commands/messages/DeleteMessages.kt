@@ -1,5 +1,24 @@
 package com.github.pool_party.pull_party_bot.commands.messages
 
+fun onAliasDeleteSuccess(partyName: String) = """Alias $partyName is no longer exists 👍"""
+
+fun onPartyDeleteSuggest(partyList: List<String>): String {
+    val message = "Perhaps you want to delete all aliases of"
+
+    val format =
+        when (partyList.size) {
+            1 -> " ${partyList.last()}"
+            2 -> " ${partyList[0]} and ${partyList[1]}"
+            else -> ": ${partyList.joinToString(", ")}"
+        }
+
+    return message + format
+}
+
+fun onPartyDeleteUnchanged(partyName: String) = """I am not familiar with $partyName 🤨"""
+
+const val ON_PARTY_DELETE_SUCCESS = """All aliases of deleted party are also vanished 💨"""
+
 val ON_CLEAR_SUCCESS =
     """
     Life is a party. Chat is dead then. 😭
@@ -10,27 +29,6 @@ val ON_CLEAR_SUCCESS =
 
     Type `/help create` for more information
     """.trimIndent()
-
-fun onAliasDeleteSuccess(partyName: String) = """Alias $partyName is no longer exists 👍"""
-
-fun onPartyDeleteSuccess(partyName: String) = """Party $partyName and its aliases are deleted 👍"""
-
-fun onPartyDeleteSuggest(partyList: List<String>): String {
-    val message = """Perhaps you want to delete all aliases of"""
-
-    val format =
-        when (partyList.size) {
-            0 -> """""" // TODO check if case is possible.
-            1 -> """ ${partyList.last()}"""
-            2 -> """ ${partyList[0]} and ${partyList[1]}"""
-            else -> """: ${partyList.joinToString(", ")}"""
-        }
-
-    return message + format
-}
-
-fun onPartyDeleteUnchanged(partyName: String) =
-    """I am not familiar with $partyName 🤨"""
 
 val ON_DELETE_EMPTY =
     """

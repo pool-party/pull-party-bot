@@ -2,14 +2,24 @@ package com.github.pool_party.pull_party_bot.commands.messages
 
 import com.github.pool_party.pull_party_bot.Configuration
 
-val ON_SINGLETON_PARTY =
+val ON_CHANGE_EMPTY =
     """
-    A person may not be a party, but if you had a few... 👫
+    The wind of change is blowing. But where? 🤨
 
-    Perhaps you want to create a party for a single user with an alternative name though
-    You can mention a single user by his original name with telegram functionality
+    At least name and a single valid user should be provided
+    You can change the party with /change, /add and /remove commands
 
-    Type `/help create` or `/help change` for more information
+    Type /help for more information
+    """.trimIndent()
+
+val ON_CHANGE_REQUEST_FAIL =
+    """
+    Party didn't started yet, but you already changing the plans. 😥
+
+    Perhaps you wanted to create a new party with /create
+    Follow /add or /change command with the name of existing party and new users
+
+    Type /help for more information
     """.trimIndent()
 
 val ON_CREATE_EMPTY =
@@ -32,26 +42,6 @@ val ON_CREATE_REQUEST_FAIL =
     Type `/help create`, `/help alias` or `/help change` for more information
     """.trimIndent()
 
-val ON_CHANGE_EMPTY =
-    """
-    The wind of change is blowing. But where? 🤨
-
-    At least name and a single valid user should be provided
-    You can change the party with /change, /add and /remove commands
-
-    Type /help for more information
-    """.trimIndent()
-
-val ON_CHANGE_REQUEST_FAIL =
-    """
-    Party didn't started yet, but you already changing the plans. 😥
-
-    Perhaps you wanted to create a new party with /create
-    Follow /add or /change command with the name of existing party and new users
-
-    Type /help for more information
-    """.trimIndent()
-
 val ON_REMOVE_REQUEST_FAIL =
     """
     It is easier to break than to make. 🧱
@@ -60,6 +50,16 @@ val ON_REMOVE_REQUEST_FAIL =
     Follow /remove command with the name of existing party and users to delete
 
     Type `/help remove` for more information
+    """.trimIndent()
+
+val ON_SINGLETON_PARTY =
+    """
+    A person may not be a party, but if you had a few... 👫
+
+    Perhaps you want to create a party for a single user with an alternative name though
+    You can mention a single user by his original name with telegram functionality
+
+    Type `/help create` or `/help change` for more information
     """.trimIndent()
 
 val ON_PARTY_NAME_FAIL =
@@ -82,14 +82,10 @@ val ON_USERS_FAIL =
     Type /help for more information
     """.trimIndent()
 
-fun onCreateSuccess(partyName: String) =
-    """Party $partyName successfully created!"""
+fun onAddSuccess(partyName: String) = "Party $partyName is getting bigger and bigger!"
 
-fun onChangeSuccess(partyName: String) =
-    """Party $partyName changed beyond recognition!"""
+fun onChangeSuccess(partyName: String) = "Party $partyName changed beyond recognition!"
 
-fun onAddSuccess(partyName: String) =
-    """Party $partyName is getting bigger and bigger!"""
+fun onCreateSuccess(partyName: String) = "Party $partyName successfully created!"
 
-fun onDeleteSuccess(partyName: String) =
-    """Party $partyName lost somebody, but not the vibe!"""
+fun onDeleteSuccess(partyName: String) = "Party $partyName lost somebody, but not the vibe!"

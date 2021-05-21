@@ -4,8 +4,8 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_DELETE_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY_CALLBACK
-import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteSuccess
 import com.github.pool_party.pull_party_bot.commands.validateAdministrator
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -30,7 +30,7 @@ class DeleteNodeSuggestionCallback(private val partyDao: PartyDao) : Callback {
         }
 
         if (partyDao.deleteNode(partyId)) {
-            answerCallbackQuery(callbackQuery.id, onPartyDeleteSuccess("TODO"))
+            answerCallbackQuery(callbackQuery.id, ON_PARTY_DELETE_SUCCESS)
         }
 
         deleteMessage(message.chat.id, message.message_id)
