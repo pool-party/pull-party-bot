@@ -1,6 +1,8 @@
 package com.github.pool_party.pull_party_bot.commands.handlers.testcontainers
 
+import com.elbekD.bot.types.CallbackQuery
 import com.elbekD.bot.types.Message
+import com.github.pool_party.pull_party_bot.commands.CallbackDispatcher
 import com.github.pool_party.pull_party_bot.commands.EveryMessageProcessor
 import com.github.pool_party.pull_party_bot.commands.handlers.AbstractBotTest
 import com.github.pool_party.pull_party_bot.commands.handlers.AddCommand
@@ -17,6 +19,9 @@ import com.github.pool_party.pull_party_bot.commands.handlers.PartyCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RemoveCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.RudeCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.StartCommand
+import com.github.pool_party.pull_party_bot.commands.handlers.callback.DeleteNodeSuggestionCallback
+import com.github.pool_party.pull_party_bot.commands.handlers.callback.DeleteSuggestionCallback
+import com.github.pool_party.pull_party_bot.commands.handlers.callback.PingCallback
 import com.github.pool_party.pull_party_bot.database.Aliases
 import com.github.pool_party.pull_party_bot.database.Chats
 import com.github.pool_party.pull_party_bot.database.Parties
@@ -48,6 +53,8 @@ internal abstract class AbstractTestContainerTest : AbstractBotTest() {
 
     private lateinit var everyMessageAction: suspend (Message) -> Unit
 
+    private lateinit var callbackAction: suspend (CallbackQuery) -> Unit
+
     private val commandActions = mutableMapOf<String, suspend (Message, String?) -> Unit>()
 
     private val commands = listOf(
@@ -65,6 +72,14 @@ internal abstract class AbstractTestContainerTest : AbstractBotTest() {
         FeedbackCommand(),
     )
 
+    private val callbacks = listOf(
+        DeleteNodeSuggestionCallback(partyDao),
+        DeleteSuggestionCallback(partyDao),
+        PingCallback(partyDao)
+    )
+
+    private val callbackDispatcher = CallbackDispatcher(callbacks.associateBy { it.callbackAction })
+
     @BeforeTest
     fun setupMock() {
         Database.connect(container.jdbcUrl, user = container.username, password = container.password)
@@ -73,9 +88,11 @@ internal abstract class AbstractTestContainerTest : AbstractBotTest() {
 
         every { bot.onCommand(any(), any()) } answers { commandActions[firstArg()] = secondArg() }
         every { bot.onMessage(any()) } answers { everyMessageAction = firstArg() }
+        every { bot.onCallbackQuery(any()) } answers { callbackAction = firstArg() }
 
         commands.forEach { it.onMessage(bot) }
         everyMessageProcessor.onMessage(bot)
+        callbackDispatcher.onMessage(bot)
     }
 
     @AfterTest
@@ -88,6 +105,14 @@ internal abstract class AbstractTestContainerTest : AbstractBotTest() {
     }
 
     // bot interaction test DSL
+
+    protected fun callback(callbackData: String) {
+        runBlocking {
+            GlobalScope.launch {
+                callbackAction(CallbackQuery("id", user, message, null, "chat instance", callbackData, null))
+            }.join()
+        }
+    }
 
     protected operator fun String.unaryMinus() {
         val split = split(" ")
