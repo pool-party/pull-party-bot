@@ -4,6 +4,7 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
+import com.github.pool_party.pull_party_bot.commands.messages.ON_CALLBACK_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_DELETE_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY_CALLBACK
 import com.github.pool_party.pull_party_bot.commands.messages.onAliasDeleteSuccess
@@ -43,9 +44,9 @@ class DeleteSuggestionCallback(private val partyDao: PartyDao) :
         val partyName = partyDao.delete(partyId)
 
         if (partyName != null) {
-            answerCallbackQuery(callbackQuery.id, "TODO")
-
             val message = callbackQuery.message ?: return
+
+            answerCallbackQuery(callbackQuery.id, ON_CALLBACK_SUCCESS)
             sendMessage(message.chat.id, onAliasDeleteSuccess(partyName))
         }
     }
@@ -56,9 +57,9 @@ class DeleteNodeSuggestionCallback(private val partyDao: PartyDao) :
 
     override suspend fun Bot.delete(callbackQuery: CallbackQuery, partyId: Int) {
         if (partyDao.deleteNode(partyId)) {
-            answerCallbackQuery(callbackQuery.id, "TODO")
-
             val message = callbackQuery.message ?: return
+
+            answerCallbackQuery(callbackQuery.id, ON_CALLBACK_SUCCESS)
             sendMessage(message.chat.id, ON_PARTY_DELETE_SUCCESS)
         }
     }

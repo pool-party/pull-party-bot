@@ -19,6 +19,8 @@ fun onPartyDeleteUnchanged(partyName: String) = """I am not familiar with $party
 
 const val ON_PARTY_DELETE_SUCCESS = """All aliases of deleted party are also vanished 💨"""
 
+const val ON_CALLBACK_SUCCESS = """Successfully deleted 😉"""
+
 val ON_CLEAR_SUCCESS =
     """
     Life is a party. Chat is dead then. 😭
