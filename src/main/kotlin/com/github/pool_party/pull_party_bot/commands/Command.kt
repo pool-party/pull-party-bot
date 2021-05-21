@@ -76,7 +76,7 @@ abstract class CaseCommand(command: String, description: String, helpMessage: St
     ) =
         sendMessage(
             chatId,
-            if (chatDao.getRude(chatId)) message.toUpperCase() else message,
+            if (chatDao.getRude(chatId)) message.uppercase() else message,
             parseMode,
             replyTo = replyTo,
             markup = markup
