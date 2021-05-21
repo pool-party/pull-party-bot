@@ -10,7 +10,7 @@ import kotlin.test.assertNotNull
 
 internal class CallbackTest : AbstractTestContainerTest() {
 
-    private val standardList = "$ON_LIST_SUCCESS\n$- admin\n  └── `admins` _(reserved)_"
+    private val standardList = "$ON_LIST_SUCCESS\n- admin\n  └── `admins` _(reserved)_"
 
     private var lastCallbackData: String? = null
 
@@ -22,7 +22,7 @@ internal class CallbackTest : AbstractTestContainerTest() {
                 ?.singleOrNull()
                 ?.singleOrNull()
                 ?.callback_data
-            CompletableFuture()
+            CompletableFuture.completedFuture(message)
         }
     }
 
@@ -33,7 +33,7 @@ internal class CallbackTest : AbstractTestContainerTest() {
 
         click()
 
-        +"@abcdef"
+        +"@qwertyuiop"
     }
 
     @Test
@@ -51,6 +51,9 @@ internal class CallbackTest : AbstractTestContainerTest() {
     @Test
     fun `stale party delete suggestion test`() {
         -"/create a qwertyuiop"
+
+        Thread.sleep(100)
+
         -"/list"
 
         click()

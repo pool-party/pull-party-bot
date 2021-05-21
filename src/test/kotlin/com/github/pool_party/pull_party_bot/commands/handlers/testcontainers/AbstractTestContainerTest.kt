@@ -88,11 +88,13 @@ internal abstract class AbstractTestContainerTest : AbstractBotTest() {
 
         every { bot.onCommand(any(), any()) } answers { commandActions[firstArg()] = secondArg() }
         every { bot.onMessage(any()) } answers { everyMessageAction = firstArg() }
-        // every { bot.onCallbackQuery(any()) } answers { callbackAction = firstArg() }
+        every { bot.onCallbackQuery(any()) } answers { callbackAction = firstArg() }
+        every { bot.answerCallbackQuery(any(), any(), any(), any(), any()) } returns CompletableFuture()
+        every { bot.deleteMessage(any(), any()) } returns CompletableFuture()
 
         commands.forEach { it.onMessage(bot) }
         everyMessageProcessor.onMessage(bot)
-        // callbackDispatcher.onMessage(bot)
+        callbackDispatcher.onMessage(bot)
     }
 
     @AfterTest

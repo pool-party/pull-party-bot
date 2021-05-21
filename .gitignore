@@ -3,4 +3,4 @@
 build
 out
 .DS_store
-test.properties
+src/main/resources/test.properties
