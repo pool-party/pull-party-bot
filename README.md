@@ -60,13 +60,11 @@ Use these commands to mention members of needed parties, see the information and
 -   `/list entry1? entry2?...` - show the parties of the chat and their members
 
     > Returns all parties on empty input \
-    >  Entries are either users or partyNames: \
-
-          - on the given user shows all parties he is part of \
-          - on the given party shows its members \
-
-    List doesn't contain repetitive values \
-     Doesn't show `@admins` party
+    > Entries are either users or partyNames: \
+    >     - on the given user shows all parties he is part of \
+    >     - on the given party shows its members \
+    > List doesn't contain repetitive values \
+    > Doesn't show `@admins` party
 
 -   `/start` - start the conversation and see welcoming message
 
@@ -129,7 +127,7 @@ or provide corresponding values in [`defaults.properties`](src/main/resources/de
 You can simply apply all the migrations to your database via flyway tool, in particular flyway gradle plugin:
 
 ```sh
-./gradlew -Pflyway.url=<jdbc-url> -Pflyway.user=<username> -Pflyway.password=<password> flywayMigrate 
+./gradlew -Pflyway.url=<jdbc-url> -Pflyway.user=<username> -Pflyway.password=<password> flywayMigrate
 ```
 
 If you have initialized your database before, you can add `-Pflyway.baselineOnMigrate=true` key to process this case.

@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0] - 21.05.2021
+
+### Added
+
+- Usage
+  - Add `/alias` command to treat party names to parties as many-to-one relation
+    - Deleting full party node suggestion
+  - `/list` command pretty printing
+- Developing
+  - Database migrations
+
+### Fixed
+
+- Supergroup migration is handled properly
+- `/list` command used to crash on too many parties in a group
+- Party pulling suggestions are now unique
+- `@admins` party is added to a `/list` output with a special mark
+
 ## [1.1.0.2] - 04.03.2021
 
 ### Fixed
@@ -82,6 +100,7 @@
 -   Implicit party pulling
 -   Rude mode
 
+[1.2.0]: https://github.com/pool-party/pull-party-bot/compare/v1.1.0.2...v1.2.0
 [1.1.0.2]: https://github.com/pool-party/pull-party-bot/compare/v1.1.0.1...v1.1.0.2
 [1.1.0.1]: https://github.com/pool-party/pull-party-bot/compare/v1.1.0...v1.1.0.1
 [1.1.0]: https://github.com/pool-party/pull-party-bot/compare/v1.0.2.1...v1.1.0
