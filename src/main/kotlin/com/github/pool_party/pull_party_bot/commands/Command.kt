@@ -12,7 +12,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_SENDER_FAIL
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import mu.KotlinLogging
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Locale
 
 private val logger = KotlinLogging.logger {}
 
