@@ -70,9 +70,8 @@ Use these commands to mention members of needed parties, see the information and
     > Returns all parties on empty input \
     > Entries are either users or party names: \
     >     - on the given user shows all parties he is part of \
-    >         - on the given party shows its members \
-    >   List doesn't contain repetitive values \
-    >   Doesn't show `@admins` party \
+    >     - on the given party shows its members \
+    > List doesn't contain repetitive values \
     > Suggests deleting least recently used parties
 
 -   `/start` - start the conversation and see welcoming message
