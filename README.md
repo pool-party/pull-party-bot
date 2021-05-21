@@ -30,9 +30,16 @@ Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to creat
     >  Party name should be no longer than 50 characters \
     >  `@`, `!`, `,`, `,`, `?`, `:`, `;`, `(`, `)` symbols and trailing `-` are not allowed in the party name
 
--   `/alias  <alias-name party-name>` - create a new party with the same users
+-   `/alias  <alias-name party-name>` - create an alias for the same party
+
+    > Alias is a reference on the same party, not just a copy \
+    > Changing single alias instance applies to the party and seen in the other aliases \
+    > If you want to delete a party with all aliases, delete a single alias and press the suggesting button
+
 -   `/change partyName user1 user2...` - change an existing party
+
 -   `/add partyName user1 user2...` - extend party with provided users
+
 -   `/remove partyName user1 user2...` - delete mentioned users from the given party
 
     > Follow all `/create` method's rules \
@@ -51,7 +58,8 @@ Use these commands to mention members of needed parties, see the information and
 
 -   `@partyName` - syntax for tagging parties implicitly right inside your messages
 
-    > To enable this function you need to grant admins rights to the bot
+    > To enable this function you need to grant admins rights to the bot \
+    > You will see the suggesting button in case of misspelling
 
 -   `/party partyName1 partyName2...` - tag the members of existing parties
 
@@ -60,13 +68,11 @@ Use these commands to mention members of needed parties, see the information and
 -   `/list entry1? entry2?...` - show the parties of the chat and their members
 
     > Returns all parties on empty input \
-    >  Entries are either users or partyNames: \
-
-          - on the given user shows all parties he is part of \
-          - on the given party shows its members \
-
-    List doesn't contain repetitive values \
-     Doesn't show `@admins` party
+    > Entries are either users or party names: \
+    >     - on the given user shows all parties he is part of \
+    >     - on the given party shows its members \
+    > List doesn't contain repetitive values \
+    > Suggests deleting least recently used parties
 
 -   `/start` - start the conversation and see welcoming message
 
@@ -129,7 +135,7 @@ or provide corresponding values in [`defaults.properties`](src/main/resources/de
 You can simply apply all the migrations to your database via flyway tool, in particular flyway gradle plugin:
 
 ```sh
-./gradlew -Pflyway.url=<jdbc-url> -Pflyway.user=<username> -Pflyway.password=<password> flywayMigrate 
+./gradlew -Pflyway.url=<jdbc-url> -Pflyway.user=<username> -Pflyway.password=<password> flywayMigrate
 ```
 
 If you have initialized your database before, you can add `-Pflyway.baselineOnMigrate=true` key to process this case.
