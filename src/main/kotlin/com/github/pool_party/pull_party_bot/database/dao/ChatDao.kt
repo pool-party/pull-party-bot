@@ -1,6 +1,6 @@
 package com.github.pool_party.pull_party_bot.database.dao
 
-import com.github.pool_party.pull_party_bot.database.Chat
+import com.github.pool_party.pull_party_bot.database.ChatCache
 import com.github.pool_party.pull_party_bot.database.Chats
 import com.github.pool_party.pull_party_bot.database.loggingTransaction
 import org.jetbrains.exposed.sql.update
@@ -18,22 +18,12 @@ interface ChatDao {
 
 class ChatDaoImpl : ChatDao {
 
-    private val rudeCache = mutableMapOf<Long, Boolean>()
-
-    private fun invalidateCache(chatId: Long) {
-        rudeCache.remove(chatId)
-    }
-
-    override fun getRude(chatId: Long): Boolean =
-        rudeCache.getOrPut(chatId) {
-            loggingTransaction("getRude($chatId)") { Chat.findById(chatId)?.isRude ?: false }
-        }
+    override fun getRude(chatId: Long): Boolean = ChatCache[chatId].isRude
 
     override fun setRude(chatId: Long, newMode: Boolean): Boolean =
         loggingTransaction("setRude($chatId, $newMode)") {
-            invalidateCache(chatId)
 
-            val chat = Chat.findById(chatId) ?: Chat.new(chatId) {}
+            val chat = ChatCache[chatId]
             val oldMode = chat.isRude
 
             chat.isRude = newMode
@@ -42,14 +32,11 @@ class ChatDaoImpl : ChatDao {
         }
 
     override fun clear(chatId: Long): Unit =
-        loggingTransaction("clear($chatId)") { Chat.findById(chatId)?.run { aliases.forEach { it.delete() } } }
+        loggingTransaction("clear($chatId)") { ChatCache[chatId].run { aliases.forEach { it.delete() } } }
 
     override fun migrate(oldChatId: Long, newChatId: Long): Unit =
         loggingTransaction("migrate($oldChatId, $newChatId)") {
-            invalidateCache(oldChatId)
-
-            Chats.update({ Chats.id eq oldChatId }) {
-                it[id] = newChatId
-            }
+            Chats.update({ Chats.id eq oldChatId }) { it[id] = newChatId }
+            ChatCache.remove(oldChatId)
         }
 }

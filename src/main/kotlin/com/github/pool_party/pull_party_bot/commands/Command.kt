@@ -12,6 +12,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_SENDER_FAIL
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import mu.KotlinLogging
 import java.time.LocalDateTime
+import kotlin.system.measureNanoTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -53,7 +54,12 @@ abstract class AbstractCommand(
         logger.info {
             "${LocalDateTime.now()} $command <- ${message.from?.username}@${message.chat.title}: \"${message.text}\""
         }
-        bot.action(message, args)
+
+        val nanoseconds = measureNanoTime { bot.action(message, args) }
+
+        logger.info {
+            "$command -> finished in ${nanoseconds / 1000000000}.${nanoseconds % 1000000000}s"
+        }
     }
 
     protected fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
