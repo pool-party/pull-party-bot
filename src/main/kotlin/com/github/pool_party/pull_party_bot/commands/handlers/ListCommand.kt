@@ -28,7 +28,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
-        val list = partyDao.getAll(-1001324259720) // TODO TEMP
+        val list = partyDao.getAll(chatId)
         val partyLists = list.asSequence().sortedByDescending { it.lastUse }.groupBy { it.party.id }.values
         val adminsParty = getAdminsParty(message)
         val adminsPartySequence = adminsParty?.let { formatParty(it, listOf("`admins` _(reserved)_")) }.orEmpty()
