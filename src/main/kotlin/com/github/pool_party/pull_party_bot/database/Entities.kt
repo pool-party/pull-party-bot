@@ -12,7 +12,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class Party(id: EntityID<Int>) : IntEntity(id) {
 
     var users by Parties.users
-    private val privateAliases by Alias referrersOn Aliases.partyId
 
     val aliases
         get() = PartyAliasesCache[id.value]

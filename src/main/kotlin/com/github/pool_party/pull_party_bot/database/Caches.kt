@@ -20,6 +20,8 @@ abstract class LruCache<K, V>(capacity: Int) {
     operator fun set(key: K, value: V) = storage.put(key, value)
 
     fun remove(key: K) = storage.remove(key)
+
+    fun clear() = storage.clear()
 }
 
 object AliasCache : LruCache<Long, MutableMap<String, Alias>>(Configuration.ALIAS_CACHE_CAPACITY) {
