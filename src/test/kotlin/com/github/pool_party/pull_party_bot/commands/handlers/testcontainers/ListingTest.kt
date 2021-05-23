@@ -6,9 +6,9 @@ import kotlin.test.Test
 
 internal class ListingTest : AbstractTestContainerTest() {
 
-    private val partyName = "party_name"
-    private val aliasName = "alias_name"
-    private val members = "@first_member @second_member @third_member"
+    private val partyName = "party"
+    private val aliasName = "alias"
+    private val members = "@first @second @third"
     private val listMembers = members.filter { it != '@' }
     private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n- $listMembers\n  └── `$aliasName`"
     private val admins = "- admin\n  └── `admins` _(reserved)_"
@@ -42,21 +42,21 @@ internal class ListingTest : AbstractTestContainerTest() {
 
     @Test
     fun `different output formats test`() {
-        -"/create $partyName first_member"
-        -"/create first_member another_member"
-        -"/list first_member"
+        -"/create $partyName first"
+        -"/create first another"
+        -"/list first"
         +"""
             $ON_ARGUMENT_LIST_SUCCESS
-            - first_member
+            - first
               └── `$partyName`
-            - another_member
-              └── `first_member`
+            - another
+              └── `first`
         """.trimIndent()
     }
 
     @Test
     fun `multiple parties list test`() {
-        val secondPartyName = "second_party"
+        val secondPartyName = "second"
         val secondPartyMembers = "members"
 
         -"/create $partyName $members"
@@ -92,7 +92,7 @@ internal class ListingTest : AbstractTestContainerTest() {
 
         val sortedPatyNames = partyNames.reversed().map { "  ├── `$it`" }
 
-        +"$ON_LIST_SUCCESS\n$admins\n- $listMembers\n${sortedPatyNames.take(73).joinToString("\n")}"
-        +("${sortedPatyNames.drop(73).joinToString("\n")}\n" + "  └── `$partyName`")
+        +"$ON_LIST_SUCCESS\n$admins\n- $listMembers\n${sortedPatyNames.take(74).joinToString("\n")}"
+        +("${sortedPatyNames.drop(74).joinToString("\n")}\n" + "  └── `$partyName`")
     }
 }

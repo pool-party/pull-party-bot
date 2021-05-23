@@ -5,13 +5,20 @@ import mu.KotlinLogging
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.LocalDateTime
+import kotlin.system.measureNanoTime
 
 private val logger = KotlinLogging.logger {}
 
 fun <T> loggingTransaction(info: String, action: Transaction.() -> T): T {
-    logger.info { "${LocalDateTime.now()} $info" }
-    return transaction { action() }
+    logger.info { "=> $info" }
+
+    val result: T
+    val nanoseconds = measureNanoTime { result = transaction { action() } }
+
+    logger.info {
+        "<= $info finished in ${nanoseconds / 1000000000}.${nanoseconds % 1000000000}s"
+    }
+    return result
 }
 
 fun initDB() {

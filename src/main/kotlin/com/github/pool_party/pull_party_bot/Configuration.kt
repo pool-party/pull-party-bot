@@ -46,6 +46,11 @@ object Configuration {
 
     val MESSAGE_LENGTH = 4096
 
+    val ALIAS_CACHE_CAPACITY by Configured("cache.capacity.alias", intType)
+    val PARTY_CACHE_CAPACITY by Configured("cache.capacity.party", intType)
+    val PARTY_ALIASES_CACHE_CAPACITY by Configured("cache.capacity.partyaliases", intType)
+    val CHAT_CACHE_CAPACITY by Configured("cache.capacity.chat", intType)
+
     private class Configured<T>(private val name: String, private val parse: (PropertyLocation, String) -> T) {
         operator fun getValue(thisRef: Configuration, property: KProperty<*>): T = configuration[Key(name, parse)]
     }

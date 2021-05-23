@@ -12,10 +12,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class Party(id: EntityID<Int>) : IntEntity(id) {
 
     var users by Parties.users
-    private val privateAliases by Alias referrersOn Aliases.partyId
 
     val aliases
-        get() = transaction { privateAliases.toList() }
+        get() = PartyAliasesCache[id.value]
 
     companion object : IntEntityClass<Party>(Parties)
 }
@@ -28,13 +27,15 @@ class Alias(id: EntityID<Int>) : IntEntity(id) {
 
     private var privateParty by Party referencedOn Aliases.partyId
 
+    val partyId by Aliases.partyId
+
     var party
-        get() = transaction { privateParty }
+        get() = PartyCache[partyId.value]!!
         set(value) = transaction { privateParty = value }
 
     var users
-        get() = transaction { party.users }
-        set(value) = transaction { party.users = value }
+        get() = party.users
+        set(value) { party.run { transaction { users = value } } }
 
     companion object : IntEntityClass<Alias>(Aliases) {
         fun find(chatId: Long, partyName: String): Alias? =
