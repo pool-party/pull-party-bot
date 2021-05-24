@@ -61,9 +61,11 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             .flatMap { arg ->
                 val party = partyMap[arg]
 
+                val argRegex = "(^|\\W)@$arg(\\W|$)".toRegex()
+
                 val userSequence = partyLists.asSequence()
                     .map { it.first() }
-                    .filter { it.users.matches("(^|\\W)$arg(\\W|$)".toRegex()) }
+                    .filter { it.users.contains(argRegex) }
                     .map { it to true }
 
                 if (party != null) {
