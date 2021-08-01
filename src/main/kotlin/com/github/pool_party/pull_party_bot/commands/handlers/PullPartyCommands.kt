@@ -106,7 +106,7 @@ private fun Bot.handleParty(
         .mapNotNull { fail ->
             parties.asSequence()
                 .map { it to similarityAlgorithm.similarity(it.name, fail) }
-                .filter { it.second >= Configuration.JARO_WINKLER_SIMILARITY }
+                .filter { it.second >= Configuration.PARTY_SIMILARITY_COEFFICIENT }
                 .maxByOrNull { it.second }
                 ?.let { it.first to fail }
         }
@@ -127,7 +127,9 @@ private fun Bot.handleParty(
                     .map { it.first }
                     .distinctBy { it.name }
                     .map {
-                        val json = Json.encodeToString(CallbackData(CallbackAction.PING, it.party.id.value))
+                        val json = Json.encodeToString(
+                            CallbackData(CallbackAction.PING, it.party.id.value, message.from?.id)
+                        )
                         listOf(InlineKeyboardButton("@${it.name}", callback_data = json))
                     }
                     .toList()

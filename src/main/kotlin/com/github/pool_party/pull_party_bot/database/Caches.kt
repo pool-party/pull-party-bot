@@ -24,7 +24,7 @@ abstract class LruCache<K, V>(capacity: Int) {
     fun clear() = storage.clear()
 }
 
-object AliasCache : LruCache<Long, MutableMap<String, Alias>>(Configuration.ALIAS_CACHE_CAPACITY) {
+object AliasCache : LruCache<Long, MutableMap<String, Alias>>(Configuration.CACHE_CAPACITY_ALIAS) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -48,21 +48,21 @@ object AliasCache : LruCache<Long, MutableMap<String, Alias>>(Configuration.ALIA
     }
 }
 
-object PartyCache : LruCache<Int, Party?>(Configuration.PARTY_CACHE_CAPACITY) {
+object PartyCache : LruCache<Int, Party?>(Configuration.CACHE_CAPACITY_PARTY) {
 
     override fun supply(key: Int) = loggingTransaction("Updating party cache: getPartyById($key)") {
         Party.findById(key)
     }
 }
 
-object PartyAliasesCache : LruCache<Int, MutableList<Alias>>(Configuration.PARTY_ALIASES_CACHE_CAPACITY) {
+object PartyAliasesCache : LruCache<Int, MutableList<Alias>>(Configuration.CACHE_CAPACITY_PARTYALIASES) {
 
     override fun supply(key: Int) = loggingTransaction("Updating party cache: getPartyById($key)") {
         Alias.find { Aliases.partyId eq key }.toMutableList()
     }
 }
 
-object ChatCache : LruCache<Long, Chat>(Configuration.CHAT_CACHE_CAPACITY) {
+object ChatCache : LruCache<Long, Chat>(Configuration.CACHE_CAPACITY_CHAT) {
 
     override fun supply(key: Long) = loggingTransaction("Updating chat cache: findOrCreateChat($key)") {
         Chat.findById(key) ?: Chat.new(key) {}

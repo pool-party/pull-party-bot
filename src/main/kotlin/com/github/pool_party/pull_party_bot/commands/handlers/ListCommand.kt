@@ -91,7 +91,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     private fun Bot.suggestDeleting(chatId: Long) {
         val topLost = partyDao.getTopLost(chatId) ?: return
 
-        if (topLost.lastUse.plusWeeks(Configuration.STALE_PARTY_TIME_WEEKS) >= DateTime.now()) return
+        if (topLost.lastUse.plusWeeks(Configuration.STALE_PARTY_WEEKS) >= DateTime.now()) return
 
         sendCaseMessage(
             chatId,

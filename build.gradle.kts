@@ -22,7 +22,7 @@ val jupyterVersion = "5.6.0"
 dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlin", "kotlin-reflect", "1.5.0")
-    implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.1.0")
+    implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.2.2")
     implementation("com.github.elbekD", "kt-telegram-bot", "1.3.8")
 
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)

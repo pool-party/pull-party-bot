@@ -14,15 +14,17 @@ enum class CallbackAction {
 }
 
 @Serializable
-data class CallbackData(val callbackAction: CallbackAction, val partyId: Int)
+data class CallbackData(
+    val callbackAction: CallbackAction,
+    val partyId: Int,
+    val creator: Int? = null,
+)
 
 interface Callback {
 
     val callbackAction: CallbackAction
 
-    suspend fun processBot(bot: Bot, callbackQuery: CallbackQuery, partyId: Int) = bot.process(callbackQuery, partyId)
-
-    suspend fun Bot.process(callbackQuery: CallbackQuery, partyId: Int)
+    suspend fun Bot.process(callbackQuery: CallbackQuery, callbackData: CallbackData)
 }
 
 class CallbackDispatcher(val callbacks: Map<CallbackAction, Callback>) : Interaction {
@@ -33,6 +35,6 @@ class CallbackDispatcher(val callbacks: Map<CallbackAction, Callback>) : Interac
         val callbackData = it.data?.let { Json.decodeFromString<CallbackData>(it) } ?: return@onCallbackQuery
         val callback = callbacks[callbackData.callbackAction] ?: return@onCallbackQuery
 
-        callback.processBot(bot, it, callbackData.partyId)
+        with(callback) { bot.process(it, callbackData) }
     }
 }

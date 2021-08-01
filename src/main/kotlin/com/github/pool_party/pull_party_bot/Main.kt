@@ -7,9 +7,9 @@ import com.github.pool_party.pull_party_bot.database.initDB
 
 fun main() {
     val token = Configuration.TELEGRAM_TOKEN
-    val userName = Configuration.USER_NAME
+    val userName = Configuration.USERNAME
 
-    val bot = if (Configuration.IS_LONGPOLL) {
+    val bot = if (Configuration.LONGPOLL) {
         Bot.createPolling(userName, token)
     } else {
         Bot.createWebhook(userName, token) {
