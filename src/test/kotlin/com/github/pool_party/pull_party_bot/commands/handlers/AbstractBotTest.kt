@@ -32,7 +32,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Container
 import java.util.concurrent.CompletableFuture
 import kotlin.test.AfterTest
@@ -248,8 +247,7 @@ internal abstract class AbstractBotTest {
 
     companion object {
         @Container
-        private val container = KPostgreSQLContainer()
-            .withDatabaseName("database")
+        private val container = KPostgreSQLContainer().withDatabaseName("database")
     }
 
     internal class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>("postgres")
