@@ -250,8 +250,7 @@ internal abstract class AbstractBotTest {
         @Container
         private val container = KPostgreSQLContainer()
             .withDatabaseName("database")
-            .waitingFor(Wait.forLogMessage(".*database system is ready to accept connections.*\\n", 1))
     }
 
-    internal class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>("postgres:13.3")
+    internal class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>("postgres")
 }

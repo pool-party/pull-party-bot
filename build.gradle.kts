@@ -41,7 +41,7 @@ dependencies {
 
     implementation("info.debatty", "java-string-similarity", "2.0.0")
 
-    runtimeOnly("org.postgresql", "postgresql", "42.2.14")
+    runtimeOnly("org.postgresql", "postgresql", "42.2.23")
 
     testImplementation("org.jetbrains.kotlin", "kotlin-test-junit5", kotlinVersion)
     testImplementation("org.junit.jupiter", "junit-jupiter-api", jupyterVersion)
