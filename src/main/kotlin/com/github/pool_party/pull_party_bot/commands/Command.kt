@@ -48,7 +48,7 @@ abstract class AbstractCommand(
 ) : Command {
     override val command = "/$commandName"
 
-    abstract fun Bot.action(message: Message, args: String?)
+    abstract suspend fun Bot.action(message: Message, args: String?)
 
     override fun onMessage(bot: Bot) = bot.onCommand(command) { message, args ->
         logger.info {
@@ -93,7 +93,7 @@ abstract class AdministratorCommand(command: String, description: String, helpMe
 
     abstract fun Bot.mainAction(message: Message, args: String?)
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
         if (validateAdministrator(message.from, message.chat)) mainAction(message, args)
     }
 }

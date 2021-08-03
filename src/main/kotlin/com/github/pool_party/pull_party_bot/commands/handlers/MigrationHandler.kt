@@ -10,7 +10,7 @@ class MigrationHandler(private val chatDao: ChatDao) : EveryMessageInteraction {
 
     private val logger = KotlinLogging.logger {}
 
-    override fun onMessage(bot: Bot, message: Message) {
+    override suspend fun onMessage(bot: Bot, message: Message) {
 
         val fromChatId = message.chat.id
         val toChatId = message.migrate_to_chat_id ?: return

@@ -216,8 +216,3 @@ val ON_PING_CREATOR_MISMATCH =
     """
     Available for initial requesting user only 🚫
     """.trimIndent()
-
-val ON_PING_OUTDATE =
-    """
-    Too late to call 📞
-    """.trimIndent()

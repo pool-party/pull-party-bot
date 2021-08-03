@@ -18,7 +18,7 @@ class AliasCommand(
     chatDao: ChatDao,
 ) : CaseCommand("alias", "create a party alias", HELP_ALIAS, chatDao) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)
         val chatId = message.chat.id
 

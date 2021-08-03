@@ -24,7 +24,7 @@ import org.joda.time.DateTime
 class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     CaseCommand("list", "show the parties of the chat", HELP_LIST, chatDao) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
 
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id

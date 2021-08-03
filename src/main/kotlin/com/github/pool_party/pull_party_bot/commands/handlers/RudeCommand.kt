@@ -10,7 +10,7 @@ import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 
 class RudeCommand(chatDao: ChatDao) : CaseCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE, chatDao) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArg = parseArgs(args)?.singleOrNull()
         val chatId = message.chat.id
 

@@ -10,7 +10,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.onFeedback
 
 class FeedbackCommand : AbstractCommand("feedback", "share your ideas and experience with developers", HELP_FEEDBACK) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArgs = args?.trim()
         val developChatId = Configuration.DEVELOP_CHAT_ID
         if (developChatId == 0L || parsedArgs.isNullOrBlank()) return

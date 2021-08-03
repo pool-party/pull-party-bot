@@ -2,12 +2,10 @@ package com.github.pool_party.pull_party_bot.commands.handlers.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
-import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PING_CREATOR_MISMATCH
-import com.github.pool_party.pull_party_bot.commands.messages.ON_PING_OUTDATE
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class PingCallback(private val partyDao: PartyDao) : Callback {
@@ -29,13 +27,10 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
             return
         }
 
-        if (System.currentTimeMillis() / 1000 - message.date > Configuration.STALE_PING_SECONDS) {
-            answerCallbackQuery(callbackQuery.id, ON_PING_OUTDATE)
-        } else {
-            answerCallbackQuery(callbackQueryId)
-            sendMessage(message.chat.id, party.users)
-        }
+        val chatId = message.chat.id
 
-        deleteMessage(message.chat.id, message.message_id)
+        answerCallbackQuery(callbackQueryId)
+        sendMessage(chatId, party.users)
+        deleteMessage(chatId, message.message_id)
     }
 }
