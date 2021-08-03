@@ -166,7 +166,7 @@ internal abstract class AbstractBotTest {
         MockKAnnotations.init(this, relaxed = true, relaxUnitFun = true)
 
         container.start()
-        Database.connect(container.jdbcUrl, user = container.username, password = container.password)
+        Database.connect("${container.jdbcUrl}&gssEncMode=disable", user = container.username, password = container.password)
         Flyway.configure().dataSource(container.jdbcUrl, container.username, container.password).load().migrate()
 
         every { bot.sendMessage(allAny(), allAny()) } answers {
