@@ -212,12 +212,12 @@ val ON_FEEDBACK_SUCCESS =
 fun onFeedback(username: String?, title: String?) =
     "New #feedback from @$username in ${if (title != null) "\"$title\"" else "private chat"}:\n\n"
 
-val ON_SPY_TAG =
+val ON_PING_CREATOR_MISMATCH =
     """
-    This is not your war.
+    Available for initial requesting user only 🚫
     """.trimIndent()
 
-val ON_SLOW_PINGING =
+val ON_PING_OUTDATE =
     """
-    This ping is outdated.
+    Too late to call 📞
     """.trimIndent()

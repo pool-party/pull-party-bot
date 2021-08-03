@@ -6,8 +6,8 @@ import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
-import com.github.pool_party.pull_party_bot.commands.messages.ON_SLOW_PINGING
-import com.github.pool_party.pull_party_bot.commands.messages.ON_SPY_TAG
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PING_CREATOR_MISMATCH
+import com.github.pool_party.pull_party_bot.commands.messages.ON_PING_OUTDATE
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class PingCallback(private val partyDao: PartyDao) : Callback {
@@ -20,7 +20,7 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
         val callbackQueryId = callbackQuery.id
 
         if (callbackQuery.from.id != callbackData.creator) {
-            answerCallbackQuery(callbackQuery.id, ON_SPY_TAG)
+            answerCallbackQuery(callbackQuery.id, ON_PING_CREATOR_MISMATCH)
             return
         }
 
@@ -30,7 +30,7 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
         }
 
         if (System.currentTimeMillis() / 1000 - message.date > Configuration.STALE_PING_SECONDS) {
-            answerCallbackQuery(callbackQuery.id, ON_SLOW_PINGING)
+            answerCallbackQuery(callbackQuery.id, ON_PING_OUTDATE)
         } else {
             answerCallbackQuery(callbackQueryId)
             sendMessage(message.chat.id, party.users)
