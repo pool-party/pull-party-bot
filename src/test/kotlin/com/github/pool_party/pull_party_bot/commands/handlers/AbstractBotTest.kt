@@ -1,15 +1,41 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.elbekD.bot.Bot
+import com.elbekD.bot.types.CallbackQuery
 import com.elbekD.bot.types.Chat
 import com.elbekD.bot.types.ChatMember
 import com.elbekD.bot.types.Message
 import com.elbekD.bot.types.User
+import com.github.pool_party.pull_party_bot.commands.CallbackDispatcher
+import com.github.pool_party.pull_party_bot.commands.EveryMessageProcessor
+import com.github.pool_party.pull_party_bot.commands.handlers.callback.DeleteNodeSuggestionCallback
+import com.github.pool_party.pull_party_bot.commands.handlers.callback.DeleteSuggestionCallback
+import com.github.pool_party.pull_party_bot.commands.handlers.callback.PingCallback
+import com.github.pool_party.pull_party_bot.database.AliasCache
+import com.github.pool_party.pull_party_bot.database.Aliases
+import com.github.pool_party.pull_party_bot.database.ChatCache
+import com.github.pool_party.pull_party_bot.database.Chats
+import com.github.pool_party.pull_party_bot.database.Parties
+import com.github.pool_party.pull_party_bot.database.PartyAliasesCache
+import com.github.pool_party.pull_party_bot.database.PartyCache
+import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
+import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.flywaydb.core.Flyway
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.junit.jupiter.Container
 import java.util.concurrent.CompletableFuture
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
 internal abstract class AbstractBotTest {
@@ -49,7 +75,7 @@ internal abstract class AbstractBotTest {
         1,
         user,
         null,
-        1,
+        System.currentTimeMillis().div(1000).toInt(),
         chat,
         null,
         null,
@@ -99,24 +125,104 @@ internal abstract class AbstractBotTest {
         null
     )
 
+    private val chatDao = ChatDaoImpl()
+
+    private val partyDao = PartyDaoImpl()
+
+    private val everyMessageProcessor =
+        EveryMessageProcessor(listOf(MigrationHandler(chatDao), ImplicitPartyHandler(partyDao)))
+
+    private lateinit var everyMessageAction: suspend (Message) -> Unit
+
+    private lateinit var callbackAction: suspend (CallbackQuery) -> Unit
+
+    private val commandActions = mutableMapOf<String, suspend (Message, String?) -> Unit>()
+
+    private val commands = listOf(
+        StartCommand(),
+        ListCommand(partyDao, chatDao),
+        PartyCommand(partyDao),
+        DeleteCommand(partyDao, chatDao),
+        ClearCommand(chatDao),
+        CreateCommand(partyDao, chatDao),
+        AliasCommand(partyDao, chatDao),
+        ChangeCommand(partyDao, chatDao),
+        AddCommand(partyDao, chatDao),
+        RemoveCommand(partyDao, chatDao),
+        RudeCommand(chatDao),
+        FeedbackCommand(),
+    )
+
+    private val callbacks = listOf(
+        DeleteNodeSuggestionCallback(partyDao),
+        DeleteSuggestionCallback(partyDao),
+        PingCallback(partyDao),
+    )
+
+    private val callbackDispatcher = CallbackDispatcher(callbacks.associateBy { it.callbackAction })
+
     @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
+    fun setupMock() {
+        MockKAnnotations.init(this, relaxed = true, relaxUnitFun = true)
 
-        every {
-            bot.sendMessage(any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns CompletableFuture()
+        container.start()
+        Database.connect(container.jdbcUrl, user = container.username, password = container.password)
+        Flyway.configure().dataSource(container.jdbcUrl, container.username, container.password).load().migrate()
 
-        // mock
-        every {
-            bot.sendMessage(any(), any(), any(), any(), any(), any(), any(), any(), any()).join()
-        } returns message
-
+        every { bot.sendMessage(allAny(), allAny()) } answers {
+            println(">> ${secondArg<String>()}")
+            CompletableFuture.completedFuture(message)
+        }
         every { bot.getChatAdministrators(chat.id) } returns CompletableFuture.completedFuture(arrayListOf(chatMember))
+        every { bot.onCommand(any(), any()) } answers { commandActions[firstArg()] = secondArg() }
+        every { bot.onMessage(any()) } answers { everyMessageAction = firstArg() }
+        every { bot.onCallbackQuery(any()) } answers { callbackAction = firstArg() }
+        every { bot.deleteMessage(any(), any()) } returns CompletableFuture.completedFuture(true)
+
+        commands.forEach { it.onMessage(bot) }
+        everyMessageProcessor.onMessage(bot)
+        callbackDispatcher.onMessage(bot)
     }
 
-    protected fun verifyMessage(chatId: Long) {
-        coVerify(exactly = 1) { bot.sendMessage(chatId, any(), any()) }
+    @AfterTest
+    fun clearDatabases() {
+        transaction {
+            Aliases.deleteAll()
+            Parties.deleteAll()
+            Chats.deleteAll()
+        }
+
+        AliasCache.clear()
+        PartyCache.clear()
+        PartyAliasesCache.clear()
+        ChatCache.clear()
+    }
+
+    // bot interaction test DSL
+
+    protected fun callback(callbackData: String) {
+        runBlocking {
+            GlobalScope.launch {
+                callbackAction(CallbackQuery("id", user, message, null, "chat instance", callbackData, null))
+            }.join()
+        }
+    }
+
+    protected operator fun String.unaryMinus() {
+        println("<< $this")
+        val split = split(" ")
+        runBlocking {
+            GlobalScope.launch {
+                val command = commandActions[split[0]]
+                val currentMessage = message.copy(text = this@unaryMinus)
+
+                if (command != null) {
+                    command(currentMessage, split.drop(1).joinToString(" "))
+                } else {
+                    everyMessageAction(currentMessage)
+                }
+            }.join()
+        }
     }
 
     protected fun verifyMessages(chatId: Long, text: String, exactly: Int = 1, replyTo: Int? = null) {
@@ -124,4 +230,24 @@ internal abstract class AbstractBotTest {
             bot.sendMessage(chatId, text, any(), any(), any(), any(), replyTo ?: any(), any(), any())
         }
     }
+
+    protected fun verifyMessage(matcher: (String) -> Boolean) {
+        coVerify {
+            bot.sendMessage(chat.id, match(matcher), any(), any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    protected fun verifyContains(vararg substrings: String) =
+        verifyMessage { message -> substrings.all { it in message } }
+
+    protected operator fun String.unaryPlus() = verifyMessages(chat.id, this)
+
+    companion object {
+        @Container
+        private val container = KPostgreSQLContainer()
+            .withDatabaseName("database")
+            .waitingFor(Wait.forLogMessage(".*database system is ready to accept connections.*\\n", 1))
+    }
+
+    internal class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>("postgres")
 }

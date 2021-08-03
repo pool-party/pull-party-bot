@@ -1,8 +1,8 @@
-package com.github.pool_party.pull_party_bot.commands.handlers.testcontainers
+package com.github.pool_party.pull_party_bot.commands.handlers
 
 import kotlin.test.Test
 
-internal class TaggingTest : AbstractTestContainerTest() {
+internal class TaggingTest : AbstractBotTest() {
 
     private val partyName = "party_name"
     private val aliasName = "alias_name"
