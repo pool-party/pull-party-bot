@@ -1,10 +1,10 @@
-package com.github.pool_party.pull_party_bot.commands.handlers.testcontainers
+package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import kotlin.test.Test
 
-internal class ListingTest : AbstractTestContainerTest() {
+internal class ListingTest : AbstractBotTest() {
 
     private val partyName = "party"
     private val aliasName = "alias"
@@ -77,22 +77,11 @@ internal class ListingTest : AbstractTestContainerTest() {
 
     @Test
     fun `a horses herd list test`() {
-        val partyNames = mutableListOf<String>()
+        val chevaux = (0..100).map { "${"cheval".repeat(7)}-$it" }
 
         -"/create $partyName $members"
-
-        for (i in 0..100) {
-            val currentPartyName = "${"cheval".repeat(7)}-$i"
-            partyNames.add(currentPartyName)
-
-            -"/alias $currentPartyName $partyName"
-        }
-
+        chevaux.forEach { -"/alias $it $partyName" }
         -"/list"
-
-        val sortedPatyNames = partyNames.reversed().map { "  ├── `$it`" }
-
-        +"$ON_LIST_SUCCESS\n$admins\n- $listMembers\n${sortedPatyNames.take(74).joinToString("\n")}"
-        +("${sortedPatyNames.drop(74).joinToString("\n")}\n" + "  └── `$partyName`")
+        chevaux.forEach { verifyContains("`$it`") }
     }
 }

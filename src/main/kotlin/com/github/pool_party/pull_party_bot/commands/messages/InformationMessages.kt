@@ -37,7 +37,7 @@ val HELP_MSG =
         /list <entries> - show the parties and their members according to entries
         /clear - delete all parties of the chat
 
-                  @partyName  - tag existing party right in your message (bot has to be an admin)
+        @partyName  - tag existing party right in your message (bot has to be an admin)
         /party  <party-names> - tag the members of the given parties
         /delete <party-names> - delete the parties you provided
 
@@ -211,3 +211,8 @@ val ON_FEEDBACK_SUCCESS =
 
 fun onFeedback(username: String?, title: String?) =
     "New #feedback from @$username in ${if (title != null) "\"$title\"" else "private chat"}:\n\n"
+
+val ON_PING_CREATOR_MISMATCH =
+    """
+    Available for initial requesting user only 🚫
+    """.trimIndent()

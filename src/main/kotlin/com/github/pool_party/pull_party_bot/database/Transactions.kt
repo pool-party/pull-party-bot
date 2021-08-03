@@ -23,8 +23,8 @@ fun <T> loggingTransaction(info: String, action: Transaction.() -> T): T {
 
 fun initDB() {
     Database.connect(
-        Configuration.DATABASE_URL,
-        user = Configuration.DATABASE_USERNAME,
-        password = Configuration.DATABASE_PASSWORD
+        Configuration.JDBC_DATABASE_URL,
+        user = Configuration.JDBC_DATABASE_USERNAME,
+        password = Configuration.JDBC_DATABASE_PASSWORD
     )
 }

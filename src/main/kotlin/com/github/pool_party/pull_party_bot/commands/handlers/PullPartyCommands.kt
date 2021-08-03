@@ -17,6 +17,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_F
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import info.debatty.java.stringsimilarity.JaroWinkler
+import kotlinx.coroutines.delay
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -25,7 +26,7 @@ class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInterac
     /**
      * Handle implicit `@party-name`-like calls
      */
-    override fun onMessage(bot: Bot, message: Message) {
+    override suspend fun onMessage(bot: Bot, message: Message) {
         val text = message.text ?: message.caption
 
         if (message.forward_from != null || text == null) {
@@ -48,7 +49,7 @@ class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInterac
 class PartyCommand(private val partyDao: PartyDao) :
     AbstractCommand("party", "tag the members of existing parties", HELP_PARTY) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
 
@@ -68,7 +69,7 @@ class PartyCommand(private val partyDao: PartyDao) :
     }
 }
 
-private fun Bot.handleParty(
+private suspend fun Bot.handleParty(
     partyNames: Sequence<String>,
     message: Message,
     partyDao: PartyDao,
@@ -106,7 +107,7 @@ private fun Bot.handleParty(
         .mapNotNull { fail ->
             parties.asSequence()
                 .map { it to similarityAlgorithm.similarity(it.name, fail) }
-                .filter { it.second >= Configuration.JARO_WINKLER_SIMILARITY }
+                .filter { it.second >= Configuration.PARTY_SIMILARITY_COEFFICIENT }
                 .maxByOrNull { it.second }
                 ?.let { it.first to fail }
         }
@@ -117,23 +118,29 @@ private fun Bot.handleParty(
         onFailure()
     }
 
-    if (suggestions.isNotEmpty()) {
-        sendMessage(
-            chatId,
-            ON_PARTY_MISSPELL,
-            "Markdown",
-            markup = InlineKeyboardMarkup(
-                suggestions.asSequence()
-                    .map { it.first }
-                    .distinctBy { it.name }
-                    .map {
-                        val json = Json.encodeToString(CallbackData(CallbackAction.PING, it.party.id.value))
-                        listOf(InlineKeyboardButton("@${it.name}", callback_data = json))
-                    }
-                    .toList()
-            )
+    if (suggestions.isEmpty()) return
+
+    val sentMessage = sendMessage(
+        chatId,
+        ON_PARTY_MISSPELL,
+        "Markdown",
+        markup = InlineKeyboardMarkup(
+            suggestions.asSequence()
+                .map { it.first }
+                .distinctBy { it.name }
+                .map {
+                    val json = Json.encodeToString(
+                        CallbackData(CallbackAction.PING, it.party.id.value, message.from?.id)
+                    )
+                    listOf(InlineKeyboardButton("@${it.name}", callback_data = json))
+                }
+                .toList()
         )
-    }
+    ).join()
+
+    delay(Configuration.STALE_PING_SECONDS * 1000L)
+
+    deleteMessage(chatId, sentMessage.message_id)
 }
 
 fun Bot.getAdminsParty(message: Message): String? {

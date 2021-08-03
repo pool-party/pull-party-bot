@@ -51,7 +51,7 @@ abstract class AbstractChangeCommand(
     chatDao: ChatDao
 ) : CaseCommand(command, description, helpMessage, chatDao) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
 
         val parsedArgs = parseArgs(args)
         val chatId = message.chat.id

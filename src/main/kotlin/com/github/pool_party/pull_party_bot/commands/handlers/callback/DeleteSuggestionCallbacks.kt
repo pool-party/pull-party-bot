@@ -4,6 +4,7 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
+import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CALLBACK_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_DELETE_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY_CALLBACK
@@ -15,7 +16,7 @@ abstract class AbstractDeleteSuggestionCallback(override val callbackAction: Cal
 
     abstract suspend fun Bot.delete(callbackQuery: CallbackQuery, partyId: Int)
 
-    override suspend fun Bot.process(callbackQuery: CallbackQuery, partyId: Int) {
+    override suspend fun Bot.process(callbackQuery: CallbackQuery, callbackData: CallbackData) {
         val message = callbackQuery.message
 
         if (message == null) {
@@ -31,7 +32,7 @@ abstract class AbstractDeleteSuggestionCallback(override val callbackAction: Cal
             return
         }
 
-        delete(callbackQuery, partyId)
+        delete(callbackQuery, callbackData.partyId)
         deleteMessage(message.chat.id, message.message_id)
         answerCallbackQuery(callbackQuery.id)
     }

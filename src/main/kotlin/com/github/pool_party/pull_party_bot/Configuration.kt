@@ -23,35 +23,49 @@ object Configuration {
             else it
         }
 
-    val APP_URL by Configured("app.url", stringType)
-    val USER_NAME by Configured("username", stringType)
-    val PORT by Configured("port", intType)
-    val HOST by Configured("host", stringType)
+    val APP_URL by Configured(stringType)
+    val USERNAME by Configured(stringType)
+    val PORT by Configured(intType)
+    val HOST by Configured(stringType)
 
-    val IS_LONGPOLL by Configured("longpoll", booleanType)
+    val LONGPOLL by Configured(booleanType)
 
-    val TELEGRAM_TOKEN by Configured("telegram.token", stringType)
+    val TELEGRAM_TOKEN by Configured(stringType)
 
-    val DATABASE_URL by Configured("jdbc.database.url", stringType)
-    val DATABASE_USERNAME by Configured("jdbc.database.username", stringType)
-    val DATABASE_PASSWORD by Configured("jdbc.database.password", stringType)
+    val JDBC_DATABASE_URL by Configured(stringType)
+    val JDBC_DATABASE_USERNAME by Configured(stringType)
+    val JDBC_DATABASE_PASSWORD by Configured(stringType)
 
-    val DEVELOP_CHAT_ID by Configured("develop.chat.id", longType)
+    val DEVELOP_CHAT_ID by Configured(longType)
 
     val PROHIBITED_SYMBOLS = "!,.?:;()".toList()
 
-    val STALE_PARTY_TIME_WEEKS by Configured("stalePartyTimeWeeks", intType)
+    val STALE_PARTY_WEEKS by Configured(intType)
 
-    val JARO_WINKLER_SIMILARITY by Configured("partySimilarity.coefficient", doubleType)
+    val STALE_PING_SECONDS by Configured(intType)
 
-    val MESSAGE_LENGTH = 4096
+    val PARTY_SIMILARITY_COEFFICIENT by Configured(doubleType)
 
-    val ALIAS_CACHE_CAPACITY by Configured("cache.capacity.alias", intType)
-    val PARTY_CACHE_CAPACITY by Configured("cache.capacity.party", intType)
-    val PARTY_ALIASES_CACHE_CAPACITY by Configured("cache.capacity.partyaliases", intType)
-    val CHAT_CACHE_CAPACITY by Configured("cache.capacity.chat", intType)
+    const val MESSAGE_LENGTH = 4096
 
-    private class Configured<T>(private val name: String, private val parse: (PropertyLocation, String) -> T) {
-        operator fun getValue(thisRef: Configuration, property: KProperty<*>): T = configuration[Key(name, parse)]
+    val CACHE_CAPACITY_ALIAS by Configured(intType)
+    val CACHE_CAPACITY_PARTY by Configured(intType)
+    val CACHE_CAPACITY_PARTYALIASES by Configured(intType)
+    val CACHE_CAPACITY_CHAT by Configured(intType)
+
+    private open class Configured<T>(private val parse: (PropertyLocation, String) -> T) {
+
+        private var value: T? = null
+
+        operator fun getValue(thisRef: Configuration, property: KProperty<*>): T {
+            if (value == null) {
+                value = configuration[Key(property.name.lowercase().replace('_', '.'), parse)]
+            }
+            return value!!
+        }
+
+        operator fun setValue(thisRef: Configuration, property: KProperty<*>, value: T) {
+            this.value = value
+        }
     }
 }

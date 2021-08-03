@@ -5,7 +5,7 @@ import com.elbekD.bot.types.Message
 
 interface EveryMessageInteraction {
 
-    fun onMessage(bot: Bot, message: Message)
+    suspend fun onMessage(bot: Bot, message: Message)
 }
 
 class EveryMessageProcessor(private val interactions: List<EveryMessageInteraction>) : Interaction {

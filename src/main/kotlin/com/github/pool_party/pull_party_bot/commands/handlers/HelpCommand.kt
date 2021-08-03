@@ -9,7 +9,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_HELP_ERROR
 class HelpCommand(private val helpMessages: Map<String, String>) :
     AbstractCommand("help", "show this usage guide", HELP_MSG) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)?.distinct()
 
         if (parsedArgs.isNullOrEmpty()) {

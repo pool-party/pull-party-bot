@@ -8,7 +8,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.INIT_MSG
 
 class StartCommand : AbstractCommand("start", "awake the bot", HELP_START) {
 
-    override fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: String?) {
         sendMessage(message.chat.id, INIT_MSG)
     }
 }
