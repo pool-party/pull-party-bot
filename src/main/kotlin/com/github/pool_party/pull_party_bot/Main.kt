@@ -22,45 +22,42 @@ import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 import com.github.pool_party.pull_party_bot.database.initDB
 import com.github.pool_party.pull_party_bot.every.PullPartyHandler
 import com.github.pool_party.telegram_bot_utils.bot.BotBuilder
-import com.github.pool_party.telegram_bot_utils.interaction.Interaction
 
-val partyDaoImpl = PartyDaoImpl()
+val botBuilder = BotBuilder(Configuration).apply {
+    val partyDaoImpl = PartyDaoImpl()
+    val chatDaoImpl = ChatDaoImpl()
 
-val chatDaoImpl = ChatDaoImpl()
-
-val callbacks = listOf(
-    DeleteNodeSuggestionCallback(partyDaoImpl),
-    DeleteSuggestionCallback(partyDaoImpl),
-    PingCallback(partyDaoImpl)
-)
-
-val pullPartyEveryMessageInteractions = listOf(MigrationHandler(chatDaoImpl), PullPartyHandler(partyDaoImpl))
-
-val callbackDispatcher = CallbackDispatcher(callbacks)
-
-val pullPartyInteractions: List<List<Interaction>> = listOf(
-    listOf(
-        StartCommand(),
-        ListCommand(partyDaoImpl),
-        ClearCommand(chatDaoImpl),
-    ),
-    listOf(
-        PartyCommand(partyDaoImpl),
-        DeleteCommand(partyDaoImpl),
-    ),
-    listOf(
-        CreateCommand(partyDaoImpl),
-        AliasCommand(partyDaoImpl),
-        ChangeCommand(partyDaoImpl),
-        AddCommand(partyDaoImpl),
-        RemoveCommand(partyDaoImpl),
-    ),
-    listOf(
-        RudeCommand(chatDaoImpl),
-        FeedbackCommand(),
-    ),
-    listOf(callbackDispatcher),
-)
+    everyMessageInteractions = listOf(MigrationHandler(chatDaoImpl), PullPartyHandler(partyDaoImpl))
+    interactions = listOf(
+        listOf(
+            StartCommand(),
+            ListCommand(partyDaoImpl),
+            ClearCommand(chatDaoImpl),
+        ),
+        listOf(
+            PartyCommand(partyDaoImpl),
+            DeleteCommand(partyDaoImpl),
+        ),
+        listOf(
+            CreateCommand(partyDaoImpl),
+            AliasCommand(partyDaoImpl),
+            ChangeCommand(partyDaoImpl),
+            AddCommand(partyDaoImpl),
+            RemoveCommand(partyDaoImpl),
+        ),
+        listOf(
+            RudeCommand(chatDaoImpl),
+            FeedbackCommand(),
+        ),
+        listOf(
+            CallbackDispatcher(
+                DeleteNodeSuggestionCallback(partyDaoImpl),
+                DeleteSuggestionCallback(partyDaoImpl),
+                PingCallback(partyDaoImpl)
+            )
+        ),
+    )
+}
 
 fun main() {
     try {
@@ -70,8 +67,5 @@ fun main() {
         return
     }
 
-    BotBuilder(Configuration).apply {
-        everyMessageInteractions = pullPartyEveryMessageInteractions
-        interactions = pullPartyInteractions
-    }.start()
+    botBuilder.start()
 }

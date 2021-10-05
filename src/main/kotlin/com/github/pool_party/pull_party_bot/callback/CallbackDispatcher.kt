@@ -20,8 +20,8 @@ sealed class CallbackData {
     }
 }
 
-class CallbackDispatcher(callbacks: List<Callback<CallbackData>>) :
-    AbstractCallbackDispatcher<CallbackData>(callbacks) {
+class CallbackDispatcher(vararg callbacks: Callback<CallbackData>) :
+    AbstractCallbackDispatcher<CallbackData>(callbacks.toList()) {
 
     override fun getCallbackData(data: String) = CallbackData.of(data)
 }
