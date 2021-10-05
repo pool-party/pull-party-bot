@@ -42,27 +42,6 @@ val ON_DELETE_EMPTY =
     Type `/help delete` for more information
     """.trimIndent()
 
-val ON_SENDER_FAIL =
-    """
-    Only the chosen ones can perform these actions. 😎
-
-    I were not able to recognize the permissions you have in this chat
-    Operation aborted, ask group admins if you still want to make it happen
-
-    Type `/help delete` or `/help clear` for more information
-    """.trimIndent()
-
-val ON_PERMISSION_DENY =
-    """
-    Parties are all I have. You can't just do this. 🤬
-
-    Sad enough for me, parties can be deleted, but only by admins
-    Only group administrators can perform /delete and /clear commands
-    You can pull @admins party to ask them to perform this command
-
-    Type `/help delete` or `/help clear` for more information
-    """.trimIndent()
-
 val ON_PERMISSION_DENY_CALLBACK =
     """
     Action is available for admins only. 🙅‍

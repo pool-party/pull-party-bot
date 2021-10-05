@@ -26,31 +26,6 @@ val INIT_MSG =
     Type /help for more information
     """.trimIndent()
 
-val HELP_MSG =
-    """
-    Available commands:
-
-        /start - start the conversation and see welcoming message
-        /help  - show this usage guide
-        /help <command> - show the usage guide of given command
-        /list  - show all the parties of the chat and their members
-        /list <entries> - show the parties and their members according to entries
-        /clear - delete all parties of the chat
-
-        @partyName  - tag existing party right in your message (bot has to be an admin)
-        /party  <party-names> - tag the members of the given parties
-        /delete <party-names> - delete the parties you provided
-
-        /create <party-name users-list> - create new party with mentioned users
-        /alias  <alias-name party-name> - create a new party with the same users
-        /change <party-name users-list> - change an existing party
-        /add    <party-name users-list> - add new users to the given party
-        /remove <party-name users-list> - remove given users from the provided party
-
-        /rude      <on/off> - switch RUDE(CAPS LOCK) mode
-        /feedback <message> - share your ideas and experience with developers
-    """.trimIndent()
-
 val HELP_START =
     """
     /start - start the conversation and see welcoming message
@@ -153,14 +128,6 @@ val HELP_ALIAS =
 
     Party party-name should exist
     `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the alias name
-    """.trimIndent()
-
-val ON_HELP_ERROR =
-    """
-    The Lord helps those who help themselves 👼
-
-    Expected no arguments or command to explain
-    Follow /help with the unclear command or leave empty for general guide
     """.trimIndent()
 
 val ON_LIST_SUCCESS =
