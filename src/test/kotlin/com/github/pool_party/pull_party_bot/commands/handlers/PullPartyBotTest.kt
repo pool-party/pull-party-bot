@@ -1,7 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
-import com.github.pool_party.pull_party_bot.callbackDispatcher
 import com.github.pool_party.pull_party_bot.callback.CallbackData
+import com.github.pool_party.pull_party_bot.callbackDispatcher
 import com.github.pool_party.pull_party_bot.commands
 import com.github.pool_party.pull_party_bot.database.Aliases
 import com.github.pool_party.pull_party_bot.database.AliasCache
