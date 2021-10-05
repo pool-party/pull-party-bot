@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.commands.messages
+package com.github.pool_party.pull_party_bot.message
 
 fun onAliasDeleteSuccess(partyName: String) = """Alias $partyName is no longer exists 👍"""
 

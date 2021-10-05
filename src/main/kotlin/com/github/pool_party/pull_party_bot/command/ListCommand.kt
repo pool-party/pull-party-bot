@@ -1,39 +1,36 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.command
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.InlineKeyboardButton
 import com.elbekD.bot.types.InlineKeyboardMarkup
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
-import com.github.pool_party.pull_party_bot.commands.CallbackAction
-import com.github.pool_party.pull_party_bot.commands.CallbackData
-import com.github.pool_party.pull_party_bot.commands.CaseCommand
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_LIST
-import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_EMPTY
-import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
-import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
-import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
-import com.github.pool_party.pull_party_bot.commands.messages.ON_STALE_PARTY_REMOVE
+import com.github.pool_party.pull_party_bot.callback.DeleteSuggestionCallbackData
+import com.github.pool_party.pull_party_bot.message.HELP_LIST
+import com.github.pool_party.pull_party_bot.message.ON_ARGUMENT_LIST_EMPTY
+import com.github.pool_party.pull_party_bot.message.ON_ARGUMENT_LIST_SUCCESS
+import com.github.pool_party.pull_party_bot.message.ON_LIST_EMPTY
+import com.github.pool_party.pull_party_bot.message.ON_LIST_SUCCESS
+import com.github.pool_party.pull_party_bot.message.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 import org.joda.time.DateTime
 
 class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     CaseCommand("list", "show the parties of the chat", HELP_LIST, chatDao) {
 
-    override suspend fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: List<String>) {
 
-        val parsedArgs = parseArgs(args)?.distinct()
+        val parsedArgs = args.distinct()
         val chatId = message.chat.id
         val list = partyDao.getAll(chatId)
         val partyLists = list.asSequence().sortedByDescending { it.lastUse }.groupBy { it.party.id }.values
         val adminsParty = getAdminsParty(message)
         val adminsPartySequence = adminsParty?.let { formatParty(it, listOf("`admins` _(reserved)_")) }.orEmpty()
 
-        if (parsedArgs.isNullOrEmpty()) {
+        if (parsedArgs.isEmpty()) {
             listAll(chatId, partyLists, adminsPartySequence)
         } else {
             listFind(chatId, list, parsedArgs, partyLists, adminsParty, adminsPartySequence)
@@ -101,7 +98,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                     listOf(
                         InlineKeyboardButton(
                             "Delete ${topLost.name}",
-                            callback_data = Json.encodeToString(CallbackData(CallbackAction.DELETE, topLost.id.value))
+                            callback_data = DeleteSuggestionCallbackData(topLost.id.value).encoded
                         )
                     )
                 )
@@ -119,15 +116,15 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
                 currentString.append("\n").append(line)
             } else {
-                sendCaseMessage(chatId, currentString.toString(), "Markdown").join()
+                sendCaseMessage(chatId, currentString.toString()).join()
                 currentString = StringBuilder(line)
             }
         }
 
         if (emptySequence) {
-            sendMessage(chatId, onEmptyMessage, "Markdown")
+            sendMessageLogging(chatId, onEmptyMessage)
         } else {
-            sendCaseMessage(chatId, currentString.toString(), "Markdown").join()
+            sendCaseMessage(chatId, currentString.toString()).join()
         }
     }
 

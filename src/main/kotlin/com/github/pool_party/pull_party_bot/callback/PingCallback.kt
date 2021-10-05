@@ -1,23 +1,28 @@
-package com.github.pool_party.pull_party_bot.commands.handlers.callback
+package com.github.pool_party.pull_party_bot.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
-import com.github.pool_party.pull_party_bot.commands.Callback
-import com.github.pool_party.pull_party_bot.commands.CallbackAction
-import com.github.pool_party.pull_party_bot.commands.CallbackData
-import com.github.pool_party.pull_party_bot.commands.messages.ON_PING_CREATOR_MISMATCH
+import com.github.pool_party.pull_party_bot.message.ON_PING_CREATOR_MISMATCH
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import com.github.pool_party.telegram_bot_utils.interaction.callback.Callback
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-class PingCallback(private val partyDao: PartyDao) : Callback {
+@Serializable
+@SerialName("ping")
+data class PingCallbackData(override val partyId: Int, val creator: Int? = null) : CallbackData()
 
-    override val callbackAction = CallbackAction.PING
+class PingCallback(private val partyDao: PartyDao) : Callback<CallbackData> {
+
+    override val callbackDataKClass = PingCallbackData::class
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, callbackData: CallbackData) {
+        val pingCallbackData = callbackData as? PingCallbackData ?: return
         val message = callbackQuery.message
         val party = partyDao.getByPartyId(callbackData.partyId)
         val callbackQueryId = callbackQuery.id
 
-        if (callbackQuery.from.id != callbackData.creator) {
+        if (callbackQuery.from.id != pingCallbackData.creator) {
             answerCallbackQuery(callbackQuery.id, ON_PING_CREATOR_MISMATCH)
             return
         }

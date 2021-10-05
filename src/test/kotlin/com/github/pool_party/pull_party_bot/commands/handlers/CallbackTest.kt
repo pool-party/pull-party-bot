@@ -7,7 +7,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
-internal class CallbackTest : AbstractBotTest() {
+internal class CallbackTest : PullPartyBotTest() {
 
     private var lastCallbackData: String? = null
 

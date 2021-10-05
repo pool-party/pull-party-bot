@@ -2,7 +2,7 @@ package com.github.pool_party.pull_party_bot.commands.handlers
 
 import kotlin.test.Test
 
-internal class TaggingTest : AbstractBotTest() {
+internal class TaggingTest : PullPartyBotTest() {
 
     private val partyName = "party_name"
     private val aliasName = "alias_name"

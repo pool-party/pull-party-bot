@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.commands.messages
+package com.github.pool_party.pull_party_bot.message
 
 val ON_RUDE_FAIL =
     """

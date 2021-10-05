@@ -1,27 +1,27 @@
-package com.github.pool_party.pull_party_bot.commands.handlers
+package com.github.pool_party.pull_party_bot.command
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
-import com.github.pool_party.pull_party_bot.commands.CaseCommand
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_ADD
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_CHANGE
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_CREATE
-import com.github.pool_party.pull_party_bot.commands.messages.HELP_REMOVE
-import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_EMPTY
-import com.github.pool_party.pull_party_bot.commands.messages.ON_CHANGE_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.commands.messages.ON_CREATE_EMPTY
-import com.github.pool_party.pull_party_bot.commands.messages.ON_CREATE_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_NAME_FAIL
-import com.github.pool_party.pull_party_bot.commands.messages.ON_REMOVE_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.commands.messages.ON_SINGLETON_PARTY
-import com.github.pool_party.pull_party_bot.commands.messages.ON_USERS_FAIL
-import com.github.pool_party.pull_party_bot.commands.messages.onAddSuccess
-import com.github.pool_party.pull_party_bot.commands.messages.onChangeSuccess
-import com.github.pool_party.pull_party_bot.commands.messages.onCreateSuccess
-import com.github.pool_party.pull_party_bot.commands.messages.onDeleteSuccess
+import com.github.pool_party.pull_party_bot.message.HELP_ADD
+import com.github.pool_party.pull_party_bot.message.HELP_CHANGE
+import com.github.pool_party.pull_party_bot.message.HELP_CREATE
+import com.github.pool_party.pull_party_bot.message.HELP_REMOVE
+import com.github.pool_party.pull_party_bot.message.ON_CHANGE_EMPTY
+import com.github.pool_party.pull_party_bot.message.ON_CHANGE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.message.ON_CREATE_EMPTY
+import com.github.pool_party.pull_party_bot.message.ON_CREATE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.message.ON_PARTY_NAME_FAIL
+import com.github.pool_party.pull_party_bot.message.ON_REMOVE_REQUEST_FAIL
+import com.github.pool_party.pull_party_bot.message.ON_SINGLETON_PARTY
+import com.github.pool_party.pull_party_bot.message.ON_USERS_FAIL
+import com.github.pool_party.pull_party_bot.message.onAddSuccess
+import com.github.pool_party.pull_party_bot.message.onChangeSuccess
+import com.github.pool_party.pull_party_bot.message.onCreateSuccess
+import com.github.pool_party.pull_party_bot.message.onDeleteSuccess
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 
 class CreateCommand(partyDao: PartyDao, chatDao: ChatDao) :
     AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao, chatDao)
@@ -51,27 +51,25 @@ abstract class AbstractChangeCommand(
     chatDao: ChatDao
 ) : CaseCommand(command, description, helpMessage, chatDao) {
 
-    override suspend fun Bot.action(message: Message, args: String?) {
+    override suspend fun Bot.action(message: Message, args: List<String>) {
 
-        val parsedArgs = parseArgs(args)
         val chatId = message.chat.id
 
         // TODO suggest alias instead of party, if possible
 
-        if (parsedArgs.isNullOrEmpty() || parsedArgs.size < 2) {
-            sendMessage(
+        if (args.isEmpty() || args.size < 2) {
+            sendMessageLogging(
                 chatId,
                 if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
                 else ON_CHANGE_EMPTY,
-                "Markdown"
             )
             return
         }
 
-        val partyName = parsedArgs[0].removePrefix("@")
+        val partyName = args[0].removePrefix("@")
 
         if (!validatePartyName(partyName)) {
-            sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
+            sendMessageLogging(chatId, ON_PARTY_NAME_FAIL)
             return
         }
 
@@ -79,14 +77,14 @@ abstract class AbstractChangeCommand(
             return
         }
 
-        var (users, failedUsers) = parsedArgs.asSequence().drop(1)
+        var (users, failedUsers) = args.asSequence().drop(1)
             .map { it.replace("@", "") }.distinct()
             .partition { it.matches("([a-z0-9_]{5,32})".toRegex()) }
 
         users = users.map { "@$it" }
 
         if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
-            sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
+            sendMessageLogging(chatId, ON_SINGLETON_PARTY)
             return
         }
 
@@ -94,11 +92,10 @@ abstract class AbstractChangeCommand(
             sendMessage(chatId, ON_USERS_FAIL)
 
             if (users.isEmpty()) {
-                sendMessage(
+                sendMessageLogging(
                     chatId,
                     if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
                     else ON_CHANGE_EMPTY,
-                    "Markdown"
                 )
                 return
             }
