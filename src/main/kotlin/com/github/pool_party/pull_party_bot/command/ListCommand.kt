@@ -13,13 +13,19 @@ import com.github.pool_party.pull_party_bot.message.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.message.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.message.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.database.Alias
-import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 import org.joda.time.DateTime
 
-class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
-    CaseCommand("list", "show the parties of the chat", HELP_LIST, chatDao) {
+class ListCommand(private val partyDao: PartyDao) :
+    AbstractCommand(
+        "list",
+        "show the parties of the chat",
+        HELP_LIST,
+        listOf("show all the parties of the chat and their members"),
+        listOf("entries...", " show the parties and their members according to entries"),
+    ) {
 
     override suspend fun Bot.action(message: Message, args: List<String>) {
 
@@ -90,7 +96,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 
         if (topLost.lastUse.plusWeeks(Configuration.STALE_PARTY_WEEKS) >= DateTime.now()) return
 
-        sendCaseMessage(
+        sendMessageLogging(
             chatId,
             ON_STALE_PARTY_REMOVE,
             markup = InlineKeyboardMarkup(
@@ -116,7 +122,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
                 currentString.append("\n").append(line)
             } else {
-                sendCaseMessage(chatId, currentString.toString()).join()
+                sendMessageLogging(chatId, currentString.toString()).join()
                 currentString = StringBuilder(line)
             }
         }
@@ -124,7 +130,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         if (emptySequence) {
             sendMessageLogging(chatId, onEmptyMessage)
         } else {
-            sendCaseMessage(chatId, currentString.toString()).join()
+            sendMessageLogging(chatId, currentString.toString()).join()
         }
     }
 

@@ -6,9 +6,16 @@ import com.github.pool_party.pull_party_bot.message.HELP_RUDE
 import com.github.pool_party.pull_party_bot.message.ON_RUDE_FAIL
 import com.github.pool_party.pull_party_bot.message.onRudeSuccess
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
+import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 
-class RudeCommand(chatDao: ChatDao) : CaseCommand("rude", "switch RUDE(CAPS LOCK) mode", HELP_RUDE, chatDao) {
+class RudeCommand(private val chatDao: ChatDao) :
+    AbstractCommand(
+        "rude",
+        "switch RUDE\\(CAPS LOCK\\) mode",
+        HELP_RUDE,
+        listOf("on/off", "switch RUDE\\(CAPS LOCK\\) mode"),
+    ) {
 
     override suspend fun Bot.action(message: Message, args: List<String>) {
         val parsedArg = args.singleOrNull()
@@ -23,6 +30,6 @@ class RudeCommand(chatDao: ChatDao) : CaseCommand("rude", "switch RUDE(CAPS LOCK
             }
         }
 
-        sendCaseMessage(chatId, onRudeSuccess(res, parsedArg))
+        sendMessageLogging(chatId, onRudeSuccess(res, parsedArg))
     }
 }

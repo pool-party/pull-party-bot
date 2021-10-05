@@ -8,6 +8,8 @@ import mu.KotlinLogging
 
 class MigrationHandler(private val chatDao: ChatDao) : EveryMessageInteraction {
 
+    override val usage: String? = null
+
     private val logger = KotlinLogging.logger {}
 
     override suspend fun onMessage(bot: Bot, message: Message) {

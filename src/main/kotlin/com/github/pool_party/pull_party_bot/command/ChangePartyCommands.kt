@@ -19,28 +19,21 @@ import com.github.pool_party.pull_party_bot.message.onAddSuccess
 import com.github.pool_party.pull_party_bot.message.onChangeSuccess
 import com.github.pool_party.pull_party_bot.message.onCreateSuccess
 import com.github.pool_party.pull_party_bot.message.onDeleteSuccess
-import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 
-class CreateCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao, chatDao)
+class CreateCommand(partyDao: PartyDao) :
+    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao)
 
-class ChangeCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("change", "changing existing party", HELP_CHANGE, PartyChangeStatus.CHANGE, partyDao, chatDao)
+class ChangeCommand(partyDao: PartyDao) :
+    AbstractChangeCommand("change", "changing existing party", HELP_CHANGE, PartyChangeStatus.CHANGE, partyDao)
 
-class AddCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("add", "add people to a party", HELP_ADD, PartyChangeStatus.ADD, partyDao, chatDao)
+class AddCommand(partyDao: PartyDao) :
+    AbstractChangeCommand("add", "add people to a party", HELP_ADD, PartyChangeStatus.ADD, partyDao)
 
-class RemoveCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand(
-        "remove",
-        "remove people from a party",
-        HELP_REMOVE,
-        PartyChangeStatus.REMOVE,
-        partyDao,
-        chatDao
-    )
+class RemoveCommand(partyDao: PartyDao) :
+    AbstractChangeCommand("remove", "remove people from a party", HELP_REMOVE, PartyChangeStatus.REMOVE, partyDao)
 
 abstract class AbstractChangeCommand(
     command: String,
@@ -48,8 +41,7 @@ abstract class AbstractChangeCommand(
     helpMessage: String,
     private val status: PartyChangeStatus,
     private val partyDao: PartyDao,
-    chatDao: ChatDao
-) : CaseCommand(command, description, helpMessage, chatDao) {
+) : AbstractCommand(command, description, helpMessage, listOf("party-name", "users...", description)) {
 
     override suspend fun Bot.action(message: Message, args: List<String>) {
 
@@ -102,7 +94,7 @@ abstract class AbstractChangeCommand(
         }
 
         if (status.transaction.invoke(partyDao, chatId, partyName, users)) {
-            sendCaseMessage(chatId, status.onSuccess(partyName))
+            sendMessageLogging(chatId, status.onSuccess(partyName))
             return
         }
 

@@ -9,7 +9,13 @@ import com.github.pool_party.pull_party_bot.message.onFeedback
 import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 
-class FeedbackCommand : AbstractCommand("feedback", "share your ideas and experience with developers", HELP_FEEDBACK) {
+class FeedbackCommand :
+    AbstractCommand(
+        "feedback",
+        "share your ideas and experience with developers",
+        HELP_FEEDBACK,
+        listOf("message", "share your ideas and experience with developers"),
+    ) {
 
     override suspend fun Bot.action(message: Message, args: List<String>) {
         if (args.isEmpty()) return

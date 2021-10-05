@@ -21,6 +21,8 @@ import kotlinx.coroutines.delay
 
 class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInteraction {
 
+    override val usage = "@partyName  - tag existing party right in your message \\(bot has to be an admin\\)"
+
     /**
      * Handle implicit `@party-name`-like calls
      */
@@ -45,7 +47,12 @@ class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInterac
 }
 
 class PartyCommand(private val partyDao: PartyDao) :
-    AbstractCommand("party", "tag the members of existing parties", HELP_PARTY) {
+    AbstractCommand(
+        "party",
+        "tag the members of existing parties",
+        HELP_PARTY,
+        listOf("party-names", "tag the members of the given parties"),
+    ) {
 
     override suspend fun Bot.action(message: Message, args: List<String>) {
         val parsedArgs = args.distinct()

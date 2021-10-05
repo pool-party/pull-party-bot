@@ -20,7 +20,9 @@ import com.github.pool_party.pull_party_bot.command.RudeCommand
 import com.github.pool_party.pull_party_bot.command.StartCommand
 import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
+import com.github.pool_party.pull_party_bot.database.initDB
 import com.github.pool_party.telegram_bot_utils.bot.BotBuilder
+import com.github.pool_party.telegram_bot_utils.interaction.Interaction
 
 val partyDaoImpl = PartyDaoImpl()
 
@@ -32,28 +34,44 @@ val callbacks = listOf(
     PingCallback(partyDaoImpl)
 )
 
-val messageInteractions = listOf(MigrationHandler(chatDaoImpl), ImplicitPartyHandler(partyDaoImpl))
-
-val commands = listOf(
-    StartCommand(),
-    ListCommand(partyDaoImpl, chatDaoImpl),
-    PartyCommand(partyDaoImpl),
-    DeleteCommand(partyDaoImpl),
-    ClearCommand(chatDaoImpl),
-    CreateCommand(partyDaoImpl, chatDaoImpl),
-    AliasCommand(partyDaoImpl, chatDaoImpl),
-    ChangeCommand(partyDaoImpl, chatDaoImpl),
-    AddCommand(partyDaoImpl, chatDaoImpl),
-    RemoveCommand(partyDaoImpl, chatDaoImpl),
-    RudeCommand(chatDaoImpl),
-    FeedbackCommand(),
-)
+val pullPartyEveryMessageInteractions = listOf(MigrationHandler(chatDaoImpl), ImplicitPartyHandler(partyDaoImpl))
 
 val callbackDispatcher = CallbackDispatcher(callbacks)
 
+val pullPartyInteractions: List<List<Interaction>> = listOf(
+    listOf(
+        StartCommand(),
+        ListCommand(partyDaoImpl),
+        ClearCommand(chatDaoImpl),
+    ),
+    listOf(
+        PartyCommand(partyDaoImpl),
+        DeleteCommand(partyDaoImpl),
+    ),
+    listOf(
+        CreateCommand(partyDaoImpl),
+        AliasCommand(partyDaoImpl),
+        ChangeCommand(partyDaoImpl),
+        AddCommand(partyDaoImpl),
+        RemoveCommand(partyDaoImpl),
+    ),
+    listOf(
+        RudeCommand(chatDaoImpl),
+        FeedbackCommand(),
+    ),
+    listOf(callbackDispatcher),
+)
+
 fun main() {
+    try {
+        initDB()
+    } catch (e: Exception) {
+        println(e.message)
+        return
+    }
+
     BotBuilder(Configuration).apply {
-        everyMessageInteractions = messageInteractions
-        interactions = listOf(commands + callbackDispatcher)
+        everyMessageInteractions = pullPartyEveryMessageInteractions
+        interactions = pullPartyInteractions
     }.start()
 }

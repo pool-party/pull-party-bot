@@ -15,7 +15,12 @@ import com.github.pool_party.telegram_bot_utils.interaction.command.Administrato
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 
 class DeleteCommand(private val partyDao: PartyDao) :
-    AdministratorCommand("delete", "forget the parties as they have never happened", HELP_DELETE) {
+    AdministratorCommand(
+        "delete",
+        "forget the parties as they have never happened",
+        HELP_DELETE,
+        listOf("party-names", "delete the parties you provided"),
+    ) {
 
     override fun Bot.mainAction(message: Message, args: List<String>) {
         val parsedArgs = args.distinct()
