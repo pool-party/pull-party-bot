@@ -6,8 +6,8 @@ import com.github.pool_party.pull_party_bot.callback.DeleteSuggestionCallback
 import com.github.pool_party.pull_party_bot.callback.PingCallback
 import com.github.pool_party.pull_party_bot.command.AddCommand
 import com.github.pool_party.pull_party_bot.command.AliasCommand
-import com.github.pool_party.pull_party_bot.command.ClearCommand
 import com.github.pool_party.pull_party_bot.command.ChangeCommand
+import com.github.pool_party.pull_party_bot.command.ClearCommand
 import com.github.pool_party.pull_party_bot.command.CreateCommand
 import com.github.pool_party.pull_party_bot.command.DeleteCommand
 import com.github.pool_party.pull_party_bot.command.FeedbackCommand
