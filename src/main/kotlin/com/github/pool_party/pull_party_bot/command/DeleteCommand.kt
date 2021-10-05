@@ -11,6 +11,7 @@ import com.github.pool_party.pull_party_bot.message.ON_DELETE_EMPTY
 import com.github.pool_party.pull_party_bot.message.onAliasDeleteSuccess
 import com.github.pool_party.pull_party_bot.message.onPartyDeleteSuggest
 import com.github.pool_party.pull_party_bot.message.onPartyDeleteUnchanged
+import com.github.pool_party.pull_party_bot.utils.modifyCommandAssertion
 import com.github.pool_party.telegram_bot_utils.interaction.command.AdministratorCommand
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 

@@ -14,6 +14,7 @@ import com.github.pool_party.pull_party_bot.message.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.message.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import com.github.pool_party.pull_party_bot.utils.getAdminsParty
 import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 import org.joda.time.DateTime

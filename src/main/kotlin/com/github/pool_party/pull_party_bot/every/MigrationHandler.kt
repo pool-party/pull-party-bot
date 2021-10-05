@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.command
+package com.github.pool_party.pull_party_bot.every
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message

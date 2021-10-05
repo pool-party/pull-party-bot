@@ -20,6 +20,7 @@ import com.github.pool_party.pull_party_bot.message.onChangeSuccess
 import com.github.pool_party.pull_party_bot.message.onCreateSuccess
 import com.github.pool_party.pull_party_bot.message.onDeleteSuccess
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import com.github.pool_party.pull_party_bot.utils.modifyCommandAssertion
 import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 

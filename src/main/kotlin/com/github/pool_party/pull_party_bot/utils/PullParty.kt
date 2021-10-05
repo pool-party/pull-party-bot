@@ -1,4 +1,4 @@
-package com.github.pool_party.pull_party_bot.command
+package com.github.pool_party.pull_party_bot.utils
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.InlineKeyboardButton
@@ -6,74 +6,14 @@ import com.elbekD.bot.types.InlineKeyboardMarkup
 import com.elbekD.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.callback.PingCallbackData
-import com.github.pool_party.pull_party_bot.message.HELP_PARTY
-import com.github.pool_party.pull_party_bot.message.ON_ADMINS_PARTY_FAIL
-import com.github.pool_party.pull_party_bot.message.ON_PARTY_EMPTY
-import com.github.pool_party.pull_party_bot.message.ON_PARTY_MISSPELL
-import com.github.pool_party.pull_party_bot.message.ON_PARTY_REQUEST_FAIL
-import com.github.pool_party.pull_party_bot.message.ON_PARTY_REQUEST_FAILS
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
-import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
-import com.github.pool_party.telegram_bot_utils.interaction.message.EveryMessageInteraction
+import com.github.pool_party.pull_party_bot.message.ON_ADMINS_PARTY_FAIL
+import com.github.pool_party.pull_party_bot.message.ON_PARTY_MISSPELL
 import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.coroutines.delay
 
-class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInteraction {
-
-    override val usage = "@partyName  - tag existing party right in your message \\(bot has to be an admin\\)"
-
-    /**
-     * Handle implicit `@party-name`-like calls
-     */
-    override suspend fun onMessage(bot: Bot, message: Message) {
-        val text = message.text ?: message.caption
-
-        if (message.forward_from != null || text == null) {
-            return
-        }
-
-        val prohibitedSymbolsString = Configuration.PROHIBITED_SYMBOLS.joinToString("")
-        val regex = Regex("(?<party>[^$prohibitedSymbolsString]*)[$prohibitedSymbolsString]*")
-
-        val partyNames = text.lineSequence()
-            .flatMap { it.split(' ', '\t').asSequence() }
-            .filter { it.startsWith('@') }
-            .map { it.removePrefix("@") }
-            .mapNotNull { regex.matchEntire(it)?.groups?.get(1)?.value }
-
-        bot.handleParty(partyNames, message, partyDao)
-    }
-}
-
-class PartyCommand(private val partyDao: PartyDao) :
-    AbstractCommand(
-        "party",
-        "tag the members of existing parties",
-        HELP_PARTY,
-        listOf("party-names", "tag the members of the given parties"),
-    ) {
-
-    override suspend fun Bot.action(message: Message, args: List<String>) {
-        val parsedArgs = args.distinct()
-        val chatId = message.chat.id
-
-        if (parsedArgs.isEmpty()) {
-            sendMessageLogging(chatId, ON_PARTY_EMPTY)
-            return
-        }
-
-        handleParty(parsedArgs.asSequence(), message, partyDao) {
-            sendMessageLogging(
-                chatId,
-                if (parsedArgs.size == 1) ON_PARTY_REQUEST_FAIL
-                else ON_PARTY_REQUEST_FAILS,
-            )
-        }
-    }
-}
-
-private suspend fun Bot.handleParty(
+suspend fun Bot.pullParty(
     partyNames: Sequence<String>,
     message: Message,
     partyDao: PartyDao,
@@ -159,7 +99,7 @@ fun Bot.getAdminsParty(message: Message): String? {
         .joinToString(" ")
 }
 
-fun Bot.handleAdminsParty(message: Message): String? {
+private fun Bot.handleAdminsParty(message: Message): String? {
     val adminsParty = getAdminsParty(message)
     if (adminsParty == null) sendMessageLogging(message.chat.id, ON_ADMINS_PARTY_FAIL)
     return adminsParty
