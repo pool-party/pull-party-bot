@@ -1,5 +1,6 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
+import com.github.pool_party.flume.AbstractDatabaseBotTest
 import com.github.pool_party.pull_party_bot.botBuilder
 import com.github.pool_party.pull_party_bot.database.Aliases
 import com.github.pool_party.pull_party_bot.database.AliasCache
@@ -8,7 +9,6 @@ import com.github.pool_party.pull_party_bot.database.ChatCache
 import com.github.pool_party.pull_party_bot.database.Parties
 import com.github.pool_party.pull_party_bot.database.PartyAliasesCache
 import com.github.pool_party.pull_party_bot.database.PartyCache
-import com.github.pool_party.flume.AbstractDatabaseBotTest
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.AfterTest

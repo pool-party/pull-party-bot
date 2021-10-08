@@ -13,7 +13,6 @@ import com.github.pool_party.pull_party_bot.command.CreateCommand
 import com.github.pool_party.pull_party_bot.command.DeleteCommand
 import com.github.pool_party.pull_party_bot.command.FeedbackCommand
 import com.github.pool_party.pull_party_bot.command.ListCommand
-import com.github.pool_party.pull_party_bot.every.MigrationHandler
 import com.github.pool_party.pull_party_bot.command.PartyCommand
 import com.github.pool_party.pull_party_bot.command.RemoveCommand
 import com.github.pool_party.pull_party_bot.command.RudeCommand
@@ -21,6 +20,7 @@ import com.github.pool_party.pull_party_bot.command.StartCommand
 import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 import com.github.pool_party.pull_party_bot.database.initDB
+import com.github.pool_party.pull_party_bot.every.MigrationHandler
 import com.github.pool_party.pull_party_bot.every.PullPartyHandler
 
 val botBuilder = BotBuilder(Configuration).apply {

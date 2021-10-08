@@ -178,7 +178,8 @@ val ON_FEEDBACK_SUCCESS =
     """.trimIndent()
 
 fun onFeedback(username: String?, title: String?) =
-    "New #feedback from @${username?.unformatted()} in ${if (title != null) "\"${title.unformatted()}\"" else "private chat"}:\n\n"
+    "New #feedback from @${username?.unformatted()} in " +
+        "${if (title != null) "\"${title.unformatted()}\"" else "private chat"}:\n\n"
 
 val ON_PING_CREATOR_MISMATCH =
     """
