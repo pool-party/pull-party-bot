@@ -2,10 +2,10 @@ package com.github.pool_party.pull_party_bot.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
+import com.github.pool_party.flume.utils.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import com.github.pool_party.pull_party_bot.message.ON_CALLBACK_SUCCESS
 import com.github.pool_party.pull_party_bot.message.onAliasDeleteSuccess
-import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

@@ -9,7 +9,8 @@ import com.github.pool_party.pull_party_bot.callback.PingCallbackData
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import com.github.pool_party.pull_party_bot.message.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.message.ON_PARTY_MISSPELL
-import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
+import com.github.pool_party.flume.utils.sendMessageLogging
+import com.github.pool_party.flume.utils.unformatted
 import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.coroutines.delay
 
@@ -40,7 +41,7 @@ suspend fun Bot.pullParty(
         .distinct()
         .joinToString(" ")
 
-    if (res.isNotBlank()) sendMessageLogging(chatId, res, replyTo = message.message_id)
+    if (res.isNotBlank()) sendMessageLogging(chatId, res.unformatted(), replyTo = message.message_id)
 
     if (failed.isEmpty()) return
 

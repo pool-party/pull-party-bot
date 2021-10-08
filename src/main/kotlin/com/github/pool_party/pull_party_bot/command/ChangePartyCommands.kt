@@ -2,6 +2,8 @@ package com.github.pool_party.pull_party_bot.command
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.Message
+import com.github.pool_party.flume.interaction.command.AbstractCommand
+import com.github.pool_party.flume.utils.sendMessageLogging
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.message.HELP_ADD
 import com.github.pool_party.pull_party_bot.message.HELP_CHANGE
@@ -21,8 +23,6 @@ import com.github.pool_party.pull_party_bot.message.onCreateSuccess
 import com.github.pool_party.pull_party_bot.message.onDeleteSuccess
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import com.github.pool_party.pull_party_bot.utils.modifyCommandAssertion
-import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
-import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 
 class CreateCommand(partyDao: PartyDao) :
     AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao)

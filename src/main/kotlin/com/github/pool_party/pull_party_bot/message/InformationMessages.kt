@@ -1,5 +1,6 @@
 package com.github.pool_party.pull_party_bot.message
 
+import com.github.pool_party.flume.utils.unformatted
 import com.github.pool_party.pull_party_bot.Configuration
 
 // Comment template:
@@ -75,7 +76,7 @@ val HELP_CREATE =
     Party should consist of at least one user
     You can enter users with or without `@` symbol
     @admins is a reserved party and already exists
-    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
+    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }.unformatted()} symbols and trailing `-` are not allowed in the party name
     """.trimIndent()
 
 val HELP_CHANGE =
@@ -127,7 +128,7 @@ val HELP_ALIAS =
     /alias  <alias-name party-name> - create a new party with the same users
 
     Party party-name should exist
-    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the alias name
+    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }.unformatted()} symbols and trailing `-` are not allowed in the alias name
     """.trimIndent()
 
 val ON_LIST_SUCCESS =
@@ -177,7 +178,7 @@ val ON_FEEDBACK_SUCCESS =
     """.trimIndent()
 
 fun onFeedback(username: String?, title: String?) =
-    "New #feedback from @$username in ${if (title != null) "\"$title\"" else "private chat"}:\n\n"
+    "New #feedback from @${username?.unformatted()} in ${if (title != null) "\"${title.unformatted()}\"" else "private chat"}:\n\n"
 
 val ON_PING_CREATOR_MISMATCH =
     """

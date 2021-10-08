@@ -8,7 +8,7 @@ import com.github.pool_party.pull_party_bot.database.ChatCache
 import com.github.pool_party.pull_party_bot.database.Parties
 import com.github.pool_party.pull_party_bot.database.PartyAliasesCache
 import com.github.pool_party.pull_party_bot.database.PartyCache
-import com.github.pool_party.telegram_bot_test_utils.AbstractDatabaseBotTest
+import com.github.pool_party.flume.AbstractDatabaseBotTest
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.AfterTest

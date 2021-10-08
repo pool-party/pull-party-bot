@@ -4,9 +4,9 @@ import kotlin.test.Test
 
 internal class TaggingTest : PullPartyBotTest() {
 
-    private val partyName = "party_name"
-    private val aliasName = "alias_name"
-    private val members = "@first_member @second_member @third_member"
+    private val partyName = "partyname"
+    private val aliasName = "aliasname"
+    private val members = "@firstmember @secondmember @thirdmember"
 
     @Test
     fun `explicit tagging test`() {
@@ -41,7 +41,7 @@ internal class TaggingTest : PullPartyBotTest() {
 
     @Test
     fun `changing alias and tagging test`() {
-        val newMembers = "@another_member"
+        val newMembers = "@anothermember"
 
         -"/create $partyName $members"
         -"/alias $aliasName $partyName"

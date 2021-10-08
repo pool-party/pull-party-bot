@@ -1,5 +1,6 @@
 package com.github.pool_party.pull_party_bot
 
+import com.github.pool_party.flume.bot.BotBuilder
 import com.github.pool_party.pull_party_bot.callback.CallbackDispatcher
 import com.github.pool_party.pull_party_bot.callback.DeleteNodeSuggestionCallback
 import com.github.pool_party.pull_party_bot.callback.DeleteSuggestionCallback
@@ -21,7 +22,6 @@ import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 import com.github.pool_party.pull_party_bot.database.initDB
 import com.github.pool_party.pull_party_bot.every.PullPartyHandler
-import com.github.pool_party.telegram_bot_utils.bot.BotBuilder
 
 val botBuilder = BotBuilder(Configuration).apply {
     val partyDaoImpl = PartyDaoImpl()

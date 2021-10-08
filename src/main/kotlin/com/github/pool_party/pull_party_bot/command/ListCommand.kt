@@ -4,6 +4,8 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.InlineKeyboardButton
 import com.elbekD.bot.types.InlineKeyboardMarkup
 import com.elbekD.bot.types.Message
+import com.github.pool_party.flume.interaction.command.AbstractCommand
+import com.github.pool_party.flume.utils.sendMessageLogging
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.callback.DeleteSuggestionCallbackData
 import com.github.pool_party.pull_party_bot.message.HELP_LIST
@@ -15,8 +17,6 @@ import com.github.pool_party.pull_party_bot.message.ON_STALE_PARTY_REMOVE
 import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import com.github.pool_party.pull_party_bot.utils.getAdminsParty
-import com.github.pool_party.telegram_bot_utils.interaction.command.AbstractCommand
-import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 import org.joda.time.DateTime
 
 class ListCommand(private val partyDao: PartyDao) :
@@ -35,7 +35,7 @@ class ListCommand(private val partyDao: PartyDao) :
         val list = partyDao.getAll(chatId)
         val partyLists = list.asSequence().sortedByDescending { it.lastUse }.groupBy { it.party.id }.values
         val adminsParty = getAdminsParty(message)
-        val adminsPartySequence = adminsParty?.let { formatParty(it, listOf("`admins` _(reserved)_")) }.orEmpty()
+        val adminsPartySequence = adminsParty?.let { formatParty(it, listOf("`admins` _\\(reserved\\)_")) }.orEmpty()
 
         if (parsedArgs.isEmpty()) {
             listAll(chatId, partyLists, adminsPartySequence)

@@ -1,6 +1,6 @@
 package com.github.pool_party.pull_party_bot
 
-import com.github.pool_party.telegram_bot_utils.configuration.AbstractConfiguration
+import com.github.pool_party.flume.configuration.AbstractConfiguration
 
 object Configuration : AbstractConfiguration() {
 

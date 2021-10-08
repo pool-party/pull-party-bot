@@ -1,6 +1,8 @@
 package com.github.pool_party.pull_party_bot.message
 
-fun onAliasDeleteSuccess(partyName: String) = """Alias $partyName is no longer exists 👍"""
+import com.github.pool_party.flume.utils.unformatted
+
+fun onAliasDeleteSuccess(partyName: String) = """Alias ${partyName.unformatted()} is no longer exists 👍"""
 
 fun onPartyDeleteSuggest(partyList: List<String>): String {
     val message = "Perhaps you want to delete all aliases of"
@@ -12,10 +14,10 @@ fun onPartyDeleteSuggest(partyList: List<String>): String {
             else -> ": ${partyList.joinToString(", ")}"
         }
 
-    return message + format
+    return message + format.unformatted()
 }
 
-fun onPartyDeleteUnchanged(partyName: String) = """I am not familiar with $partyName 🤨"""
+fun onPartyDeleteUnchanged(partyName: String) = """I am not familiar with ${partyName.unformatted()} 🤨"""
 
 const val ON_PARTY_DELETE_SUCCESS = """All aliases of deleted party are also vanished 💨"""
 

@@ -11,7 +11,7 @@ internal class ListingTest : PullPartyBotTest() {
     private val members = "@first @second @third"
     private val listMembers = members.filter { it != '@' }
     private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n\\- $listMembers\n  └── `$aliasName`"
-    private val admins = "\\- admin\n  └── `admins` _(reserved)_"
+    private val admins = "\\- admin\n  └── `admins` _\\(reserved\\)_"
 
     @Test
     fun `list command test`() {

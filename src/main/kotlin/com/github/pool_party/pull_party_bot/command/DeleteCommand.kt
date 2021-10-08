@@ -4,6 +4,8 @@ import com.elbekD.bot.Bot
 import com.elbekD.bot.types.InlineKeyboardButton
 import com.elbekD.bot.types.InlineKeyboardMarkup
 import com.elbekD.bot.types.Message
+import com.github.pool_party.flume.interaction.command.AdministratorCommand
+import com.github.pool_party.flume.utils.sendMessageLogging
 import com.github.pool_party.pull_party_bot.callback.DeleteNodeSuggestionCallbackData
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import com.github.pool_party.pull_party_bot.message.HELP_DELETE
@@ -12,8 +14,6 @@ import com.github.pool_party.pull_party_bot.message.onAliasDeleteSuccess
 import com.github.pool_party.pull_party_bot.message.onPartyDeleteSuggest
 import com.github.pool_party.pull_party_bot.message.onPartyDeleteUnchanged
 import com.github.pool_party.pull_party_bot.utils.modifyCommandAssertion
-import com.github.pool_party.telegram_bot_utils.interaction.command.AdministratorCommand
-import com.github.pool_party.telegram_bot_utils.utils.sendMessageLogging
 
 class DeleteCommand(private val partyDao: PartyDao) :
     AdministratorCommand(

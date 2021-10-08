@@ -1,5 +1,6 @@
 package com.github.pool_party.pull_party_bot.message
 
+import com.github.pool_party.flume.utils.unformatted
 import com.github.pool_party.pull_party_bot.Configuration
 
 val ON_CHANGE_EMPTY =
@@ -67,7 +68,7 @@ val ON_PARTY_NAME_FAIL =
     As you name the boat, so shall it float. ☝️
 
     Party or alias name should consist of less than 50 non-blank symbols
-    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }} symbols and trailing `-` are not allowed in the party name
+    `@`, ${Configuration.PROHIBITED_SYMBOLS.joinToString { "`$it`" }.unformatted()} symbols and trailing `-` are not allowed in the party name
 
     Type /help for more information
     """.trimIndent()
@@ -82,10 +83,10 @@ val ON_USERS_FAIL =
     Type /help for more information
     """.trimIndent()
 
-fun onAddSuccess(partyName: String) = "Party $partyName is getting bigger and bigger!"
+fun onAddSuccess(partyName: String) = "Party ${partyName.unformatted()} is getting bigger and bigger!"
 
-fun onChangeSuccess(partyName: String) = "Party $partyName changed beyond recognition!"
+fun onChangeSuccess(partyName: String) = "Party ${partyName.unformatted()} changed beyond recognition!"
 
-fun onCreateSuccess(partyName: String) = "Party $partyName successfully created!"
+fun onCreateSuccess(partyName: String) = "Party ${partyName.unformatted()} successfully created!"
 
-fun onDeleteSuccess(partyName: String) = "Party $partyName lost somebody, but not the vibe!"
+fun onDeleteSuccess(partyName: String) = "Party ${partyName.unformatted()} lost somebody, but not the vibe!"

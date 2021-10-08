@@ -2,10 +2,10 @@ package com.github.pool_party.pull_party_bot.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
+import com.github.pool_party.flume.interaction.callback.Callback
+import com.github.pool_party.flume.utils.deleteMessageLogging
+import com.github.pool_party.flume.utils.validateAdministrator
 import com.github.pool_party.pull_party_bot.message.ON_PERMISSION_DENY_CALLBACK
-import com.github.pool_party.telegram_bot_utils.interaction.callback.Callback
-import com.github.pool_party.telegram_bot_utils.utils.deleteMessageLogging
-import com.github.pool_party.telegram_bot_utils.utils.validateAdministrator
 
 abstract class AbstractDeleteSuggestionCallback : Callback<CallbackData> {
 

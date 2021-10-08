@@ -2,9 +2,9 @@ package com.github.pool_party.pull_party_bot.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
+import com.github.pool_party.flume.interaction.callback.Callback
 import com.github.pool_party.pull_party_bot.message.ON_PING_CREATOR_MISMATCH
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
-import com.github.pool_party.telegram_bot_utils.interaction.callback.Callback
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
