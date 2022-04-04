@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.1] - 04.04.2022
+
+### Added
+
+- Developer chat error logging
+
+### Fixed
+
+- `Long` user id
+
 ## [1.2.0] - 21.05.2021
 
 ### Added
@@ -100,6 +110,7 @@
 -   Implicit party pulling
 -   Rude mode
 
+[1.2.1]: https://github.com/pool-party/pull-party-bot/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/pool-party/pull-party-bot/compare/v1.1.0.2...v1.2.0
 [1.1.0.2]: https://github.com/pool-party/pull-party-bot/compare/v1.1.0.1...v1.1.0.2
 [1.1.0.1]: https://github.com/pool-party/pull-party-bot/compare/v1.1.0...v1.1.0.1
