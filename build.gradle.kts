@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.pool-party"
-version = "1.2.0"
+version = "1.2.1"
 
 repositories {
     maven("https://jitpack.io")
