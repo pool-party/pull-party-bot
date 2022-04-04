@@ -212,6 +212,8 @@ val ON_FEEDBACK_SUCCESS =
 fun onFeedback(username: String?, title: String?) =
     "New #feedback from @$username in ${if (title != null) "\"$title\"" else "private chat"}:\n\n"
 
+fun onError(e: Throwable) = "New #error:\n\n${e.message}"
+
 val ON_PING_CREATOR_MISMATCH =
     """
     Available for initial requesting user only 🚫

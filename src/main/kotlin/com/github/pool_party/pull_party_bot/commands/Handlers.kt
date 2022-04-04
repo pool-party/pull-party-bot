@@ -1,6 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
+import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.handlers.AddCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.AliasCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.ChangeCommand
@@ -19,6 +20,7 @@ import com.github.pool_party.pull_party_bot.commands.handlers.StartCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.callback.DeleteNodeSuggestionCallback
 import com.github.pool_party.pull_party_bot.commands.handlers.callback.DeleteSuggestionCallback
 import com.github.pool_party.pull_party_bot.commands.handlers.callback.PingCallback
+import com.github.pool_party.pull_party_bot.commands.messages.onError
 import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 
@@ -62,3 +64,11 @@ fun Bot.initHandlers() {
     interactions.forEach { it.onMessage(this) }
     setMyCommands(commands.map { it.toBotCommand() })
 }
+
+suspend fun <T> loggingError(bot: Bot, action: suspend () -> T): T =
+    try {
+        action()
+    } catch (e: Throwable) {
+        bot.sendMessage(Configuration.DEVELOP_CHAT_ID, onError(e)).join()
+        throw e
+    }

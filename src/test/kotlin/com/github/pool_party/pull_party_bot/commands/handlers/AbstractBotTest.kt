@@ -228,7 +228,7 @@ internal abstract class AbstractBotTest {
         }
     }
 
-    protected fun verifyMessages(chatId: Long, text: String, exactly: Int = 1, replyTo: Int? = null) {
+    protected fun verifyMessages(chatId: Long, text: String, exactly: Int = 1, replyTo: Long? = null) {
         coVerify(exactly = exactly) {
             bot.sendMessage(chatId, text, any(), any(), any(), any(), replyTo ?: any(), any(), any())
         }

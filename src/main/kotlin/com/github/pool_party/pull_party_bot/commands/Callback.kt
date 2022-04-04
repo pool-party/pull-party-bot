@@ -17,7 +17,7 @@ enum class CallbackAction {
 data class CallbackData(
     val callbackAction: CallbackAction,
     val partyId: Int,
-    val creator: Int? = null,
+    val creator: Long? = null,
 )
 
 interface Callback {
@@ -30,11 +30,13 @@ interface Callback {
 class CallbackDispatcher(val callbacks: Map<CallbackAction, Callback>) : Interaction {
 
     override fun onMessage(bot: Bot) = bot.onCallbackQuery {
-        logger.info { "callback ${it.from.username}@${it.message?.chat?.title}: ${it.data}" }
+        loggingError(bot) {
+            logger.info { "callback ${it.from.username}@${it.message?.chat?.title}: ${it.data}" }
 
-        val callbackData = it.data?.let { Json.decodeFromString<CallbackData>(it) } ?: return@onCallbackQuery
-        val callback = callbacks[callbackData.callbackAction] ?: return@onCallbackQuery
+            val callbackData = it.data?.let { Json.decodeFromString<CallbackData>(it) } ?: return@loggingError
+            val callback = callbacks[callbackData.callbackAction] ?: return@loggingError
 
-        with(callback) { bot.process(it, callbackData) }
+            with(callback) { bot.process(it, callbackData) }
+        }
     }
 }

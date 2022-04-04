@@ -10,6 +10,9 @@ interface EveryMessageInteraction {
 
 class EveryMessageProcessor(private val interactions: List<EveryMessageInteraction>) : Interaction {
 
-    override fun onMessage(bot: Bot) =
-        bot.onMessage { message -> interactions.forEach { it.onMessage(bot, message) } }
+    override fun onMessage(bot: Bot) = bot.onMessage { message ->
+        loggingError(bot) {
+            interactions.forEach { it.onMessage(bot, message) }
+        }
+    }
 }
