@@ -55,7 +55,9 @@ abstract class AbstractCommand(
             "${LocalDateTime.now()} $command <- ${message.from?.username}@${message.chat.title}: \"${message.text}\""
         }
 
-        val nanoseconds = measureNanoTime { bot.action(message, args) }
+        val nanoseconds = loggingError(bot) {
+            measureNanoTime { bot.action(message, args) }
+        }
 
         logger.info {
             "$command -> finished in ${nanoseconds / 1000000000}.${nanoseconds % 1000000000}s"
@@ -76,7 +78,7 @@ abstract class CaseCommand(command: String, description: String, helpMessage: St
         chatId: Long,
         message: String,
         parseMode: String? = null,
-        replyTo: Int? = null,
+        replyTo: Long? = null,
         markup: ReplyKeyboard? = null
     ) =
         sendMessage(

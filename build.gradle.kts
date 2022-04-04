@@ -25,7 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", kotlinVersion)
     implementation("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion)
     implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.2.2")
-    implementation("com.github.elbekD", "kt-telegram-bot", "1.3.8")
+    implementation("com.github.elbekD", "kt-telegram-bot", "1.4.1")
 
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
