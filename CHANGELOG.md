@@ -5,6 +5,7 @@
 ### Fixed
 
 - Using logging everywhere
+- Escaping markdown in messages
 
 ## [1.2.1] - 04.04.2022
 

@@ -1,5 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.messages
 
+import com.github.pool_party.pull_party_bot.commands.escapeMarkdown
+
 val ON_ALIAS_FAIL =
     """
     Don't mess up with the cloning 👯‍♀️
@@ -20,4 +22,4 @@ val ON_ALIAS_PARSE_FAIL =
     Type `/help alias` for more information
     """.trimIndent()
 
-fun onAliasSuccess(aliasName: String) = "Party $aliasName is good to go!"
+fun onAliasSuccess(aliasName: String) = "Party ${aliasName.escapeMarkdown()} is good to go!"

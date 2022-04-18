@@ -16,6 +16,12 @@ fun <T> CompletableFuture<T>.logging(prefix: String = ""): CompletableFuture<T> 
     value
 }
 
+private fun String.escape(symbols: String) = replace("[$symbols]".toRegex()) { "\\${it.groupValues[0]}" }
+
+private fun String.escapeSpecial() = escape("-!.<>\\(\\)")
+
+fun String.escapeMarkdown() = escape("-!.<>\\(\\)_*\\[\\]`")
+
 fun Bot.sendMessageLogging(
     chatId: Long,
     text: String,
@@ -23,7 +29,7 @@ fun Bot.sendMessageLogging(
     replyTo: Long? = null
 ): CompletableFuture<out Message> {
     logger.debug { "Sending '$text'" }
-    return sendMessage(chatId, text, "MarkdownV2", replyTo = replyTo, markup = markup)
+    return sendMessage(chatId, text.escapeSpecial(), "MarkdownV2", replyTo = replyTo, markup = markup)
         .logging("Failed to send message \"$text\"")
 }
 
