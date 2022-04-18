@@ -2,11 +2,17 @@ package com.github.pool_party.pull_party_bot.commands.handlers.callback
 
 import com.elbekD.bot.Bot
 import com.elbekD.bot.types.CallbackQuery
-import com.github.pool_party.pull_party_bot.commands.*
+import com.github.pool_party.pull_party_bot.commands.Callback
+import com.github.pool_party.pull_party_bot.commands.CallbackAction
+import com.github.pool_party.pull_party_bot.commands.CallbackData
+import com.github.pool_party.pull_party_bot.commands.answerCallbackQueryLogging
+import com.github.pool_party.pull_party_bot.commands.deleteMessageLogging
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CALLBACK_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_DELETE_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY_CALLBACK
 import com.github.pool_party.pull_party_bot.commands.messages.onAliasDeleteSuccess
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
+import com.github.pool_party.pull_party_bot.commands.validateAdministrator
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 abstract class AbstractDeleteSuggestionCallback(override val callbackAction: CallbackAction) : Callback {

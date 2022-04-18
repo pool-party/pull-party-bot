@@ -23,6 +23,6 @@ class HelpCommand(private val helpMessages: Map<String, String>) :
             return
         }
 
-        sendMessageLogging(message.chat.id,  helpMessages[parsedArgs[0].removePrefix("/")] ?: ON_HELP_ERROR)
+        sendMessageLogging(message.chat.id, helpMessages[parsedArgs[0].removePrefix("/")] ?: ON_HELP_ERROR)
     }
 }
