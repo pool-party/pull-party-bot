@@ -25,7 +25,6 @@ object Aliases : IntIdTable() {
     }
 }
 
-object Chats : LongIdTable() {
-    override val id = long("chat_id").entityId()
+object Chats : LongIdTable(columnName = "chat_id") {
     val isRude = bool("is_rude").default(false)
 }
