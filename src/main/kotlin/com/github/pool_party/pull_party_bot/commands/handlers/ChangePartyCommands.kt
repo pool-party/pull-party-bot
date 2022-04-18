@@ -20,6 +20,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.onAddSuccess
 import com.github.pool_party.pull_party_bot.commands.messages.onChangeSuccess
 import com.github.pool_party.pull_party_bot.commands.messages.onCreateSuccess
 import com.github.pool_party.pull_party_bot.commands.messages.onDeleteSuccess
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -59,11 +60,10 @@ abstract class AbstractChangeCommand(
         // TODO suggest alias instead of party, if possible
 
         if (parsedArgs.isNullOrEmpty() || parsedArgs.size < 2) {
-            sendMessage(
+            sendMessageLogging(
                 chatId,
                 if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
                 else ON_CHANGE_EMPTY,
-                "Markdown"
             )
             return
         }
@@ -71,7 +71,7 @@ abstract class AbstractChangeCommand(
         val partyName = parsedArgs[0].removePrefix("@")
 
         if (!validatePartyName(partyName)) {
-            sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
+            sendMessageLogging(chatId, ON_PARTY_NAME_FAIL)
             return
         }
 
@@ -86,12 +86,12 @@ abstract class AbstractChangeCommand(
         users = users.map { "@$it" }
 
         if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
-            sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
+            sendMessageLogging(chatId, ON_SINGLETON_PARTY)
             return
         }
 
         if (failedUsers.isNotEmpty()) {
-            sendMessage(chatId, ON_USERS_FAIL)
+            sendMessageLogging(chatId, ON_USERS_FAIL)
 
             if (users.isEmpty()) {
                 sendMessage(
@@ -109,7 +109,7 @@ abstract class AbstractChangeCommand(
             return
         }
 
-        sendMessage(chatId, status.onFailure, "Markdown")
+        sendMessageLogging(chatId, status.onFailure)
     }
 }
 

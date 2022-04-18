@@ -14,6 +14,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_DELETE_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.onAliasDeleteSuccess
 import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteSuggest
 import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteUnchanged
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import kotlinx.serialization.encodeToString
@@ -27,7 +28,7 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         val chatId = message.chat.id
 
         if (parsedArgs.isNullOrEmpty()) {
-            sendMessage(chatId, ON_DELETE_EMPTY, "Markdown")
+            sendMessageLogging(chatId, ON_DELETE_EMPTY)
             return
         }
 
@@ -81,6 +82,6 @@ class ClearCommand(chatDao: ChatDao) :
     override fun Bot.mainAction(message: Message, args: String?) {
         val chatId = message.chat.id
         chatDao.clear(chatId)
-        sendMessage(chatId, ON_CLEAR_SUCCESS, "Markdown")
+        sendMessageLogging(chatId, ON_CLEAR_SUCCESS)
     }
 }
