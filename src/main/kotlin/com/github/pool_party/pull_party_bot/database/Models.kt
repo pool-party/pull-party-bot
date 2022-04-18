@@ -17,7 +17,7 @@ object Aliases : IntIdTable() {
     val chatId = reference("chat_id", Chats, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
 
     val name = varchar("name", 50)
-    val lastUse = datetime("last_use").defaultExpression(CurrentDateTime())
+    val lastUse = datetime("last_use").defaultExpression(CurrentDateTime)
 
     init {
         index(false, name, chatId)
