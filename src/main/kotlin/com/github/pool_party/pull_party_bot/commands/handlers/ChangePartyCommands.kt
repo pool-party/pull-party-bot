@@ -25,18 +25,18 @@ import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class CreateCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao, chatDao)
+    AbstractChangeCommand("create", "create new party with mentioned users", HELP_CREATE, PartyChangeStatus.CREATE, partyDao, chatDao)
 
 class ChangeCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("change", "changing existing party", HELP_CHANGE, PartyChangeStatus.CHANGE, partyDao, chatDao)
+    AbstractChangeCommand("change", "change an existing party", HELP_CHANGE, PartyChangeStatus.CHANGE, partyDao, chatDao)
 
 class AddCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("add", "add people to a party", HELP_ADD, PartyChangeStatus.ADD, partyDao, chatDao)
+    AbstractChangeCommand("add", "add new users to the given party", HELP_ADD, PartyChangeStatus.ADD, partyDao, chatDao)
 
 class RemoveCommand(partyDao: PartyDao, chatDao: ChatDao) :
     AbstractChangeCommand(
         "remove",
-        "remove people from a party",
+        "remove given users from the provided party",
         HELP_REMOVE,
         PartyChangeStatus.REMOVE,
         partyDao,

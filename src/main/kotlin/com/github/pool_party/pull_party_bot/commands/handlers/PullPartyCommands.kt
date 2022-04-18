@@ -49,7 +49,7 @@ class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInterac
 }
 
 class PartyCommand(private val partyDao: PartyDao) :
-    AbstractCommand("party", "tag the members of existing parties", HELP_PARTY) {
+    AbstractCommand("party", "tag the members of the given parties", HELP_PARTY) {
 
     override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)?.distinct()

@@ -17,7 +17,7 @@ import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 class AliasCommand(
     private val partyDao: PartyDao,
     chatDao: ChatDao,
-) : CaseCommand("alias", "create a party alias", HELP_ALIAS, chatDao) {
+) : CaseCommand("alias", "create a new party with the same users", HELP_ALIAS, chatDao) {
 
     override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)

@@ -21,7 +21,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
-    AdministratorCommand("delete", "forget the parties as they have never happened", HELP_DELETE, chatDao) {
+    AdministratorCommand("delete", "delete the parties you provided", HELP_DELETE, chatDao) {
 
     override fun Bot.mainAction(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)?.distinct()

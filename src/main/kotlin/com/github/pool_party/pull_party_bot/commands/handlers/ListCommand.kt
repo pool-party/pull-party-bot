@@ -23,7 +23,7 @@ import kotlinx.serialization.json.Json
 import org.joda.time.DateTime
 
 class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
-    CaseCommand("list", "show the parties of the chat", HELP_LIST, chatDao) {
+    CaseCommand("list", "show all the parties of the chat and their members", HELP_LIST, chatDao) {
 
     override suspend fun Bot.action(message: Message, args: String?) {
 
