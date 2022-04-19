@@ -1,6 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.messages
 
 import com.github.pool_party.pull_party_bot.Configuration
+import kotlin.math.min
 
 // Comment template:
 // """
@@ -212,7 +213,15 @@ val ON_FEEDBACK_SUCCESS =
 fun onFeedback(username: String?, title: String?) =
     "New #feedback from @$username in ${if (title != null) "\"$title\"" else "private chat"}:\n\n"
 
-fun onError(e: Throwable) = "New #error:\n\n${e.message}"
+fun onError(e: Throwable): String {
+    val intro = "New #error:\n\n`${e.message}`\n\n"
+    val stackTrace = e.stackTraceToString()
+    val tenLines = stackTrace.lineSequence().take(10).joinToString("\n")
+    val stackTraceTrimmed = if (tenLines.length + 6 < Configuration.MESSAGE_LENGTH - intro.length) tenLines
+    else stackTrace.substring(0 until min(stackTrace.length, 1000 - intro.length))
+
+    return "$intro```$stackTraceTrimmed```"
+}
 
 val ON_PING_CREATOR_MISMATCH =
     """

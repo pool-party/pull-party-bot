@@ -69,6 +69,6 @@ suspend fun <T> loggingError(bot: Bot, action: suspend () -> T): T =
     try {
         action()
     } catch (e: Throwable) {
-        bot.sendMessage(Configuration.DEVELOP_CHAT_ID, onError(e)).join()
+        bot.sendMessageLogging(Configuration.DEVELOP_CHAT_ID, onError(e)).join()
         throw e
     }

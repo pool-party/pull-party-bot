@@ -2,9 +2,10 @@ package com.github.pool_party.pull_party_bot.commands.messages
 
 import com.github.pool_party.pull_party_bot.commands.escapeMarkdown
 
-fun onAliasDeleteSuccess(partyName: String) = """Alias $partyName is no longer exists 👍"""
+fun onAliasDeleteSuccess(partyName: String) = """Alias ${partyName.escapeMarkdown()} no longer exists 👍"""
 
-fun onPartyDeleteSuggest(partyList: List<String>): String {
+fun onPartyDeleteSuggest(parties: List<String>): String {
+    val partyList = parties.map { it.escapeMarkdown() }
     val message = "Perhaps you want to delete all aliases of"
 
     val format =
