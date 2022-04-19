@@ -30,7 +30,7 @@ interface Callback {
 class CallbackDispatcher(val callbacks: Map<CallbackAction, Callback>) : Interaction {
 
     override fun onMessage(bot: Bot) = bot.onCallbackQuery {
-        loggingError(bot) {
+        bot.loggingError {
             logger.info { "callback ${it.from.username}@${it.message?.chat?.title}: ${it.data}" }
 
             val callbackData = it.data?.let { Json.decodeFromString<CallbackData>(it) } ?: return@loggingError
