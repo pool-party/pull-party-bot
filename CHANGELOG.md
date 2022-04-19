@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.3] - 19.04.2022
+
+### Fixed
+
+- Escaping markdown in messages
+
 ## [1.2.2] - 18.04.2022
 
 ### Fixed

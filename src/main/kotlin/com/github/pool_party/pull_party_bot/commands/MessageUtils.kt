@@ -18,9 +18,9 @@ fun <T> CompletableFuture<T>.logging(prefix: String = ""): CompletableFuture<T> 
 
 private fun String.escape(symbols: String) = replace("[$symbols]".toRegex()) { "\\${it.groupValues[0]}" }
 
-private fun String.escapeSpecial() = escape("-!.<>\\(\\)")
+fun String.escapeSpecial() = escape("#\\-!.<>\\(\\)")
 
-fun String.escapeMarkdown() = escape("-!.<>\\(\\)_*\\[\\]`")
+fun String.escapeMarkdown() = escapeSpecial().escape("_*\\[\\]`")
 
 fun Bot.sendMessageLogging(
     chatId: Long,
