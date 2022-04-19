@@ -55,7 +55,7 @@ abstract class AbstractCommand(
             "${LocalDateTime.now()} $command <- ${message.from?.username}@${message.chat.title}: \"${message.text}\""
         }
 
-        val nanoseconds = loggingError(bot) {
+        val nanoseconds = bot.loggingError {
             measureNanoTime { bot.action(message, args) }
         }
 

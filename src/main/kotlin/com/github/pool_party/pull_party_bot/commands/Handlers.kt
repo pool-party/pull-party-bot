@@ -23,6 +23,7 @@ import com.github.pool_party.pull_party_bot.commands.handlers.callback.PingCallb
 import com.github.pool_party.pull_party_bot.commands.messages.onError
 import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
+import mu.KotlinLogging
 
 fun Bot.initHandlers() {
 
@@ -65,10 +66,21 @@ fun Bot.initHandlers() {
     setMyCommands(commands.map { it.toBotCommand() })
 }
 
-suspend fun <T> loggingError(bot: Bot, action: suspend () -> T): T =
+private val logger = KotlinLogging.logger { }
+
+suspend fun <T> Bot.loggingError(action: suspend () -> T): T =
     try {
         action()
-    } catch (e: Throwable) {
-        bot.sendMessageLogging(Configuration.DEVELOP_CHAT_ID, onError(e)).join()
-        throw e
+    } catch (throwable: Throwable) {
+        processThrowable(throwable)
     }
+
+private fun Bot.processThrowable(throwable: Throwable): Nothing {
+    val (prefix, reason) =
+        if (throwable is SendingMessageException) "${throwable.action}: " to throwable.reason else "" to throwable
+
+    logger.error { "$prefix${reason.message}:\n${reason.stackTraceToString()}" }
+    sendMessage(Configuration.DEVELOP_CHAT_ID, onError(reason).escapeSpecial(), "MarkdownV2").join()
+
+    throw reason
+}

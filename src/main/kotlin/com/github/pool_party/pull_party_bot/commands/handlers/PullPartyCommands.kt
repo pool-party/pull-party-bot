@@ -10,6 +10,7 @@ import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.EveryMessageInteraction
 import com.github.pool_party.pull_party_bot.commands.deleteMessageLogging
+import com.github.pool_party.pull_party_bot.commands.escapeMarkdown
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
@@ -97,7 +98,7 @@ private suspend fun Bot.handleParty(
         .distinct()
         .joinToString(" ")
 
-    if (res.isNotBlank()) sendMessageLogging(chatId, res, replyTo = message.message_id)
+    if (res.isNotBlank()) sendMessageLogging(chatId, res.escapeMarkdown(), replyTo = message.message_id)
 
     if (failed.isEmpty()) return
 
@@ -136,7 +137,7 @@ private suspend fun Bot.handleParty(
                 }
                 .toList()
         )
-    ).join()
+    )
 
     delay(Configuration.STALE_PING_SECONDS * 1000L)
 

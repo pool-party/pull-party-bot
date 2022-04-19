@@ -6,7 +6,7 @@ internal class TaggingTest : AbstractBotTest() {
 
     private val partyName = "party_name"
     private val aliasName = "alias_name"
-    private val members = "@first_member @second_member @third_member"
+    private val members = "@firstmember @secondmember @thirdmember"
 
     @Test
     fun `explicit tagging test`() {
@@ -41,7 +41,7 @@ internal class TaggingTest : AbstractBotTest() {
 
     @Test
     fun `changing alias and tagging test`() {
-        val newMembers = "@another_member"
+        val newMembers = "@anothermember"
 
         -"/create $partyName $members"
         -"/alias $aliasName $partyName"

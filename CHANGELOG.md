@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4] - 19.04.2022
+
+### Fixed
+
+- Escaping markdown in messages
+- Chat logging
+
 ## [1.2.3] - 19.04.2022
 
 ### Fixed
@@ -86,7 +93,7 @@
 
 ### Fixed
 
--   Heroku Continious deployment build fixed
+-   Heroku Continuous deployment build fixed
 
 ## [1.0.2] - 16.10.2020
 
@@ -123,6 +130,8 @@
 -   Implicit party pulling
 -   Rude mode
 
+[1.2.4]: https://github.com/pool-party/pull-party-bot/compare/v1.2.3...v1.2.4
+[1.2.3]: https://github.com/pool-party/pull-party-bot/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/pool-party/pull-party-bot/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/pool-party/pull-party-bot/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/pool-party/pull-party-bot/compare/v1.1.0.2...v1.2.0

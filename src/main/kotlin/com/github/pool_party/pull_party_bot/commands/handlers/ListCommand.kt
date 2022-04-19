@@ -120,7 +120,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
                 currentString.append("\n").append(line)
             } else {
-                sendCaseMessage(chatId, currentString.toString()).join()
+                sendCaseMessage(chatId, currentString.toString())
                 currentString = StringBuilder(line)
             }
         }
@@ -128,7 +128,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         if (emptySequence) {
             sendMessageLogging(chatId, onEmptyMessage)
         } else {
-            sendCaseMessage(chatId, currentString.toString()).join()
+            sendCaseMessage(chatId, currentString.toString())
         }
     }
 

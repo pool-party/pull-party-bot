@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.pool-party"
-version = "1.2.2"
+version = "1.2.4"
 
 repositories {
     maven("https://jitpack.io")
@@ -75,4 +75,6 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+    kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
 }

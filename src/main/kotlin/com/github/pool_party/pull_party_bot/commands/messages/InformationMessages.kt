@@ -1,6 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.messages
 
 import com.github.pool_party.pull_party_bot.Configuration
+import com.github.pool_party.pull_party_bot.commands.SendingMessageException
 import kotlin.math.min
 
 // Comment template:
@@ -213,9 +214,11 @@ val ON_FEEDBACK_SUCCESS =
 fun onFeedback(username: String?, title: String?) =
     "New #feedback from @$username in ${if (title != null) "\"$title\"" else "private chat"}:\n\n"
 
-fun onError(e: Throwable): String {
-    val intro = "New #error:\n\n`${e.message}`\n\n"
-    val stackTrace = e.stackTraceToString()
+fun onError(throwable: Throwable): String {
+    val prefix = if (throwable is SendingMessageException) "${throwable.action}: " else ""
+    val intro = "New #error:\n\n`$prefix${throwable.message}`\n\n"
+
+    val stackTrace = throwable.stackTraceToString()
     val tenLines = stackTrace.lineSequence().take(10).joinToString("\n")
     val stackTraceTrimmed = if (tenLines.length + 6 < Configuration.MESSAGE_LENGTH - intro.length) tenLines
     else stackTrace.substring(0 until min(stackTrace.length, 1000 - intro.length))
