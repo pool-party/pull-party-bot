@@ -218,7 +218,7 @@ fun onError(e: Throwable): String {
     val stackTrace = e.stackTraceToString()
     val tenLines = stackTrace.lineSequence().take(10).joinToString("\n")
     val stackTraceTrimmed = if (tenLines.length + 6 < Configuration.MESSAGE_LENGTH - intro.length) tenLines
-        else stackTrace.substring(0 until min(stackTrace.length, 1000 - intro.length))
+    else stackTrace.substring(0 until min(stackTrace.length, 1000 - intro.length))
 
     return "$intro```$stackTraceTrimmed```"
 }
