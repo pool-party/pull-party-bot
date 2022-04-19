@@ -93,7 +93,7 @@
 
 ### Fixed
 
--   Heroku Continious deployment build fixed
+-   Heroku Continuous deployment build fixed
 
 ## [1.0.2] - 16.10.2020
 
