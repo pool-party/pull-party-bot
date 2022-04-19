@@ -1,6 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.messages
 
 import com.github.pool_party.pull_party_bot.Configuration
+import com.github.pool_party.pull_party_bot.commands.escapeMarkdown
 
 val ON_CHANGE_EMPTY =
     """
@@ -82,10 +83,10 @@ val ON_USERS_FAIL =
     Type /help for more information
     """.trimIndent()
 
-fun onAddSuccess(partyName: String) = "Party $partyName is getting bigger and bigger!"
+fun onAddSuccess(partyName: String) = "Party ${partyName.escapeMarkdown()} is getting bigger and bigger!"
 
-fun onChangeSuccess(partyName: String) = "Party $partyName changed beyond recognition!"
+fun onChangeSuccess(partyName: String) = "Party ${partyName.escapeMarkdown()} changed beyond recognition!"
 
-fun onCreateSuccess(partyName: String) = "Party $partyName successfully created!"
+fun onCreateSuccess(partyName: String) = "Party ${partyName.escapeMarkdown()} successfully created!"
 
-fun onDeleteSuccess(partyName: String) = "Party $partyName lost somebody, but not the vibe!"
+fun onDeleteSuccess(partyName: String) = "Party ${partyName.escapeMarkdown()} lost somebody, but not the vibe!"

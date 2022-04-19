@@ -5,7 +5,10 @@ import com.elbekD.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
+import com.github.pool_party.pull_party_bot.commands.answerCallbackQueryLogging
+import com.github.pool_party.pull_party_bot.commands.deleteMessageLogging
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PING_CREATOR_MISMATCH
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class PingCallback(private val partyDao: PartyDao) : Callback {
@@ -18,18 +21,18 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
         val callbackQueryId = callbackQuery.id
 
         if (callbackQuery.from.id != callbackData.creator) {
-            answerCallbackQuery(callbackQuery.id, ON_PING_CREATOR_MISMATCH)
+            answerCallbackQueryLogging(callbackQuery.id, ON_PING_CREATOR_MISMATCH)
             return
         }
 
-        answerCallbackQuery(callbackQueryId)
+        answerCallbackQueryLogging(callbackQueryId)
 
         if (party == null || message == null) {
             return
         }
 
         val chatId = message.chat.id
-        sendMessage(chatId, party.users)
-        deleteMessage(chatId, message.message_id)
+        sendMessageLogging(chatId, party.users)
+        deleteMessageLogging(chatId, message.message_id)
     }
 }

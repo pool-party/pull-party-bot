@@ -14,6 +14,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_S
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_LIST_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_STALE_PARTY_REMOVE
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.Alias
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
@@ -22,7 +23,7 @@ import kotlinx.serialization.json.Json
 import org.joda.time.DateTime
 
 class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
-    CaseCommand("list", "show the parties of the chat", HELP_LIST, chatDao) {
+    CaseCommand("list", "show all the parties of the chat and their members", HELP_LIST, chatDao) {
 
     override suspend fun Bot.action(message: Message, args: String?) {
 
@@ -119,15 +120,15 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             if (currentString.length + line.length + 1 < Configuration.MESSAGE_LENGTH) {
                 currentString.append("\n").append(line)
             } else {
-                sendCaseMessage(chatId, currentString.toString(), "Markdown").join()
+                sendCaseMessage(chatId, currentString.toString()).join()
                 currentString = StringBuilder(line)
             }
         }
 
         if (emptySequence) {
-            sendMessage(chatId, onEmptyMessage, "Markdown")
+            sendMessageLogging(chatId, onEmptyMessage)
         } else {
-            sendCaseMessage(chatId, currentString.toString(), "Markdown").join()
+            sendCaseMessage(chatId, currentString.toString()).join()
         }
     }
 

@@ -5,10 +5,13 @@ import com.elbekD.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
+import com.github.pool_party.pull_party_bot.commands.answerCallbackQueryLogging
+import com.github.pool_party.pull_party_bot.commands.deleteMessageLogging
 import com.github.pool_party.pull_party_bot.commands.messages.ON_CALLBACK_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_DELETE_SUCCESS
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY_CALLBACK
 import com.github.pool_party.pull_party_bot.commands.messages.onAliasDeleteSuccess
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.commands.validateAdministrator
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
@@ -20,12 +23,12 @@ abstract class AbstractDeleteSuggestionCallback(override val callbackAction: Cal
         val message = callbackQuery.message
 
         if (message == null) {
-            answerCallbackQuery(callbackQuery.id)
+            answerCallbackQueryLogging(callbackQuery.id)
             return
         }
 
         if (!validateAdministrator(callbackQuery.from, message.chat, false)) {
-            answerCallbackQuery(
+            answerCallbackQueryLogging(
                 callbackQuery.id,
                 ON_PERMISSION_DENY_CALLBACK
             )
@@ -33,8 +36,8 @@ abstract class AbstractDeleteSuggestionCallback(override val callbackAction: Cal
         }
 
         delete(callbackQuery, callbackData.partyId)
-        deleteMessage(message.chat.id, message.message_id)
-        answerCallbackQuery(callbackQuery.id)
+        deleteMessageLogging(message.chat.id, message.message_id)
+        answerCallbackQueryLogging(callbackQuery.id)
     }
 }
 
@@ -47,8 +50,8 @@ class DeleteSuggestionCallback(private val partyDao: PartyDao) :
         if (partyName != null) {
             val message = callbackQuery.message ?: return
 
-            answerCallbackQuery(callbackQuery.id, ON_CALLBACK_SUCCESS)
-            sendMessage(message.chat.id, onAliasDeleteSuccess(partyName))
+            answerCallbackQueryLogging(callbackQuery.id, ON_CALLBACK_SUCCESS)
+            sendMessageLogging(message.chat.id, onAliasDeleteSuccess(partyName))
         }
     }
 }
@@ -60,8 +63,8 @@ class DeleteNodeSuggestionCallback(private val partyDao: PartyDao) :
         if (partyDao.deleteNode(partyId)) {
             val message = callbackQuery.message ?: return
 
-            answerCallbackQuery(callbackQuery.id, ON_CALLBACK_SUCCESS)
-            sendMessage(message.chat.id, ON_PARTY_DELETE_SUCCESS)
+            answerCallbackQueryLogging(callbackQuery.id, ON_CALLBACK_SUCCESS)
+            sendMessageLogging(message.chat.id, ON_PARTY_DELETE_SUCCESS)
         }
     }
 }

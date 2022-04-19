@@ -77,14 +77,12 @@ abstract class CaseCommand(command: String, description: String, helpMessage: St
     protected fun Bot.sendCaseMessage(
         chatId: Long,
         message: String,
-        parseMode: String? = null,
         replyTo: Long? = null,
         markup: ReplyKeyboard? = null
     ) =
-        sendMessage(
+        sendMessageLogging(
             chatId,
             if (chatDao.getRude(chatId)) message.uppercase() else message,
-            parseMode,
             replyTo = replyTo,
             markup = markup
         )
@@ -104,7 +102,7 @@ fun Bot.validateAdministrator(user: User?, chat: Chat, sendMessage: Boolean = tr
     val chatId = chat.id
 
     if (user == null) {
-        sendMessage(chatId, ON_SENDER_FAIL, "Markdown")
+        sendMessageLogging(chatId, ON_SENDER_FAIL)
         return false
     }
 
@@ -112,7 +110,7 @@ fun Bot.validateAdministrator(user: User?, chat: Chat, sendMessage: Boolean = tr
     if ((chatType == "group" || chatType == "supergroup") &&
         getChatAdministrators(chatId).join().all { it.user != user }
     ) {
-        if (sendMessage) sendMessage(chatId, ON_PERMISSION_DENY, "Markdown")
+        if (sendMessage) sendMessageLogging(chatId, ON_PERMISSION_DENY)
         return false
     }
     return true

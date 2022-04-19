@@ -9,12 +9,14 @@ import com.github.pool_party.pull_party_bot.commands.AbstractCommand
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.EveryMessageInteraction
+import com.github.pool_party.pull_party_bot.commands.deleteMessageLogging
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_PARTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_MISSPELL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.coroutines.delay
@@ -47,23 +49,22 @@ class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInterac
 }
 
 class PartyCommand(private val partyDao: PartyDao) :
-    AbstractCommand("party", "tag the members of existing parties", HELP_PARTY) {
+    AbstractCommand("party", "tag the members of the given parties", HELP_PARTY) {
 
     override suspend fun Bot.action(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
 
         if (parsedArgs.isNullOrEmpty()) {
-            sendMessage(chatId, ON_PARTY_EMPTY, "Markdown")
+            sendMessageLogging(chatId, ON_PARTY_EMPTY)
             return
         }
 
         handleParty(parsedArgs.asSequence(), message, partyDao) {
-            sendMessage(
+            sendMessageLogging(
                 chatId,
                 if (parsedArgs.size == 1) ON_PARTY_REQUEST_FAIL
                 else ON_PARTY_REQUEST_FAILS,
-                "Markdown"
             )
         }
     }
@@ -96,7 +97,7 @@ private suspend fun Bot.handleParty(
         .distinct()
         .joinToString(" ")
 
-    if (res.isNotBlank()) sendMessage(chatId, res, replyTo = message.message_id)
+    if (res.isNotBlank()) sendMessageLogging(chatId, res, replyTo = message.message_id)
 
     if (failed.isEmpty()) return
 
@@ -120,10 +121,9 @@ private suspend fun Bot.handleParty(
 
     if (suggestions.isEmpty()) return
 
-    val sentMessage = sendMessage(
+    val sentMessage = sendMessageLogging(
         chatId,
         ON_PARTY_MISSPELL,
-        "Markdown",
         markup = InlineKeyboardMarkup(
             suggestions.asSequence()
                 .map { it.first }
@@ -140,7 +140,7 @@ private suspend fun Bot.handleParty(
 
     delay(Configuration.STALE_PING_SECONDS * 1000L)
 
-    deleteMessage(chatId, sentMessage.message_id)
+    deleteMessageLogging(chatId, sentMessage.message_id)
 }
 
 fun Bot.getAdminsParty(message: Message): String? {
@@ -160,6 +160,6 @@ fun Bot.getAdminsParty(message: Message): String? {
 
 fun Bot.handleAdminsParty(message: Message): String? {
     val adminsParty = getAdminsParty(message)
-    if (adminsParty == null) sendMessage(message.chat.id, ON_ADMINS_PARTY_FAIL)
+    if (adminsParty == null) sendMessageLogging(message.chat.id, ON_ADMINS_PARTY_FAIL)
     return adminsParty
 }

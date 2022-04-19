@@ -1,5 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.messages
 
+import com.github.pool_party.pull_party_bot.commands.escapeMarkdown
+
 fun onAliasDeleteSuccess(partyName: String) = """Alias $partyName is no longer exists 👍"""
 
 fun onPartyDeleteSuggest(partyList: List<String>): String {
@@ -15,7 +17,7 @@ fun onPartyDeleteSuggest(partyList: List<String>): String {
     return message + format
 }
 
-fun onPartyDeleteUnchanged(partyName: String) = """I am not familiar with $partyName 🤨"""
+fun onPartyDeleteUnchanged(partyName: String) = """I am not familiar with ${partyName.escapeMarkdown()} 🤨"""
 
 const val ON_PARTY_DELETE_SUCCESS = """All aliases of deleted party are also vanished 💨"""
 

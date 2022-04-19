@@ -20,22 +20,37 @@ import com.github.pool_party.pull_party_bot.commands.messages.onAddSuccess
 import com.github.pool_party.pull_party_bot.commands.messages.onChangeSuccess
 import com.github.pool_party.pull_party_bot.commands.messages.onCreateSuccess
 import com.github.pool_party.pull_party_bot.commands.messages.onDeleteSuccess
+import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 
 class CreateCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("create", "create new party", HELP_CREATE, PartyChangeStatus.CREATE, partyDao, chatDao)
+    AbstractChangeCommand(
+        "create",
+        "create new party with mentioned users",
+        HELP_CREATE,
+        PartyChangeStatus.CREATE,
+        partyDao,
+        chatDao
+    )
 
 class ChangeCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("change", "changing existing party", HELP_CHANGE, PartyChangeStatus.CHANGE, partyDao, chatDao)
+    AbstractChangeCommand(
+        "change",
+        "change an existing party",
+        HELP_CHANGE,
+        PartyChangeStatus.CHANGE,
+        partyDao,
+        chatDao
+    )
 
 class AddCommand(partyDao: PartyDao, chatDao: ChatDao) :
-    AbstractChangeCommand("add", "add people to a party", HELP_ADD, PartyChangeStatus.ADD, partyDao, chatDao)
+    AbstractChangeCommand("add", "add new users to the given party", HELP_ADD, PartyChangeStatus.ADD, partyDao, chatDao)
 
 class RemoveCommand(partyDao: PartyDao, chatDao: ChatDao) :
     AbstractChangeCommand(
         "remove",
-        "remove people from a party",
+        "remove given users from the provided party",
         HELP_REMOVE,
         PartyChangeStatus.REMOVE,
         partyDao,
@@ -59,11 +74,10 @@ abstract class AbstractChangeCommand(
         // TODO suggest alias instead of party, if possible
 
         if (parsedArgs.isNullOrEmpty() || parsedArgs.size < 2) {
-            sendMessage(
+            sendMessageLogging(
                 chatId,
                 if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
                 else ON_CHANGE_EMPTY,
-                "Markdown"
             )
             return
         }
@@ -71,7 +85,7 @@ abstract class AbstractChangeCommand(
         val partyName = parsedArgs[0].removePrefix("@")
 
         if (!validatePartyName(partyName)) {
-            sendMessage(chatId, ON_PARTY_NAME_FAIL, "Markdown")
+            sendMessageLogging(chatId, ON_PARTY_NAME_FAIL)
             return
         }
 
@@ -86,12 +100,12 @@ abstract class AbstractChangeCommand(
         users = users.map { "@$it" }
 
         if (status.changesFull && users.singleOrNull()?.removePrefix("@") == partyName) {
-            sendMessage(chatId, ON_SINGLETON_PARTY, "Markdown")
+            sendMessageLogging(chatId, ON_SINGLETON_PARTY)
             return
         }
 
         if (failedUsers.isNotEmpty()) {
-            sendMessage(chatId, ON_USERS_FAIL)
+            sendMessageLogging(chatId, ON_USERS_FAIL)
 
             if (users.isEmpty()) {
                 sendMessage(
@@ -109,7 +123,7 @@ abstract class AbstractChangeCommand(
             return
         }
 
-        sendMessage(chatId, status.onFailure, "Markdown")
+        sendMessageLogging(chatId, status.onFailure)
     }
 }
 

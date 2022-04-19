@@ -10,8 +10,8 @@ internal class ListingTest : AbstractBotTest() {
     private val aliasName = "alias"
     private val members = "@first @second @third"
     private val listMembers = members.filter { it != '@' }
-    private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n- $listMembers\n  └── `$aliasName`"
-    private val admins = "- admin\n  └── `admins` _(reserved)_"
+    private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n\\- $listMembers\n  └── `$aliasName`"
+    private val admins = "\\- admin\n  └── `admins` _\\(reserved\\)_"
 
     @Test
     fun `list command test`() {
@@ -47,9 +47,9 @@ internal class ListingTest : AbstractBotTest() {
         -"/list first"
         +"""
             $ON_ARGUMENT_LIST_SUCCESS
-            - first
+            \- first
               └── `$partyName`
-            - another
+            \- another
               └── `first`
         """.trimIndent()
     }
@@ -66,9 +66,9 @@ internal class ListingTest : AbstractBotTest() {
         +(
             "$ON_LIST_SUCCESS\n$admins\n" +
                 """
-                    - $secondPartyMembers
+                    \- $secondPartyMembers
                       └── `$secondPartyName`
-                    - $listMembers
+                    \- $listMembers
                       ├── `${aliasName.lowercase()}`
                       └── `${partyName.lowercase()}`
                 """.trimIndent()
@@ -77,7 +77,7 @@ internal class ListingTest : AbstractBotTest() {
 
     @Test
     fun `a horses herd list test`() {
-        val chevaux = (0..100).map { "${"cheval".repeat(7)}-$it" }
+        val chevaux = (0..100).map { "${"cheval".repeat(7)}$it" }
 
         -"/create $partyName $members"
         chevaux.forEach { -"/alias $it $partyName" }
