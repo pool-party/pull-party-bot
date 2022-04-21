@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.5] - 21.04.2022
+
+### Fixed
+
+- Escaping markdown in messages
+
 ## [1.2.4] - 19.04.2022
 
 ### Fixed
@@ -130,6 +136,7 @@
 -   Implicit party pulling
 -   Rude mode
 
+[1.2.5]: https://github.com/pool-party/pull-party-bot/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/pool-party/pull-party-bot/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/pool-party/pull-party-bot/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/pool-party/pull-party-bot/compare/v1.2.1...v1.2.2
