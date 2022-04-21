@@ -7,6 +7,7 @@ import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.answerCallbackQueryLogging
 import com.github.pool_party.pull_party_bot.commands.deleteMessageLogging
+import com.github.pool_party.pull_party_bot.commands.escapeMarkdown
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PING_CREATOR_MISMATCH
 import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
@@ -32,7 +33,7 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
         }
 
         val chatId = message.chat.id
-        sendMessageLogging(chatId, party.users)
+        sendMessageLogging(chatId, party.users.escapeMarkdown())
         deleteMessageLogging(chatId, message.message_id)
     }
 }
