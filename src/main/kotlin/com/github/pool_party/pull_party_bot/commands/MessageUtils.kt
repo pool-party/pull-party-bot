@@ -1,6 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands
 
 import com.elbekD.bot.Bot
+import com.elbekD.bot.http.TelegramApiError
 import com.elbekD.bot.types.Message
 import com.elbekD.bot.types.ReplyKeyboard
 import mu.KotlinLogging
@@ -37,7 +38,12 @@ fun Bot.sendMessageLogging(
 
 fun Bot.deleteMessageLogging(chatId: Long, messageId: Long): Boolean {
     logger.debug { "Deleting message $chatId/$messageId" }
-    return deleteMessage(chatId, messageId).logging("Failed to delete message $chatId/$messageId")
+    return try {
+        deleteMessage(chatId, messageId).logging("Failed to delete message $chatId/$messageId")
+    } catch (telegramApiError: TelegramApiError) {
+        // already deleted
+        true
+    }
 }
 
 fun Bot.answerCallbackQueryLogging(id: String, text: String? = null): Boolean {
