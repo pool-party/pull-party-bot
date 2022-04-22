@@ -40,9 +40,13 @@ fun Bot.deleteMessageLogging(chatId: Long, messageId: Long): Boolean {
     logger.debug { "Deleting message $chatId/$messageId" }
     return try {
         deleteMessage(chatId, messageId).logging("Failed to delete message $chatId/$messageId")
-    } catch (telegramApiError: TelegramApiError) {
-        // already deleted
-        true
+    } catch (sendingMessageException: SendingMessageException) {
+        if (sendingMessageException.reason !is TelegramApiError) {
+            throw sendingMessageException
+        } else {
+            // already deleted
+            true
+        }
     }
 }
 
