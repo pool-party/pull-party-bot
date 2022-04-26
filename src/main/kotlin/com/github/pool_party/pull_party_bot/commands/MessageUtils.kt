@@ -6,6 +6,7 @@ import com.elbekD.bot.types.Message
 import com.elbekD.bot.types.ReplyKeyboard
 import mu.KotlinLogging
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
 
 private val logger = KotlinLogging.logger { }
 
@@ -41,11 +42,12 @@ fun Bot.deleteMessageLogging(chatId: Long, messageId: Long): Boolean {
     return try {
         deleteMessage(chatId, messageId).logging("Failed to delete message $chatId/$messageId")
     } catch (sendingMessageException: SendingMessageException) {
-        if (sendingMessageException.reason !is TelegramApiError) {
-            throw sendingMessageException
-        } else {
+        val reason = sendingMessageException.reason
+        if (reason is CompletionException && reason.cause is TelegramApiError) {
             // already deleted
             true
+        } else {
+            throw sendingMessageException
         }
     }
 }
