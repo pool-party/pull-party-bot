@@ -22,9 +22,9 @@ fun <T> CompletableFuture<T>.logging(action: String = ""): T =
 
 private fun String.escape(symbols: String) = replace("[$symbols]".toRegex()) { "\\${it.groupValues[0]}" }
 
-fun String.escapeSpecial() = escape("#\\-!.<>\\(\\)")
+fun String.escapeSpecial() = escape("""#\-!.<>\(\)""")
 
-fun String.escapeMarkdown() = escapeSpecial().escape("_*\\[\\]`")
+fun String.escapeMarkdown() = escape("""_*\[\]`""")
 
 fun Bot.sendMessageLogging(
     chatId: Long,
