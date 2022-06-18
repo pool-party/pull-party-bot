@@ -1,9 +1,10 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.InlineKeyboardButton
-import com.elbekD.bot.types.InlineKeyboardMarkup
-import com.elbekD.bot.types.Message
+import com.elbekd.bot.Bot
+import com.elbekd.bot.model.toChatId
+import com.elbekd.bot.types.InlineKeyboardButton
+import com.elbekd.bot.types.InlineKeyboardMarkup
+import com.elbekd.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.AbstractCommand
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
@@ -18,9 +19,13 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_MISSPELL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAIL
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PARTY_REQUEST_FAILS
 import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
+import com.github.pool_party.pull_party_bot.commands.user
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
 import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.toList
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -32,7 +37,7 @@ class ImplicitPartyHandler(private val partyDao: PartyDao) : EveryMessageInterac
     override suspend fun onMessage(bot: Bot, message: Message) {
         val text = message.text ?: message.caption
 
-        if (message.forward_from != null || text == null) {
+        if (message.forwardFrom != null || text == null) {
             return
         }
 
@@ -75,7 +80,7 @@ private suspend fun Bot.handleParty(
     partyNames: Sequence<String>,
     message: Message,
     partyDao: PartyDao,
-    onFailure: () -> Unit = {}
+    onFailure: suspend () -> Unit = {}
 ) {
     val chatId = message.chat.id
     val failed = mutableListOf<String>()
@@ -83,6 +88,7 @@ private suspend fun Bot.handleParty(
     val res = partyNames
         .map { it.lowercase() }
         .distinct()
+        .asFlow()
         .mapNotNull {
             if (it == "admins") {
                 handleAdminsParty(message)
@@ -94,11 +100,13 @@ private suspend fun Bot.handleParty(
                 users
             }
         }
+        .toList()
+        .asSequence()
         .flatMap { it.split(" ").asSequence() }
         .distinct()
         .joinToString(" ")
 
-    if (res.isNotBlank()) sendMessageLogging(chatId, res.escapeMarkdown(), replyTo = message.message_id)
+    if (res.isNotBlank()) sendMessageLogging(chatId, res.escapeMarkdown(), replyTo = message.messageId)
 
     if (failed.isEmpty()) return
 
@@ -133,7 +141,7 @@ private suspend fun Bot.handleParty(
                     val json = Json.encodeToString(
                         CallbackData(CallbackAction.PING, it.party.id.value, message.from?.id)
                     )
-                    listOf(InlineKeyboardButton("@${it.name}", callback_data = json))
+                    listOf(InlineKeyboardButton("@${it.name}", callbackData = json))
                 }
                 .toList()
         )
@@ -141,25 +149,24 @@ private suspend fun Bot.handleParty(
 
     delay(Configuration.STALE_PING_SECONDS * 1000L)
 
-    deleteMessageLogging(chatId, sentMessage.message_id)
+    deleteMessageLogging(chatId, sentMessage.messageId)
 }
 
-fun Bot.getAdminsParty(message: Message): String? {
+suspend fun Bot.getAdminsParty(message: Message): String? {
     val chatId = message.chat.id
     val chatType = message.chat.type
 
     if (chatType != "group" && chatType != "supergroup") return null
 
-    return getChatAdministrators(chatId)
-        .join()
+    return getChatAdministrators(chatId.toChatId())
         .asSequence()
-        .mapNotNull { it.user.username }
+        .mapNotNull {it.user.username }
         .filter { it.substring(it.length - 3).lowercase() != "bot" }
         .map { "@$it" }
         .joinToString(" ")
 }
 
-fun Bot.handleAdminsParty(message: Message): String? {
+suspend fun Bot.handleAdminsParty(message: Message): String? {
     val adminsParty = getAdminsParty(message)
     if (adminsParty == null) sendMessageLogging(message.chat.id, ON_ADMINS_PARTY_FAIL)
     return adminsParty

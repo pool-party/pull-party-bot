@@ -1,7 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.handlers.callback
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.CallbackQuery
+import com.elbekd.bot.Bot
+import com.elbekd.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
@@ -36,7 +36,7 @@ abstract class AbstractDeleteSuggestionCallback(override val callbackAction: Cal
         }
 
         delete(callbackQuery, callbackData.partyId)
-        deleteMessageLogging(message.chat.id, message.message_id)
+        deleteMessageLogging(message.chat.id, message.messageId)
         answerCallbackQueryLogging(callbackQuery.id)
     }
 }

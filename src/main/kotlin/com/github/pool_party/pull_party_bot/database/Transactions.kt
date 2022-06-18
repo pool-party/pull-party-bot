@@ -25,6 +25,6 @@ fun initDB() {
     Database.connect(
         Configuration.JDBC_DATABASE_URL,
         user = Configuration.JDBC_DATABASE_USERNAME,
-        password = Configuration.JDBC_DATABASE_PASSWORD
+        password = Configuration.JDBC_DATABASE_PASSWORD,
     )
 }

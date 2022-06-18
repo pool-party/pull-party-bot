@@ -1,9 +1,9 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.InlineKeyboardButton
-import com.elbekD.bot.types.InlineKeyboardMarkup
-import com.elbekD.bot.types.Message
+import com.elbekd.bot.Bot
+import com.elbekd.bot.types.InlineKeyboardButton
+import com.elbekd.bot.types.InlineKeyboardMarkup
+import com.elbekd.bot.types.Message
 import com.github.pool_party.pull_party_bot.commands.AdministratorCommand
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
@@ -17,13 +17,17 @@ import com.github.pool_party.pull_party_bot.commands.messages.onPartyDeleteUncha
 import com.github.pool_party.pull_party_bot.commands.sendMessageLogging
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
 import com.github.pool_party.pull_party_bot.database.dao.PartyDao
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.toList
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     AdministratorCommand("delete", "delete the parties you provided", HELP_DELETE, chatDao) {
 
-    override fun Bot.mainAction(message: Message, args: String?) {
+    override suspend fun Bot.mainAction(message: Message, args: String?) {
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
 
@@ -32,7 +36,7 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
             return
         }
 
-        parsedArgs.asSequence()
+        parsedArgs.asFlow()
             .mapNotNull {
                 if (!modifyCommandAssertion(chatId, it)) return@mapNotNull null
 
@@ -42,6 +46,7 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                 }
                 alias
             }
+            .toList()
             .groupBy { it.party.id.value }
             .forEach { (partyId, aliasList) ->
                 val partySize = aliasList.first().party.aliases.size
@@ -51,6 +56,7 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                         val name = it.name
                         name to partyDao.delete(chatId, name)
                     }
+                    .asFlow()
                     .onEach { (name, success) ->
                         sendCaseMessage(
                             chatId,
@@ -58,6 +64,7 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                             else onPartyDeleteUnchanged(name)
                         )
                     }
+                    .toList()
                     .all { it.second }
 
                 if (allSucceeded && aliasList.size < partySize) {
@@ -68,7 +75,7 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                         chatId,
                         onPartyDeleteSuggest(partyList),
                         markup = InlineKeyboardMarkup(
-                            listOf(listOf(InlineKeyboardButton("Delete", callback_data = json)))
+                            listOf(listOf(InlineKeyboardButton("Delete", callbackData = json)))
                         )
                     )
                 }
@@ -79,7 +86,7 @@ class DeleteCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
 class ClearCommand(chatDao: ChatDao) :
     AdministratorCommand("clear", "shut down all the parties ever existed", HELP_CLEAR, chatDao) {
 
-    override fun Bot.mainAction(message: Message, args: String?) {
+    override suspend fun Bot.mainAction(message: Message, args: String?) {
         val chatId = message.chat.id
         chatDao.clear(chatId)
         sendMessageLogging(chatId, ON_CLEAR_SUCCESS)

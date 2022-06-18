@@ -1,7 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.Message
+import com.elbekd.bot.Bot
+import com.elbekd.bot.types.Message
 
 interface EveryMessageInteraction {
 

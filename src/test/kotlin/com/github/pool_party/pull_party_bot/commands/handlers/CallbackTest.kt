@@ -1,62 +1,45 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
-import com.elbekD.bot.types.InlineKeyboardMarkup
-import io.mockk.every
-import java.util.concurrent.CompletableFuture
-import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 
 internal class CallbackTest : AbstractBotTest() {
 
-    private var lastCallbackData: String? = null
+    private val partyName = "party"
+    private val aliasName = "alias"
 
-    @BeforeTest
-    fun setUpCallbackData() {
-        every { bot.sendMessage(allAny(), allAny()) } answers {
-            val inlineKeyboardMarkup = arg(8) as? InlineKeyboardMarkup
-            println(">> ${secondArg<String>()}\n*button*: $inlineKeyboardMarkup")
-            lastCallbackData = inlineKeyboardMarkup?.inline_keyboard?.singleOrNull()?.singleOrNull()?.callback_data
-            CompletableFuture.completedFuture(message)
-        }
+    private val taggedMembers: String
+    private val listedMembers: String
 
-        every { bot.answerCallbackQuery(allAny(), allAny()) } answers {
-            println("^^ ${secondArg<String>()}")
-            CompletableFuture.completedFuture(true)
-        }
-
-        every { bot.answerCallbackQuery(allAny()) } returns CompletableFuture.completedFuture(true)
+    init {
+        val members = listOf("first", "second", "third")
+        taggedMembers = members.asSequence().map { "@$it" }.joinToString(" ")
+        listedMembers = members.joinToString(" ")
     }
 
     @Test
     fun `tag suggestion test`() {
-        -"/create abcdef qwertyuiop"
+        -"/create abcdef $listedMembers"
         -"@abcde"
-        click()
-        +"@qwertyuiop"
+        clickButton()
+        +taggedMembers
     }
 
     @Test
     fun `delete node suggestion test`() {
-        -"/create partyname qwertyuiop"
-        -"/alias alias partyname"
-        -"/delete partyname"
-        click()
+        -"/create $partyName $listedMembers"
+        -"/alias $aliasName $partyName"
+        -"/delete $partyName"
+        clickButton()
         -"/list"
-        verifyMessage { "admins" in it && "partyname" !in it && "alias" !in it }
+        verifyMessage { "admins" in it && partyName !in it && aliasName !in it }
     }
 
     @Test
     fun `stale party delete suggestion test`() {
-        -"/create partyname qwertyuiop"
+        -"/create $partyName $listedMembers"
         -"/list"
-        click()
+        clickButton()
         -"/list"
-        verifyMessage { "admins" in it && "partyname" !in it }
-    }
-
-    private fun click() {
-        assertNotNull(lastCallbackData)
-        callback(lastCallbackData!!)
+        verifyMessage { "admins" in it && partyName !in it }
     }
 }

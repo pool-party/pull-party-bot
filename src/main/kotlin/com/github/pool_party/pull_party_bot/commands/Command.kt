@@ -1,11 +1,12 @@
 package com.github.pool_party.pull_party_bot.commands
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.BotCommand
-import com.elbekD.bot.types.Chat
-import com.elbekD.bot.types.Message
-import com.elbekD.bot.types.ReplyKeyboard
-import com.elbekD.bot.types.User
+import com.elbekd.bot.Bot
+import com.elbekd.bot.model.toChatId
+import com.elbekd.bot.types.BotCommand
+import com.elbekd.bot.types.Chat
+import com.elbekd.bot.types.Message
+import com.elbekd.bot.types.ReplyKeyboard
+import com.elbekd.bot.types.User
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_CHANGE
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_SENDER_FAIL
@@ -50,7 +51,7 @@ abstract class AbstractCommand(
 
     abstract suspend fun Bot.action(message: Message, args: String?)
 
-    override fun onMessage(bot: Bot) = bot.onCommand(command) { message, args ->
+    override fun onMessage(bot: Bot) = bot.onCommand(command) { (message, args) ->
         logger.info {
             "${LocalDateTime.now()} $command <- ${message.from?.username}@${message.chat.title}: \"${message.text}\""
         }
@@ -64,8 +65,8 @@ abstract class AbstractCommand(
         }
     }
 
-    protected fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
-        (name == "admins").not().also { if (!it) sendMessage(chatId, ON_ADMINS_PARTY_CHANGE) }
+    protected suspend fun Bot.modifyCommandAssertion(chatId: Long, name: String): Boolean =
+        (name == "admins").not().also { if (!it) sendMessage(chatId.toChatId(), ON_ADMINS_PARTY_CHANGE) }
 
     protected fun parseArgs(args: String?): List<String>? =
         args?.split(' ')?.map { it.trim().lowercase() }?.filter { it.isNotBlank() }
@@ -74,7 +75,7 @@ abstract class AbstractCommand(
 abstract class CaseCommand(command: String, description: String, helpMessage: String, protected val chatDao: ChatDao) :
     AbstractCommand(command, description, helpMessage) {
 
-    protected fun Bot.sendCaseMessage(
+    protected suspend fun Bot.sendCaseMessage(
         chatId: Long,
         message: String,
         replyTo: Long? = null,
@@ -91,14 +92,14 @@ abstract class CaseCommand(command: String, description: String, helpMessage: St
 abstract class AdministratorCommand(command: String, description: String, helpMessage: String, chatDao: ChatDao) :
     CaseCommand(command, description, helpMessage, chatDao) {
 
-    abstract fun Bot.mainAction(message: Message, args: String?)
+    abstract suspend fun Bot.mainAction(message: Message, args: String?)
 
     override suspend fun Bot.action(message: Message, args: String?) {
         if (validateAdministrator(message.from, message.chat)) mainAction(message, args)
     }
 }
 
-fun Bot.validateAdministrator(user: User?, chat: Chat, sendMessage: Boolean = true): Boolean {
+suspend fun Bot.validateAdministrator(user: User?, chat: Chat, sendMessage: Boolean = true): Boolean {
     val chatId = chat.id
 
     if (user == null) {
@@ -108,7 +109,7 @@ fun Bot.validateAdministrator(user: User?, chat: Chat, sendMessage: Boolean = tr
 
     val chatType = chat.type
     if ((chatType == "group" || chatType == "supergroup") &&
-        getChatAdministrators(chatId).join().all { it.user != user }
+        getChatAdministrators(chatId.toChatId()).all { it.user != user }
     ) {
         if (sendMessage) sendMessageLogging(chatId, ON_PERMISSION_DENY)
         return false

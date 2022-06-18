@@ -1,55 +1,42 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
-    kotlin("plugin.serialization") version "1.6.20"
-
-    id("org.flywaydb.flyway") version "8.5.8"
+    alias(libs.plugins.jvm)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.flyway)
 }
 
 group = "org.pool-party"
-version = "1.2.7"
+version = "1.2.8"
 
 repositories {
     maven("https://jitpack.io")
     mavenCentral()
 }
 
-val exposedVersion = "0.38.1"
-val testContainersVersion = "1.17.1"
-val jupyterVersion = "5.8.2"
-val kotlinVersion = "1.6.20"
-
 dependencies {
-    implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", kotlinVersion)
-    implementation("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion)
-    implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.3.2")
-    implementation("com.github.elbekD", "kt-telegram-bot", "1.4.1")
 
-    implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
-    implementation("org.jetbrains.exposed", "exposed-jodatime", exposedVersion)
+    implementation(libs.kotlin.std)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlin.serialization)
+    implementation(libs.telegramBot)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.jodatime)
+    implementation(libs.postgresql)
+    implementation(libs.flyway)
+    implementation(libs.konfig)
+    implementation(libs.slf4j)
+    implementation(libs.logging)
+    implementation(libs.stringSimilarity)
 
-    implementation("org.flywaydb", "flyway-core", "8.5.8")
-
-    implementation("com.natpryce", "konfig", "1.6.10.0")
-
-    implementation("org.slf4j", "slf4j-simple", "2.0.0-alpha7")
-    implementation("io.github.microutils", "kotlin-logging", "2.1.21")
-
-    implementation("info.debatty", "java-string-similarity", "2.0.0")
-
-    runtimeOnly("org.postgresql", "postgresql", "42.3.4")
-
-    testImplementation("org.jetbrains.kotlin", "kotlin-test-junit5", kotlinVersion)
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", jupyterVersion)
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", jupyterVersion)
-
-    testImplementation("io.mockk", "mockk", "1.12.0")
-    testImplementation("org.testcontainers", "postgresql", testContainersVersion)
-    testImplementation("org.testcontainers", "junit-jupiter", testContainersVersion)
+    testImplementation(libs.kotlin.test.junit5)
+    testCompileOnly(libs.jupiter.api)
+    testRuntimeOnly(libs.jupiter.engine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.testContainers.jupiter)
+    testImplementation(libs.testContainers.postgres)
 }
 
 tasks.withType<Jar> {
@@ -74,7 +61,6 @@ tasks.test {
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
     kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
 }

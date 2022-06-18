@@ -8,36 +8,53 @@ internal class ListingTest : AbstractBotTest() {
 
     private val partyName = "party"
     private val aliasName = "alias"
-    private val members = "@first @second @third"
-    private val listMembers = members.filter { it != '@' }
-    private val listOutput = "$ON_ARGUMENT_LIST_SUCCESS\n\\- $listMembers\n  └── `$aliasName`"
-    private val admins = "\\- admin\n  └── `admins` _\\(reserved\\)_"
+
+    private val taggedMembers: String
+    private val listedMembers: String
+
+    init {
+        val members = listOf("first", "second", "third")
+        taggedMembers = members.asSequence().map { "@$it" }.joinToString(" ")
+        listedMembers = members.joinToString(" ")
+    }
 
     @Test
-    fun `list command test`() {
-        -"/create $partyName $members"
+    fun `list command untagged test`() {
+        -"/create $partyName $listedMembers"
         -"/alias $aliasName $partyName"
         -"/list $aliasName"
-        +listOutput
+
+        verifyContains(ON_ARGUMENT_LIST_SUCCESS, aliasName, listedMembers)
+    }
+
+    @Test
+    fun `list command tagged test`() {
+        -"/create $partyName $taggedMembers"
+        -"/alias $aliasName $partyName"
+        -"/list $aliasName"
+
+        verifyContains(ON_ARGUMENT_LIST_SUCCESS, aliasName, listedMembers)
     }
 
     @Test
     fun `list command with deleted party test`() {
-        -"/create $partyName $members"
+        -"/create $partyName $listedMembers"
         -"/alias $aliasName $partyName"
         -"/delete $partyName"
         -"/list $aliasName"
-        +listOutput
+
+        verifyMessage { ON_ARGUMENT_LIST_SUCCESS in it && aliasName in it && listedMembers in it && partyName !in it }
     }
 
     @Test
     fun `list command with deleted full party test`() {
-        -"/create $partyName $members"
+        -"/create $partyName $listedMembers"
         -"/alias $aliasName $partyName"
         -"/delete $aliasName"
         -"/delete $partyName"
         -"/list"
-        +"$ON_LIST_SUCCESS\n$admins"
+
+        verifyContains(ON_LIST_SUCCESS, "admins")
     }
 
     @Test
@@ -45,13 +62,8 @@ internal class ListingTest : AbstractBotTest() {
         -"/create $partyName first"
         -"/create first another"
         -"/list first"
-        +"""
-            $ON_ARGUMENT_LIST_SUCCESS
-            \- first
-              └── `$partyName`
-            \- another
-              └── `first`
-        """.trimIndent()
+
+        verifyContains(ON_ARGUMENT_LIST_SUCCESS, partyName, " first", "`first`")
     }
 
     @Test
@@ -59,27 +71,19 @@ internal class ListingTest : AbstractBotTest() {
         val secondPartyName = "second"
         val secondPartyMembers = "members"
 
-        -"/create $partyName $members"
+        -"/create $partyName $listedMembers"
         -"/alias $aliasName $partyName"
         -"/create $secondPartyName $secondPartyMembers"
         -"/list"
-        +(
-            "$ON_LIST_SUCCESS\n$admins\n" +
-                """
-                    \- $secondPartyMembers
-                      └── `$secondPartyName`
-                    \- $listMembers
-                      ├── `${aliasName.lowercase()}`
-                      └── `${partyName.lowercase()}`
-                """.trimIndent()
-            )
+
+        verifyContains(ON_LIST_SUCCESS, "admins", secondPartyMembers, secondPartyName, aliasName, partyName)
     }
 
     @Test
     fun `a horses herd list test`() {
         val chevaux = (0..100).map { "${"cheval".repeat(7)}$it" }
 
-        -"/create $partyName $members"
+        -"/create $partyName $listedMembers"
         chevaux.forEach { -"/alias $it $partyName" }
         -"/list"
         chevaux.forEach { verifyContains("`$it`") }

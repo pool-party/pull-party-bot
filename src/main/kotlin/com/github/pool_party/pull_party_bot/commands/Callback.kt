@@ -1,7 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.CallbackQuery
+import com.elbekd.bot.Bot
+import com.elbekd.bot.types.CallbackQuery
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
