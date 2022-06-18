@@ -1,7 +1,6 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
 import com.elbekd.bot.Bot
-import com.elbekd.bot.model.toChatId
 import com.elbekd.bot.types.CallbackQuery
 import com.elbekd.bot.types.Chat
 import com.elbekd.bot.types.ChatMember
@@ -105,7 +104,6 @@ internal abstract class AbstractBotTest {
     private val commandActions = mutableMapOf<String, suspend (Pair<Message, String?>) -> Unit>()
 
     protected var lastCallbackData: String? = null
-
 
     @BeforeTest
     fun setupMock() {

@@ -69,13 +69,13 @@ object Configuration {
     private fun double() = Configured(doubleType)
 
     private fun getDatabaseUrl(): MatchResult =
-        """postgres://(\w+):([\w\d]+)@([\w\d\-\.]+):(\d+)/([\w\d]+)""".toRegex().matchEntire(DATABASE_URL) ?:
-            throw RuntimeException("Bad DATABASE_URL format")
+        """postgres://(\w+):([\w\d]+)@([\w\d\-\.]+):(\d+)/([\w\d]+)""".toRegex().matchEntire(DATABASE_URL)
+            ?: throw RuntimeException("Bad DATABASE_URL format")
 
     private val <T> KProperty<T>.configName
         get() = name.lowercase().replace('_', '.')
 
-    private  class Configured<T>(private val parse: (PropertyLocation, String) -> T) {
+    private class Configured<T>(private val parse: (PropertyLocation, String) -> T) {
 
         private var value: T? = null
 

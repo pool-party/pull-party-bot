@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.jvm)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.flyway)
 }
 

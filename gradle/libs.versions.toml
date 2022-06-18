@@ -8,6 +8,7 @@ flyway = "8.5.8"
 [plugins]
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "10.3.0" }
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 
 [libraries]

@@ -44,7 +44,11 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         suggestDeleting(chatId)
     }
 
-    private suspend fun Bot.listAll(chatId: Long, partyLists: Collection<List<Alias>>, adminsPartySequence: Sequence<String>) {
+    private suspend fun Bot.listAll(
+        chatId: Long,
+        partyLists: Collection<List<Alias>>,
+        adminsPartySequence: Sequence<String>,
+    ) {
         val formattedPartySequence = adminsPartySequence + partyLists.asSequence().flatMap { formatIntoStrings(it) }
         sendMessages(chatId, ON_LIST_SUCCESS, formattedPartySequence, ON_LIST_EMPTY)
     }
@@ -111,7 +115,12 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         )
     }
 
-    private suspend fun Bot.sendMessages(chatId: Long, prefix: String, lines: Sequence<String>, onEmptyMessage: String) {
+    private suspend fun Bot.sendMessages(
+        chatId: Long,
+        prefix: String,
+        lines: Sequence<String>,
+        onEmptyMessage: String,
+    ) {
         var currentString = StringBuilder(prefix)
         var emptySequence = true
 

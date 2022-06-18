@@ -160,7 +160,7 @@ suspend fun Bot.getAdminsParty(message: Message): String? {
 
     return getChatAdministrators(chatId.toChatId())
         .asSequence()
-        .mapNotNull {it.user.username }
+        .mapNotNull { it.user.username }
         .filter { it.substring(it.length - 3).lowercase() != "bot" }
         .map { "@$it" }
         .joinToString(" ")
