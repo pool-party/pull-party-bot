@@ -1,13 +1,14 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.InlineKeyboardButton
-import com.elbekD.bot.types.InlineKeyboardMarkup
-import com.elbekD.bot.types.Message
+import com.elbekd.bot.Bot
+import com.elbekd.bot.types.InlineKeyboardButton
+import com.elbekd.bot.types.InlineKeyboardMarkup
+import com.elbekd.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
+import com.github.pool_party.pull_party_bot.commands.escapeMarkdown
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_LIST
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_EMPTY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_ARGUMENT_LIST_SUCCESS
@@ -43,12 +44,16 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         suggestDeleting(chatId)
     }
 
-    private fun Bot.listAll(chatId: Long, partyLists: Collection<List<Alias>>, adminsPartySequence: Sequence<String>) {
+    private suspend fun Bot.listAll(
+        chatId: Long,
+        partyLists: Collection<List<Alias>>,
+        adminsPartySequence: Sequence<String>,
+    ) {
         val formattedPartySequence = adminsPartySequence + partyLists.asSequence().flatMap { formatIntoStrings(it) }
         sendMessages(chatId, ON_LIST_SUCCESS, formattedPartySequence, ON_LIST_EMPTY)
     }
 
-    private fun Bot.listFind(
+    private suspend fun Bot.listFind(
         chatId: Long,
         list: List<Alias>,
         parsedArgs: List<String>,
@@ -89,7 +94,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         sendMessages(chatId, ON_ARGUMENT_LIST_SUCCESS, requestedPartiesSequence, ON_ARGUMENT_LIST_EMPTY)
     }
 
-    private fun Bot.suggestDeleting(chatId: Long) {
+    private suspend fun Bot.suggestDeleting(chatId: Long) {
         val topLost = partyDao.getTopLost(chatId) ?: return
 
         if (topLost.lastUse.plusWeeks(Configuration.STALE_PARTY_WEEKS) >= DateTime.now()) return
@@ -102,7 +107,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
                     listOf(
                         InlineKeyboardButton(
                             "Delete ${topLost.name}",
-                            callback_data = Json.encodeToString(CallbackData(CallbackAction.DELETE, topLost.id.value))
+                            callbackData = Json.encodeToString(CallbackData(CallbackAction.DELETE, topLost.id.value))
                         )
                     )
                 )
@@ -110,7 +115,12 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
         )
     }
 
-    private fun Bot.sendMessages(chatId: Long, prefix: String, lines: Sequence<String>, onEmptyMessage: String) {
+    private suspend fun Bot.sendMessages(
+        chatId: Long,
+        prefix: String,
+        lines: Sequence<String>,
+        onEmptyMessage: String,
+    ) {
         var currentString = StringBuilder(prefix)
         var emptySequence = true
 
@@ -133,8 +143,7 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     }
 
     private fun formatParty(users: String, aliasNames: List<String>): Sequence<String> {
-        val formattedUsers = users.replace("@", "")
-            .replace("[_*`\\[]".toRegex()) { "\\${it.groups[0]!!.value}" }
+        val formattedUsers = users.replace("@", "").escapeMarkdown()
 
         return sequenceOf("- $formattedUsers") +
             aliasNames.dropLast(1).map { "  ├── $it" } +
@@ -142,5 +151,5 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     }
 
     private fun formatIntoStrings(aliases: List<Alias>) =
-        formatParty(aliases.first().users, aliases.map { "`${it.name}`" })
+        formatParty(aliases.first().users, aliases.map { "`${it.name.escapeMarkdown()}`" })
 }

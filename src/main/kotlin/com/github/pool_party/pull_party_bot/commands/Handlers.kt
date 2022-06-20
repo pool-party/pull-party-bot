@@ -1,6 +1,8 @@
 package com.github.pool_party.pull_party_bot.commands
 
-import com.elbekD.bot.Bot
+import com.elbekd.bot.Bot
+import com.elbekd.bot.model.toChatId
+import com.elbekd.bot.types.ParseMode
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.handlers.AddCommand
 import com.github.pool_party.pull_party_bot.commands.handlers.AliasCommand
@@ -25,7 +27,7 @@ import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
 import mu.KotlinLogging
 
-fun Bot.initHandlers() {
+suspend fun Bot.initHandlers() {
 
     val partyDaoImpl = PartyDaoImpl()
 
@@ -75,12 +77,12 @@ suspend fun <T> Bot.loggingError(action: suspend () -> T): T =
         processThrowable(throwable)
     }
 
-private fun Bot.processThrowable(throwable: Throwable): Nothing {
+private suspend fun Bot.processThrowable(throwable: Throwable): Nothing {
     val (prefix, reason) =
         if (throwable is SendingMessageException) "${throwable.action}: " to throwable.reason else "" to throwable
 
     logger.error { "$prefix${reason.message}:\n${reason.stackTraceToString()}" }
-    sendMessage(Configuration.DEVELOP_CHAT_ID, onError(reason).escapeSpecial(), "MarkdownV2").join()
+    sendMessage(Configuration.DEVELOP_CHAT_ID.toChatId(), onError(reason).escapeSpecial(), ParseMode.MarkdownV2)
 
     throw reason
 }

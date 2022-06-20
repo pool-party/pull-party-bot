@@ -1,58 +1,75 @@
 package com.github.pool_party.pull_party_bot.commands
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.http.TelegramApiError
-import com.elbekD.bot.types.Message
-import com.elbekD.bot.types.ReplyKeyboard
+import com.elbekd.bot.Bot
+import com.elbekd.bot.model.TelegramApiError
+import com.elbekd.bot.model.toChatId
+import com.elbekd.bot.types.ChatMember
+import com.elbekd.bot.types.Message
+import com.elbekd.bot.types.ParseMode
+import com.elbekd.bot.types.ReplyKeyboard
 import mu.KotlinLogging
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionException
 
 private val logger = KotlinLogging.logger { }
 
 class SendingMessageException(val action: String, val reason: Throwable) : RuntimeException()
 
-context(Bot)
-fun <T> CompletableFuture<T>.logging(action: String = ""): T =
-    try {
-        join()
-    } catch (throwable: Throwable) {
-        throw SendingMessageException(action, throwable)
-    }
+private fun String.escape(regex: Regex) = replace(regex) { "\\${it.groupValues[0]}" }
 
-private fun String.escape(symbols: String) = replace("[$symbols]".toRegex()) { "\\${it.groupValues[0]}" }
+private val USED_MARKDOWN_SYMBOLS = """[_*`\[\]\\]""".toRegex()
 
-fun String.escapeSpecial() = escape("""#\-!.<>\(\)""")
+private val UNUSED_MARKDOWN_SYMBOLS = """[()>~#+\-=|{}.!]""".toRegex()
 
-fun String.escapeMarkdown() = escape("""_*\[\]`""")
+/**
+ * Used on a message.
+ */
+fun String.escapeSpecial() = escape(UNUSED_MARKDOWN_SYMBOLS)
 
-fun Bot.sendMessageLogging(
+/**
+ * Used on party names.
+ */
+fun String.escapeMarkdown() = escape(USED_MARKDOWN_SYMBOLS)
+
+suspend fun Bot.sendMessageLogging(
     chatId: Long,
     text: String,
     markup: ReplyKeyboard? = null,
     replyTo: Long? = null
 ): Message {
     logger.debug { "Sending '$text'" }
-    return sendMessage(chatId, text.escapeSpecial(), "MarkdownV2", replyTo = replyTo, markup = markup)
-        .logging("Failed to send message \"$text\"")
+    return sendMessage(
+        chatId.toChatId(),
+        text.escapeSpecial(),
+        ParseMode.MarkdownV2,
+        replyToMessageId = replyTo,
+        replyMarkup = markup,
+    )
 }
 
-fun Bot.deleteMessageLogging(chatId: Long, messageId: Long): Boolean {
+suspend fun Bot.deleteMessageLogging(chatId: Long, messageId: Long): Boolean {
     logger.debug { "Deleting message $chatId/$messageId" }
     return try {
-        deleteMessage(chatId, messageId).logging("Failed to delete message $chatId/$messageId")
+        deleteMessage(chatId.toChatId(), messageId)
     } catch (sendingMessageException: SendingMessageException) {
-        val reason = sendingMessageException.reason
-        if (reason is CompletionException && reason.cause is TelegramApiError) {
+        if (sendingMessageException.reason !is TelegramApiError) {
+            throw sendingMessageException
+        } else {
             // already deleted
             true
-        } else {
-            throw sendingMessageException
         }
     }
 }
 
-fun Bot.answerCallbackQueryLogging(id: String, text: String? = null): Boolean {
+suspend fun Bot.answerCallbackQueryLogging(id: String, text: String? = null): Boolean {
     logger.debug { "Answering callback query $id" }
-    return answerCallbackQuery(id, text).logging("Answering callback query $id")
+    return answerCallbackQuery(id, text)
 }
+
+val ChatMember.user
+    get() = when (this) {
+        is ChatMember.Owner -> user
+        is ChatMember.Member -> user
+        is ChatMember.Left -> user
+        is ChatMember.Banned -> user
+        is ChatMember.Restricted -> user
+        is ChatMember.Administrator -> user
+    }

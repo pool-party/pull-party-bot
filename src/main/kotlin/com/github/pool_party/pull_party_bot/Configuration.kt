@@ -23,43 +23,65 @@ object Configuration {
             else it
         }
 
-    val APP_URL by Configured(stringType)
-    val USERNAME by Configured(stringType)
-    val PORT by Configured(intType)
-    val HOST by Configured(stringType)
+    val APP_URL by string()
+    val USERNAME by string()
+    val PORT by int()
+    val HOST by string()
 
-    val LONGPOLL by Configured(booleanType)
+    val LONGPOLL by boolean()
 
-    val TELEGRAM_TOKEN by Configured(stringType)
+    val TELEGRAM_TOKEN by string()
 
-    val JDBC_DATABASE_URL by Configured(stringType)
-    val JDBC_DATABASE_USERNAME by Configured(stringType)
-    val JDBC_DATABASE_PASSWORD by Configured(stringType)
+    private val DATABASE_URL by string()
 
-    val DEVELOP_CHAT_ID by Configured(longType)
+    val JDBC_DATABASE_URL by lazy {
+        val (_, _, host, port, database) = getDatabaseUrl().destructured
+        "jdbc:postgresql://$host:$port/$database"
+    }
+    val JDBC_DATABASE_USERNAME by lazy { getDatabaseUrl().groupValues[1] }
+    val JDBC_DATABASE_PASSWORD by lazy { getDatabaseUrl().groupValues[2] }
+
+    val DEVELOP_CHAT_ID by long()
 
     val PROHIBITED_SYMBOLS = "!,.?:;()".toList()
 
-    val STALE_PARTY_WEEKS by Configured(intType)
+    val STALE_PARTY_WEEKS by int()
 
-    val STALE_PING_SECONDS by Configured(intType)
+    val STALE_PING_SECONDS by int()
 
-    val PARTY_SIMILARITY_COEFFICIENT by Configured(doubleType)
+    val PARTY_SIMILARITY_COEFFICIENT by double()
 
     const val MESSAGE_LENGTH = 4096
 
-    val CACHE_CAPACITY_ALIAS by Configured(intType)
-    val CACHE_CAPACITY_PARTY by Configured(intType)
-    val CACHE_CAPACITY_PARTYALIASES by Configured(intType)
-    val CACHE_CAPACITY_CHAT by Configured(intType)
+    val CACHE_CAPACITY_ALIAS by int()
+    val CACHE_CAPACITY_PARTY by int()
+    val CACHE_CAPACITY_PARTYALIASES by int()
+    val CACHE_CAPACITY_CHAT by int()
 
-    private open class Configured<T>(private val parse: (PropertyLocation, String) -> T) {
+    private fun boolean() = Configured(booleanType)
+
+    private fun string() = Configured(stringType)
+
+    private fun int() = Configured(intType)
+
+    private fun long() = Configured(longType)
+
+    private fun double() = Configured(doubleType)
+
+    private fun getDatabaseUrl(): MatchResult =
+        """postgres://(\w+):([\w\d]+)@([\w\d\-\.]+):(\d+)/([\w\d]+)""".toRegex().matchEntire(DATABASE_URL)
+            ?: throw RuntimeException("Bad DATABASE_URL format")
+
+    private val <T> KProperty<T>.configName
+        get() = name.lowercase().replace('_', '.')
+
+    private class Configured<T>(private val parse: (PropertyLocation, String) -> T) {
 
         private var value: T? = null
 
         operator fun getValue(thisRef: Configuration, property: KProperty<*>): T {
             if (value == null) {
-                value = configuration[Key(property.name.lowercase().replace('_', '.'), parse)]
+                value = configuration[Key(property.configName, parse)]
             }
             return value!!
         }

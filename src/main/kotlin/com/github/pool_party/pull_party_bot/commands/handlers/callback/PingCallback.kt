@@ -1,7 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.handlers.callback
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.CallbackQuery
+import com.elbekd.bot.Bot
+import com.elbekd.bot.types.CallbackQuery
 import com.github.pool_party.pull_party_bot.commands.Callback
 import com.github.pool_party.pull_party_bot.commands.CallbackAction
 import com.github.pool_party.pull_party_bot.commands.CallbackData
@@ -34,6 +34,6 @@ class PingCallback(private val partyDao: PartyDao) : Callback {
 
         val chatId = message.chat.id
         sendMessageLogging(chatId, party.users.escapeMarkdown())
-        deleteMessageLogging(chatId, message.message_id)
+        deleteMessageLogging(chatId, message.messageId)
     }
 }

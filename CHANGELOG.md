@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.8] - 02.06.2022
+
+### Fixed
+
+- Escaping markdown in messages
+- Developing
+  - Moving to the telegram bot library v2.1.4
+  - Using `DATABASE_URL` configuration option
+
 ## [1.2.7] - 28.05.2022
 
 ### Fixed
@@ -148,6 +157,7 @@
 -   Implicit party pulling
 -   Rude mode
 
+[1.2.8]: https://github.com/pool-party/pull-party-bot/compare/v1.2.7...v1.2.8
 [1.2.7]: https://github.com/pool-party/pull-party-bot/compare/v1.2.6...v1.2.7
 [1.2.6]: https://github.com/pool-party/pull-party-bot/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/pool-party/pull-party-bot/compare/v1.2.4...v1.2.5

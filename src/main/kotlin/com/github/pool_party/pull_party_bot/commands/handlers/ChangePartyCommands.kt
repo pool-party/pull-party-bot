@@ -1,7 +1,7 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.types.Message
+import com.elbekd.bot.Bot
+import com.elbekd.bot.types.Message
 import com.github.pool_party.pull_party_bot.Configuration
 import com.github.pool_party.pull_party_bot.commands.CaseCommand
 import com.github.pool_party.pull_party_bot.commands.messages.HELP_ADD
@@ -95,7 +95,7 @@ abstract class AbstractChangeCommand(
 
         var (users, failedUsers) = parsedArgs.asSequence().drop(1)
             .map { it.replace("@", "") }.distinct()
-            .partition { it.matches("([a-z0-9_]{5,32})".toRegex()) }
+            .partition { it.matches("([a-z\\d_]{5,32})".toRegex()) }
 
         users = users.map { "@$it" }
 
@@ -108,11 +108,10 @@ abstract class AbstractChangeCommand(
             sendMessageLogging(chatId, ON_USERS_FAIL)
 
             if (users.isEmpty()) {
-                sendMessage(
+                sendMessageLogging(
                     chatId,
                     if (status == PartyChangeStatus.CREATE) ON_CREATE_EMPTY
                     else ON_CHANGE_EMPTY,
-                    "Markdown"
                 )
                 return
             }
@@ -128,7 +127,7 @@ abstract class AbstractChangeCommand(
 }
 
 fun validatePartyName(partyName: String): Boolean {
-    val regex = Regex("(.*[@${Configuration.PROHIBITED_SYMBOLS.joinToString("")}].*)|(.*-)")
+    val regex = Regex(".*[@${Configuration.PROHIBITED_SYMBOLS.joinToString("")}].*")
     return partyName.isNotBlank() && partyName.length <= 50 && !partyName.matches(regex)
 }
 

@@ -1,18 +1,18 @@
 package com.github.pool_party.pull_party_bot
 
-import com.elbekD.bot.Bot
-import com.elbekD.bot.server
+import com.elbekd.bot.Bot
+import com.elbekd.bot.server
 import com.github.pool_party.pull_party_bot.commands.initHandlers
 import com.github.pool_party.pull_party_bot.database.initDB
 
-fun main() {
+suspend fun main() {
     val token = Configuration.TELEGRAM_TOKEN
     val userName = Configuration.USERNAME
 
     val bot = if (Configuration.LONGPOLL) {
-        Bot.createPolling(userName, token)
+        Bot.createPolling(token, userName)
     } else {
-        Bot.createWebhook(userName, token) {
+        Bot.createWebhook(token, userName) {
             url = "${Configuration.APP_URL}/$token"
 
             server {
