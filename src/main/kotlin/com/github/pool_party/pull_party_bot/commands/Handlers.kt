@@ -25,10 +25,9 @@ import com.github.pool_party.pull_party_bot.commands.handlers.callback.PingCallb
 import com.github.pool_party.pull_party_bot.commands.messages.onError
 import com.github.pool_party.pull_party_bot.database.dao.ChatDaoImpl
 import com.github.pool_party.pull_party_bot.database.dao.PartyDaoImpl
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 
 suspend fun Bot.initHandlers() {
-
     val partyDaoImpl = PartyDaoImpl()
 
     val chatDaoImpl = ChatDaoImpl()
@@ -82,7 +81,11 @@ private suspend fun Bot.processThrowable(throwable: Throwable): Nothing {
         if (throwable is SendingMessageException) "${throwable.action}: " to throwable.reason else "" to throwable
 
     logger.error { "$prefix${reason.message}:\n${reason.stackTraceToString()}" }
-    sendMessage(Configuration.DEVELOP_CHAT_ID.toChatId(), onError(reason).escapeSpecial(), ParseMode.MarkdownV2)
+    sendMessage(
+        Configuration.DEVELOP_CHAT_ID.toChatId(),
+        onError(reason).escapeSpecial(),
+        parseMode = ParseMode.MarkdownV2,
+    )
 
     throw reason
 }

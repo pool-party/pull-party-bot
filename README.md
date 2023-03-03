@@ -97,7 +97,7 @@ Use these commands to mention members of needed parties, see the information and
 
     > To set up required version of gradle and dependencies run `gradlew` script (according to your system) with `build` target.
 
--   [Heroku deployment service](https://www.heroku.com)
+-   [Northflank deployment service](https://northflank.com/)
 
 -   [JetBrains Exposed SQL DSL](https://github.com/JetBrains/Exposed)
 
@@ -124,11 +124,12 @@ Use these commands to mention members of needed parties, see the information and
 In order to be able to launch the bot server locally you have to compile sources with gradle and set the following environment variables
 or provide corresponding values in [`defaults.properties`](src/main/resources/defaults.properties):
 
--   `TELEGRAM_TOKEN` - the one you get from [`BotFather`](https://t.me/BotFather)
+- `TELEGRAM_TOKEN` - the one you get from [`BotFather`](https://t.me/BotFather)
+- `DATABASE_URL`
+- `LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
+- `APP_URL` - webhook url
+- `DEVELOPER_CHAT_ID` for error logs
 
--   `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME`, `JDBC_DATABASE_PASSWORD` - all provided by heroku on database deployment
-
--   `LONGPOLL=true` for using long polling instead of web hooking (common usage case is local launch and debugging)
 
 ### Database migrations
 

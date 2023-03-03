@@ -11,7 +11,6 @@ internal class MarkdownTest : AbstractBotTest() {
         .filter { it !in Configuration.PROHIBITED_SYMBOLS }
         .map {
             dynamicTest("create reserved markdown \"$it\" party") {
-
                 -"/create $it abcdef"
                 verifyContains("successfully", "\\$it")
 

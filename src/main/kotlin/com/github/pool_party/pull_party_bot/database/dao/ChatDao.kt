@@ -22,7 +22,6 @@ class ChatDaoImpl : ChatDao {
 
     override fun setRude(chatId: Long, newMode: Boolean): Boolean =
         loggingTransaction("setRude($chatId, $newMode)") {
-
             val chat = ChatCache[chatId]
             val oldMode = chat.isRude
 

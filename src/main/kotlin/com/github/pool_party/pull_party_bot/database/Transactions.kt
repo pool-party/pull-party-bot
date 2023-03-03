@@ -1,7 +1,7 @@
 package com.github.pool_party.pull_party_bot.database
 
 import com.github.pool_party.pull_party_bot.Configuration
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.transaction

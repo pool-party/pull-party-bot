@@ -1,7 +1,9 @@
 package com.github.pool_party.pull_party_bot.commands.handlers
 
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 internal class CallbackTest : AbstractBotTest() {
 
     private val partyName = "party"

@@ -7,7 +7,7 @@ import com.elbekd.bot.types.ChatMember
 import com.elbekd.bot.types.Message
 import com.elbekd.bot.types.ParseMode
 import com.elbekd.bot.types.ReplyKeyboard
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
@@ -39,7 +39,7 @@ suspend fun Bot.sendMessageLogging(
     return sendMessage(
         chatId.toChatId(),
         text.escapeSpecial(),
-        ParseMode.MarkdownV2,
+        parseMode = ParseMode.MarkdownV2,
         replyToMessageId = replyTo,
         replyMarkup = markup,
     )

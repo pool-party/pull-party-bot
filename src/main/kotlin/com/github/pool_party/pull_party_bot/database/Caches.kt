@@ -3,7 +3,7 @@ package com.github.pool_party.pull_party_bot.database
 import com.github.pool_party.pull_party_bot.Configuration
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import org.jetbrains.exposed.sql.select
 import java.util.LinkedHashMap
 

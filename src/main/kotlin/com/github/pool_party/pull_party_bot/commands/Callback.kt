@@ -5,7 +5,7 @@ import com.elbekd.bot.types.CallbackQuery
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 

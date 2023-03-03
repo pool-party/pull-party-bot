@@ -27,7 +27,6 @@ class ListCommand(private val partyDao: PartyDao, chatDao: ChatDao) :
     CaseCommand("list", "show all the parties of the chat and their members", HELP_LIST, chatDao) {
 
     override suspend fun Bot.action(message: Message, args: String?) {
-
         val parsedArgs = parseArgs(args)?.distinct()
         val chatId = message.chat.id
         val list = partyDao.getAll(chatId)

@@ -134,7 +134,6 @@ class PartyDaoImpl : PartyDao {
 
     override fun delete(chatId: Long, partyName: String): Boolean =
         loggingTransaction("delete($chatId, $partyName)") {
-
             val alias = Alias.find(chatId, partyName) ?: return@loggingTransaction false
             val count = alias.party.aliases.count()
 
@@ -177,7 +176,6 @@ class PartyDaoImpl : PartyDao {
         partyName: String,
         transform: (MutableSet<String>) -> Collection<String>
     ): Boolean = loggingTransaction("changeUsers($chatId, $partyName)") {
-
         val alias = getAliasByChatIdAndName(chatId, partyName) ?: return@loggingTransaction false
 
         val newUsers = transform(alias.users.split(' ').toMutableSet())

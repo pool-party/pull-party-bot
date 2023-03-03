@@ -11,7 +11,7 @@ import com.github.pool_party.pull_party_bot.commands.messages.ON_ADMINS_PARTY_CH
 import com.github.pool_party.pull_party_bot.commands.messages.ON_PERMISSION_DENY
 import com.github.pool_party.pull_party_bot.commands.messages.ON_SENDER_FAIL
 import com.github.pool_party.pull_party_bot.database.dao.ChatDao
-import mu.KotlinLogging
+import mu.two.KotlinLogging
 import java.time.LocalDateTime
 import kotlin.system.measureNanoTime
 
