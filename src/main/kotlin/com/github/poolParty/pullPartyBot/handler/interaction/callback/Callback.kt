@@ -7,22 +7,22 @@ import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.interaction.Interaction
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.protobuf.ProtoBuf
+import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.decodeFromByteArray
 import mu.two.KotlinLogging
 
 @Serializable
 sealed class Callback {
 
     val encoded: String
-        get() = Json.encodeToString(this)
+        get() = ProtoBuf.encodeToByteArray(this).asSequence().map { it.toInt().toChar() }.joinToString("")
 
     abstract suspend fun Bot.process(callbackQuery: CallbackQuery, partyDao: PartyDao, chatDao: ChatDao)
 
     companion object {
         fun of(string: String) = try {
-            Json.decodeFromString<Callback>(string)
+            ProtoBuf.decodeFromByteArray<Callback>(string.map { it.code.toByte() }.toByteArray())
         } catch (e: SerializationException) {
             null
         }

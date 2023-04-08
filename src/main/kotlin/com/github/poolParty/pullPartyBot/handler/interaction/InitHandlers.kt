@@ -33,7 +33,7 @@ suspend fun Bot.initHandlers() {
         ListCommand(partyDaoImpl),
         PartyCommand(partyDaoImpl),
         DeleteCommand(partyDaoImpl),
-        ClearCommand(chatDaoImpl),
+        ClearCommand(),
         CreateCommand(partyDaoImpl),
         AliasCommand(partyDaoImpl),
         ChangeCommand(partyDaoImpl),

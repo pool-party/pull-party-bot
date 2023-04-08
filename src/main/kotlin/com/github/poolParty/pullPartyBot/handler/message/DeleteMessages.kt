@@ -51,4 +51,9 @@ object DeleteMessages {
         """
         Action is available for admins only. 🙅‍
         """.trimIndent()
+
+    val clearConfirmation =
+        """
+        Are you completely sure you have an undeniable intention to proceed? 🤯
+        """.trimIndent()
 }
