@@ -3,12 +3,12 @@ package com.github.poolParty.pullPartyBot.handler.interaction.callback
 import com.elbekd.bot.Bot
 import com.elbekd.bot.types.CallbackQuery
 import com.github.poolParty.pullPartyBot.database.dao.ChatDao
+import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.answerCallbackQueryLogging
 import com.github.poolParty.pullPartyBot.handler.deleteMessageLogging
 import com.github.poolParty.pullPartyBot.handler.interaction.validateAdministrator
-import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
-import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.message.DeleteMessages
+import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -32,7 +32,7 @@ private suspend fun Bot.processDeleteCallback(callbackQuery: CallbackQuery, dele
 
 @Serializable
 @SerialName("d")
-data class DeleteSuggestionCallbackData(val partyId: Int) : CallbackData() {
+data class DeleteSuggestionCallback(val partyId: Int) : Callback() {
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyDao: PartyDao, chatDao: ChatDao) {
         processDeleteCallback(callbackQuery) {
@@ -47,7 +47,7 @@ data class DeleteSuggestionCallbackData(val partyId: Int) : CallbackData() {
 
 @Serializable
 @SerialName("dn")
-data class DeleteNodeSuggestionCallbackData(val partyId: Int) : CallbackData() {
+data class DeleteNodeSuggestionCallback(val partyId: Int) : Callback() {
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyDao: PartyDao, chatDao: ChatDao) {
         processDeleteCallback(callbackQuery) {

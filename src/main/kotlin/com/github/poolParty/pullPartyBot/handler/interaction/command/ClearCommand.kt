@@ -6,7 +6,7 @@ import com.github.poolParty.pullPartyBot.Configuration
 import com.github.poolParty.pullPartyBot.database.dao.ChatDao
 import com.github.poolParty.pullPartyBot.handler.Button
 import com.github.poolParty.pullPartyBot.handler.deleteMessageLogging
-import com.github.poolParty.pullPartyBot.handler.interaction.callback.ClearConfirmationCallbackData
+import com.github.poolParty.pullPartyBot.handler.interaction.callback.ClearConfirmationCallback
 import com.github.poolParty.pullPartyBot.handler.message.DeleteMessages
 import com.github.poolParty.pullPartyBot.handler.message.HelpMessages
 import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
@@ -22,9 +22,9 @@ class ClearCommand(private val chatDao: ChatDao) :
             chatId,
             DeleteMessages.clearSuccess,
             buttons = listOf(
-                Button("No, I changed my mind", ClearConfirmationCallbackData(chatId, message.from?.id, false)),
-                Button("Yes, I am pretty sure", ClearConfirmationCallbackData(chatId, message.from?.id, true)),
-            )
+                Button("No, I changed my mind", ClearConfirmationCallback(chatId, message.from?.id, false)),
+                Button("Yes, I am pretty sure", ClearConfirmationCallback(chatId, message.from?.id, true)),
+            ),
         )
 
         delay(Configuration.STALE_PING_SECONDS * 1_000L)

@@ -2,8 +2,8 @@ package com.github.poolParty.pullPartyBot
 
 import com.elbekd.bot.Bot
 import com.elbekd.bot.server
-import com.github.poolParty.pullPartyBot.handler.interaction.initHandlers
 import com.github.poolParty.pullPartyBot.database.initDB
+import com.github.poolParty.pullPartyBot.handler.interaction.initHandlers
 
 suspend fun main() {
     val token = Configuration.TELEGRAM_TOKEN

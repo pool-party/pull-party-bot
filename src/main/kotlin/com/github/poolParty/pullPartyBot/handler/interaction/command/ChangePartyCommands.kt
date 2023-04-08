@@ -3,10 +3,10 @@ package com.github.poolParty.pullPartyBot.handler.interaction.command
 import com.elbekd.bot.Bot
 import com.elbekd.bot.types.Message
 import com.github.poolParty.pullPartyBot.Configuration
-import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.message.ChangePartyMessages
 import com.github.poolParty.pullPartyBot.handler.message.HelpMessages
+import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 
 class CreateCommand(partyDao: PartyDao) :
     AbstractChangeCommand(
@@ -60,8 +60,11 @@ abstract class AbstractChangeCommand(
         if (args.size < 2) {
             sendMessageLogging(
                 chatId,
-                if (status == PartyChangeStatus.CREATE) ChangePartyMessages.createEmpty
-                else ChangePartyMessages.changeEmpty,
+                if (status == PartyChangeStatus.CREATE) {
+                    ChangePartyMessages.createEmpty
+                } else {
+                    ChangePartyMessages.changeEmpty
+                },
             )
             return
         }
@@ -94,8 +97,11 @@ abstract class AbstractChangeCommand(
             if (users.isEmpty()) {
                 sendMessageLogging(
                     chatId,
-                    if (status == PartyChangeStatus.CREATE) ChangePartyMessages.createEmpty
-                    else ChangePartyMessages.changeEmpty,
+                    if (status == PartyChangeStatus.CREATE) {
+                        ChangePartyMessages.createEmpty
+                    } else {
+                        ChangePartyMessages.changeEmpty
+                    },
                 )
                 return
             }
@@ -118,7 +124,7 @@ fun validatePartyName(partyName: String): Boolean {
 enum class PartyChangeStatus(
     val changesFull: Boolean,
     val transaction: PartyDao.(Long, String, List<String>) -> Boolean,
-    val onFailure: String
+    val onFailure: String,
 ) {
     CREATE(true, PartyDao::create, ChangePartyMessages.createRequestFail) {
         override fun onSuccess(partyName: String) = ChangePartyMessages.createSuccess(partyName)

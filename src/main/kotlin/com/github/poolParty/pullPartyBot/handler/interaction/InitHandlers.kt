@@ -1,12 +1,14 @@
 package com.github.poolParty.pullPartyBot.handler.interaction
 
 import com.elbekd.bot.Bot
+import com.github.poolParty.pullPartyBot.database.dao.ChatDaoImpl
+import com.github.poolParty.pullPartyBot.database.dao.PartyDaoImpl
 import com.github.poolParty.pullPartyBot.handler.interaction.callback.CallbackDispatcher
-import com.github.poolParty.pullPartyBot.handler.interaction.command.Command
 import com.github.poolParty.pullPartyBot.handler.interaction.command.AddCommand
 import com.github.poolParty.pullPartyBot.handler.interaction.command.AliasCommand
 import com.github.poolParty.pullPartyBot.handler.interaction.command.ChangeCommand
 import com.github.poolParty.pullPartyBot.handler.interaction.command.ClearCommand
+import com.github.poolParty.pullPartyBot.handler.interaction.command.Command
 import com.github.poolParty.pullPartyBot.handler.interaction.command.CreateCommand
 import com.github.poolParty.pullPartyBot.handler.interaction.command.DeleteCommand
 import com.github.poolParty.pullPartyBot.handler.interaction.command.FeedbackCommand
@@ -18,8 +20,6 @@ import com.github.poolParty.pullPartyBot.handler.interaction.command.StartComman
 import com.github.poolParty.pullPartyBot.handler.interaction.everyMessage.EveryMessageProcessor
 import com.github.poolParty.pullPartyBot.handler.interaction.everyMessage.ImplicitPartyHandler
 import com.github.poolParty.pullPartyBot.handler.interaction.everyMessage.MigrationHandler
-import com.github.poolParty.pullPartyBot.database.dao.ChatDaoImpl
-import com.github.poolParty.pullPartyBot.database.dao.PartyDaoImpl
 
 suspend fun Bot.initHandlers() {
     val partyDaoImpl = PartyDaoImpl()

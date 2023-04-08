@@ -14,11 +14,11 @@ internal class DeleteCommandTest : AbstractBotTest() {
         -"/list alias"
 
         verifyMessage {
-            ListMessages.argumentSuccess in it
-                && "alias" in it
-                && "first second third" in it
-                && "party" !in it
-                && "admins" !in it
+            ListMessages.argumentSuccess in it &&
+                "alias" in it &&
+                "first second third" in it &&
+                "party" !in it &&
+                "admins" !in it
         }
     }
 
@@ -31,11 +31,11 @@ internal class DeleteCommandTest : AbstractBotTest() {
         -"/list"
 
         verifyMessage {
-            ListMessages.success in it
-                && "admins" in it
-                && "alias" !in it
-                && "party" !in it
-                && "first second third" !in it
+            ListMessages.success in it &&
+                "admins" in it &&
+                "alias" !in it &&
+                "party" !in it &&
+                "first second third" !in it
         }
     }
 }

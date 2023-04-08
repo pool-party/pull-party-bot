@@ -7,7 +7,7 @@ import com.elbekd.bot.types.InlineKeyboardButton
 import com.elbekd.bot.types.InlineKeyboardMarkup
 import com.elbekd.bot.types.Message
 import com.elbekd.bot.types.ParseMode
-import com.github.poolParty.pullPartyBot.handler.interaction.callback.CallbackData
+import com.github.poolParty.pullPartyBot.handler.interaction.callback.Callback
 import mu.two.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
@@ -28,7 +28,7 @@ fun String.escapeSpecial() = escape(UNUSED_MARKDOWN_SYMBOLS)
  */
 fun String.escapeMarkdown() = escape(USED_MARKDOWN_SYMBOLS)
 
-data class Button(val text: String, val callbackData: CallbackData)
+data class Button(val text: String, val callback: Callback)
 
 suspend fun Bot.sendMessageLogging(
     chatId: Long,
@@ -44,8 +44,8 @@ suspend fun Bot.sendMessageLogging(
         replyToMessageId = replyTo,
         replyMarkup = InlineKeyboardMarkup(
             buttons.map {
-                listOf(InlineKeyboardButton(it.text, callbackData = it.callbackData.encoded))
-            }
+                listOf(InlineKeyboardButton(it.text, callbackData = it.callback.encoded))
+            },
         ),
     )
 }

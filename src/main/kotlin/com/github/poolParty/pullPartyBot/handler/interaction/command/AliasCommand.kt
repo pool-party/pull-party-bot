@@ -2,12 +2,12 @@ package com.github.poolParty.pullPartyBot.handler.interaction.command
 
 import com.elbekd.bot.Bot
 import com.elbekd.bot.types.Message
-import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import com.github.poolParty.pullPartyBot.database.dao.AliasCreationResult
 import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.message.AliasMessages
 import com.github.poolParty.pullPartyBot.handler.message.ChangePartyMessages
 import com.github.poolParty.pullPartyBot.handler.message.HelpMessages
+import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 
 class AliasCommand(private val partyDao: PartyDao) :
     AbstractCommand("alias", "create a new party with the same users", HelpMessages.alias) {

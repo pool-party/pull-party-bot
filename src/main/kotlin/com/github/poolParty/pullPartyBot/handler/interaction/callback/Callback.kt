@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 import mu.two.KotlinLogging
 
 @Serializable
-sealed class CallbackData {
+sealed class Callback {
 
     val encoded: String
         get() = Json.encodeToString(this)
@@ -22,7 +22,7 @@ sealed class CallbackData {
 
     companion object {
         fun of(string: String) = try {
-            Json.decodeFromString<CallbackData>(string)
+            Json.decodeFromString<Callback>(string)
         } catch (e: SerializationException) {
             null
         }
@@ -36,13 +36,13 @@ class CallbackDispatcher(private val partyDao: PartyDao, private val chatDao: Ch
     override fun Bot.apply() = onCallbackQuery { callbackQuery ->
         if (callbackQuery.message == null) return@onCallbackQuery
 
-        val callbackData = callbackQuery.data?.let { data -> CallbackData.of(data) }
+        val callback = callbackQuery.data?.let { data -> Callback.of(data) }
 
-        logger.info { "callback ${callbackQuery.from.username}@${callbackQuery.message?.chat?.title}: $callbackData" }
+        logger.info { "callback ${callbackQuery.from.username}@${callbackQuery.message?.chat?.title}: $callback" }
 
-        if (callbackData == null) return@onCallbackQuery
+        if (callback == null) return@onCallbackQuery
 
-        with(callbackData) {
+        with(callback) {
             try {
                 process(callbackQuery, partyDao, chatDao)
             } catch (e: Throwable) {

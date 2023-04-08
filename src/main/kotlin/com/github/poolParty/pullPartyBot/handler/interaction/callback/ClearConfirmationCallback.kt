@@ -14,8 +14,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("c")
-data class ClearConfirmationCallbackData(val chatId: Long, val creator: Long?, val confirmed: Boolean) :
-    CallbackData() {
+data class ClearConfirmationCallback(val chatId: Long, val creator: Long?, val confirmed: Boolean) :
+    Callback() {
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyDao: PartyDao, chatDao: ChatDao) {
         if (callbackQuery.from.id != creator) {

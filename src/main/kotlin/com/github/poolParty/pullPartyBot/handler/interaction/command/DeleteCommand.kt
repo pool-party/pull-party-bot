@@ -1,15 +1,13 @@
 package com.github.poolParty.pullPartyBot.handler.interaction.command
 
 import com.elbekd.bot.Bot
-import com.elbekd.bot.types.InlineKeyboardButton
-import com.elbekd.bot.types.InlineKeyboardMarkup
 import com.elbekd.bot.types.Message
-import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.Button
-import com.github.poolParty.pullPartyBot.handler.interaction.callback.DeleteNodeSuggestionCallbackData
+import com.github.poolParty.pullPartyBot.handler.interaction.callback.DeleteNodeSuggestionCallback
 import com.github.poolParty.pullPartyBot.handler.message.DeleteMessages
 import com.github.poolParty.pullPartyBot.handler.message.HelpMessages
+import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -51,8 +49,11 @@ class DeleteCommand(private val partyDao: PartyDao) :
                     .onEach { (name, success) ->
                         sendMessageLogging(
                             chatId,
-                            if (success) DeleteMessages.aliasDeleteSuccess(name)
-                            else DeleteMessages.partyDeleteUnchanged(name)
+                            if (success) {
+                                DeleteMessages.aliasDeleteSuccess(name)
+                            } else {
+                                DeleteMessages.partyDeleteUnchanged(name)
+                            },
                         )
                     }
                     .toList()
@@ -64,7 +65,7 @@ class DeleteCommand(private val partyDao: PartyDao) :
                     sendMessageLogging(
                         chatId,
                         DeleteMessages.partyDeleteSuggest(partyList),
-                        buttons = listOf(Button("Delete", DeleteNodeSuggestionCallbackData(partyId))),
+                        buttons = listOf(Button("Delete", DeleteNodeSuggestionCallback(partyId))),
                     )
                 }
             }

@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("p")
-data class PartyCallbackData(val partyId: Int, val creator: Long?) : CallbackData() {
+data class PartyCallback(val partyId: Int, val creator: Long?) : Callback() {
 
     override suspend fun Bot.process(callbackQuery: CallbackQuery, partyDao: PartyDao, chatDao: ChatDao) {
         val message = callbackQuery.message

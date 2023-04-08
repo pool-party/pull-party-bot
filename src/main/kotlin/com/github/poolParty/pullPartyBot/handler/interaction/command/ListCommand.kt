@@ -1,20 +1,18 @@
 package com.github.poolParty.pullPartyBot.handler.interaction.command
 
 import com.elbekd.bot.Bot
-import com.elbekd.bot.types.InlineKeyboardButton
-import com.elbekd.bot.types.InlineKeyboardMarkup
 import com.elbekd.bot.types.Message
 import com.github.poolParty.pullPartyBot.Configuration
-import com.github.poolParty.pullPartyBot.handler.escapeMarkdown
-import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import com.github.poolParty.pullPartyBot.database.Alias
 import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.Button
-import com.github.poolParty.pullPartyBot.handler.interaction.callback.DeleteSuggestionCallbackData
+import com.github.poolParty.pullPartyBot.handler.escapeMarkdown
+import com.github.poolParty.pullPartyBot.handler.interaction.callback.DeleteSuggestionCallback
 import com.github.poolParty.pullPartyBot.handler.interaction.common.getAdminsParty
 import com.github.poolParty.pullPartyBot.handler.message.HelpMessages
 import com.github.poolParty.pullPartyBot.handler.message.InformationMessages
 import com.github.poolParty.pullPartyBot.handler.message.ListMessages
+import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import org.joda.time.DateTime
 
 class ListCommand(private val partyDao: PartyDao) :
@@ -95,7 +93,7 @@ class ListCommand(private val partyDao: PartyDao) :
         sendMessageLogging(
             chatId,
             InformationMessages.stalePartyRemove,
-            buttons = listOf(Button("Delete ${topLost.name}", DeleteSuggestionCallbackData(topLost.id.value))),
+            buttons = listOf(Button("Delete ${topLost.name}", DeleteSuggestionCallback(topLost.id.value))),
         )
     }
 

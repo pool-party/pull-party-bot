@@ -15,11 +15,11 @@ internal class ClearCommandTest : AbstractBotTest() {
         -"/list"
 
         verifyMessage {
-            ListMessages.success in it
-                && "admins" in it
-                && "alias" !in it
-                && "party" !in it
-                && "first second third" !in it
+            ListMessages.success in it &&
+                "admins" in it &&
+                "alias" !in it &&
+                "party" !in it &&
+                "first second third" !in it
         }
     }
 
@@ -32,11 +32,11 @@ internal class ClearCommandTest : AbstractBotTest() {
         -"/list"
 
         verifyMessage {
-            ListMessages.success in it
-                && "admins" in it
-                && "alias" in it
-                && "party" in it
-                && "first second third" in it
+            ListMessages.success in it &&
+                "admins" in it &&
+                "alias" in it &&
+                "party" in it &&
+                "first second third" in it
         }
     }
 }

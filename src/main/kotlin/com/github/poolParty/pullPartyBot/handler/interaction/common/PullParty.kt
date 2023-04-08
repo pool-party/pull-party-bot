@@ -2,15 +2,13 @@ package com.github.poolParty.pullPartyBot.handler.interaction.common
 
 import com.elbekd.bot.Bot
 import com.elbekd.bot.model.toChatId
-import com.elbekd.bot.types.InlineKeyboardButton
-import com.elbekd.bot.types.InlineKeyboardMarkup
 import com.elbekd.bot.types.Message
 import com.github.poolParty.pullPartyBot.Configuration
 import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.Button
 import com.github.poolParty.pullPartyBot.handler.deleteMessageLogging
 import com.github.poolParty.pullPartyBot.handler.escapeMarkdown
-import com.github.poolParty.pullPartyBot.handler.interaction.callback.PartyCallbackData
+import com.github.poolParty.pullPartyBot.handler.interaction.callback.PartyCallback
 import com.github.poolParty.pullPartyBot.handler.message.InformationMessages
 import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import info.debatty.java.stringsimilarity.JaroWinkler
@@ -23,7 +21,7 @@ suspend fun Bot.pullParty(
     partyNames: Sequence<String>,
     message: Message,
     partyDao: PartyDao,
-    onFailure: suspend () -> Unit = {}
+    onFailure: suspend () -> Unit = {},
 ) {
     val chatId = message.chat.id
     val failed = mutableListOf<String>()
@@ -59,7 +57,7 @@ private suspend fun Bot.misspellSuggestions(
     message: Message,
     chatId: Long,
     failed: List<String>,
-    onFailure: suspend () -> Unit = {}
+    onFailure: suspend () -> Unit = {},
 ) {
     if (failed.isEmpty()) return
 
@@ -89,8 +87,8 @@ private suspend fun Bot.misspellSuggestions(
         buttons = suggestions.asSequence()
             .map { it.first }
             .distinctBy { it.name }
-            .map { Button("@${it.name}", PartyCallbackData(it.party.id.value, message.from?.id)) }
-            .toList()
+            .map { Button("@${it.name}", PartyCallback(it.party.id.value, message.from?.id)) }
+            .toList(),
     )
 
     delay(Configuration.STALE_PING_SECONDS * 1_000L)

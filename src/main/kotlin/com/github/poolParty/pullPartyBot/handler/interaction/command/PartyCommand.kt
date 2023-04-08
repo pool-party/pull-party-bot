@@ -2,11 +2,11 @@ package com.github.poolParty.pullPartyBot.handler.interaction.command
 
 import com.elbekd.bot.Bot
 import com.elbekd.bot.types.Message
-import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 import com.github.poolParty.pullPartyBot.database.dao.PartyDao
 import com.github.poolParty.pullPartyBot.handler.interaction.common.pullParty
 import com.github.poolParty.pullPartyBot.handler.message.HelpMessages
 import com.github.poolParty.pullPartyBot.handler.message.PullPartyMessages
+import com.github.poolParty.pullPartyBot.handler.sendMessageLogging
 
 class PartyCommand(private val partyDao: PartyDao) :
     AbstractCommand("party", "tag the members of the given parties", HelpMessages.party) {

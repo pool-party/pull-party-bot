@@ -4,8 +4,8 @@ import com.elbekd.bot.Bot
 import com.elbekd.bot.model.toChatId
 import com.elbekd.bot.types.BotCommand
 import com.elbekd.bot.types.Message
-import com.github.poolParty.pullPartyBot.handler.interaction.loggingError
 import com.github.poolParty.pullPartyBot.handler.interaction.Interaction
+import com.github.poolParty.pullPartyBot.handler.interaction.loggingError
 import com.github.poolParty.pullPartyBot.handler.interaction.validateAdministrator
 import com.github.poolParty.pullPartyBot.handler.message.ChangePartyMessages
 import mu.two.KotlinLogging
@@ -37,7 +37,7 @@ interface Command : Interaction {
 abstract class AbstractCommand(
     commandName: String,
     override val description: String,
-    override val helpMessage: String
+    override val helpMessage: String,
 ) : Command {
     override val command = "/$commandName"
 
