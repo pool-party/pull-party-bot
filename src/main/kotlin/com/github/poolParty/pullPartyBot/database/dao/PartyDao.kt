@@ -174,7 +174,7 @@ class PartyDaoImpl : PartyDao {
     private fun changeUsers(
         chatId: Long,
         partyName: String,
-        transform: (MutableSet<String>) -> Collection<String>
+        transform: (MutableSet<String>) -> Collection<String>,
     ): Boolean = loggingTransaction("changeUsers($chatId, $partyName)") {
         val alias = getAliasByChatIdAndName(chatId, partyName) ?: return@loggingTransaction false
 

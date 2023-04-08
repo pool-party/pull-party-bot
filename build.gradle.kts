@@ -48,7 +48,7 @@ tasks.withType<Jar> {
     manifest {
         attributes(
             mapOf(
-                "Main-Class" to "com.github.pool_party.pull_party_bot.MainKt"
+                "Main-Class" to "com.github.pool_party.pull_party_bot.MainKt",
             )
         )
     }
@@ -68,10 +68,9 @@ tasks.withType<KotlinCompile>().configureEach {
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     disabledRules.set(
         setOf(
-            "package-name",
-            "multiline-if-else",
             "trailing-comma-on-call-site",
-            "trailing-comma-on-declaration-site",
+            "trailing-comma-on-declaration-site", // BUG: unnecessary trailing commas, needs , before ; in enum
+            "wrapping", // BUG: alignment of ${} in """
         )
     )
 }

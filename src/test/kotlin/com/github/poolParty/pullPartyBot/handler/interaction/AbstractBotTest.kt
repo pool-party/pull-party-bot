@@ -96,7 +96,7 @@ internal abstract class AbstractBotTest {
         null,
         null,
         null,
-        null
+        null,
     )
 
     private lateinit var everyMessageAction: suspend (Message) -> Unit
@@ -116,7 +116,7 @@ internal abstract class AbstractBotTest {
         Database.connect(
             "${container.jdbcUrl}&gssEncMode=disable",
             user = container.username,
-            password = container.password
+            password = container.password,
         )
         Flyway.configure().dataSource(container.jdbcUrl, container.username, container.password).load().migrate()
 

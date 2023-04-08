@@ -34,7 +34,7 @@ suspend fun Bot.sendMessageLogging(
     chatId: Long,
     text: String,
     buttons: List<Button> = emptyList(),
-    replyTo: Long? = null
+    replyTo: Long? = null,
 ): Message {
     logger.debug { "Sending '$text'" }
     return sendMessage(

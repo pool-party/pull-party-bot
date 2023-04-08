@@ -18,9 +18,11 @@ object Configuration {
         .overriding(ConfigurationProperties.fromResource("defaults.properties"))
         .let {
             val testProperties = "test.properties"
-            if (ClassLoader.getSystemClassLoader().getResource(testProperties) != null)
+            if (ClassLoader.getSystemClassLoader().getResource(testProperties) != null) {
                 ConfigurationProperties.fromResource(testProperties) overriding it
-            else it
+            } else {
+                it
+            }
         }
 
     val APP_URL by string()
