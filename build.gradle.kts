@@ -64,13 +64,3 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
     kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
 }
-
-configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-    disabledRules.set(
-        setOf(
-            "trailing-comma-on-call-site",
-            "trailing-comma-on-declaration-site", // BUG: unnecessary trailing commas, needs , before ; in enum
-            "wrapping", // BUG: alignment of ${} in """
-        )
-    )
-}

@@ -1,14 +1,14 @@
 [versions]
-kotlin = "1.8.10"
-testContainers = "1.17.6"
+kotlin = "1.8.20"
+testContainers = "1.18.0"
 jupiter = "5.9.2"
 exposed = "0.41.1"
-flyway = "9.15.1"
+flyway = "9.16.3"
 
 [plugins]
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "11.2.0" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "11.3.1" }
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 
 [libraries]
@@ -23,7 +23,7 @@ exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version
 exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
 exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
 exposed-jodatime = { group = "org.jetbrains.exposed", name = "exposed-jodatime", version.ref = "exposed" }
-postgresql = { group = "org.postgresql", name = "postgresql", version = "42.5.4" }
+postgresql = { group = "org.postgresql", name = "postgresql", version = "42.6.0" }
 
 telegramBot = { group = "com.github.elbekD", name = "kt-telegram-bot", version = "2.2.0" }
 
