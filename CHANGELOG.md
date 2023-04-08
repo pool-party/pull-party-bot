@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.10] - 06.04.2023
+
+### Changed
+
+- Enormously huge refactoring
+
+### Added
+
+- `/clear` command confirmation
+
+### Removed
+
+- `/rude` command
+- `chats.is_rude` and `chats.id` columns
+
+### Fixed
+
+- Catching deleting message exception
+- `/clear` command cache clearing
+
 ## [1.2.9] - 03.03.2023
 
 ### Changed
@@ -11,7 +31,7 @@
 ### Fixed
 
 - Escaping markdown in messages
-- Developing
+- Internal
   - Moving to the telegram bot library v2.1.4
   - Using `DATABASE_URL` configuration option
 
@@ -63,7 +83,7 @@
 
 - `Long` user id
 
-## [1.2.0] - 21.05.2021
+## [1.2.0] "Mammillaria Grusonii" - 21.05.2021
 
 ### Added
 
@@ -71,7 +91,7 @@
   - Add `/alias` command to treat party names to parties as many-to-one relation
     - Deleting full party node suggestion
   - `/list` command pretty printing
-- Developing
+- Internal
   - Database migrations
 
 ### Fixed
@@ -96,7 +116,7 @@
 
 -   Hotfixed deploy process
 
-## [1.1.0] - 31.12.2020
+## [1.1.0] "Parodia Magnifica" - 31.12.2020
 
 ### Added
 
@@ -155,7 +175,7 @@
 -   Implicit party calls are not case-sensitive now (`@pArTy` will call `party` members)
 -   You unable to create a party called as the only user in the party (e.g. `/create PullPartyBot PullPartyBot`)
 
-## [1.0.0] - 16.08.2020
+## [1.0.0] "Party pulling" - 16.08.2020
 
 ### Added
 
@@ -163,6 +183,7 @@
 -   Implicit party pulling
 -   Rude mode
 
+[1.2.10]: https://github.com/pool-party/pull-party-bot/compare/v1.2.9...v1.2.10
 [1.2.9]: https://github.com/pool-party/pull-party-bot/compare/v1.2.8...v1.2.9
 [1.2.8]: https://github.com/pool-party/pull-party-bot/compare/v1.2.7...v1.2.8
 [1.2.7]: https://github.com/pool-party/pull-party-bot/compare/v1.2.6...v1.2.7
