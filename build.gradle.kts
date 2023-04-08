@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "org.pool-party"
-version = "1.2.9"
+version = "1.2.10"
 
 repositories {
     maven("https://jitpack.io")
@@ -48,7 +48,7 @@ tasks.withType<Jar> {
     manifest {
         attributes(
             mapOf(
-                "Main-Class" to "com.github.pool_party.pull_party_bot.MainKt"
+                "Main-Class" to "com.github.pool_party.pull_party_bot.MainKt",
             )
         )
     }
@@ -63,15 +63,4 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
     kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
     kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
-}
-
-configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-    disabledRules.set(
-        setOf(
-            "package-name",
-            "multiline-if-else",
-            "trailing-comma-on-call-site",
-            "trailing-comma-on-declaration-site",
-        )
-    )
 }

@@ -16,6 +16,8 @@
 
 ## Usage guide
 
+![example](assets/example.png)
+
 Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to create custom parties and manage them via following commands:
 
 > all commands are not case-sensitive to support RUDE mode \
@@ -80,12 +82,6 @@ Use these commands to mention members of needed parties, see the information and
 
     > Provides general guide on empty input \
     >  Shows command usage guide while argument is given
-
--   `/rude on/off` - switch RUDE _(Caps Lock)_ mode
-
-    > Set `off` by default \
-    >  Takes only `on` and `off` as correct arguments \
-    >  Doesn't affect error messages
 
 -   `/feedback message` - leave a feedback for developers in a free-form
 

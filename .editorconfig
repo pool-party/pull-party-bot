@@ -11,3 +11,9 @@ trim_trailing_whitespace = true
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.kt]
+# ktlint
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled # BUG: unnecessary trailing commas, needs , before ; in enum
+ktlint_standard_wrapping = disabled # BUG: alignment of ${} in """

@@ -1,1 +1,1 @@
-web: java -jar build/libs/pull-party-bot-1.2.9.jar
+web: java -jar build/libs/pull-party-bot-1.2.10.jar
