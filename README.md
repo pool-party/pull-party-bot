@@ -16,7 +16,9 @@
 
 ## Usage guide
 
-![example](assets/example.png)
+<div>
+    <img src="assets/example.png" width=400 alt="logo">
+</div>
 
 Add [`@PullPartyBot`](https://t.me/PullPartyBot) to the chat to be able to create custom parties and manage them via following commands:
 
